@@ -10,9 +10,7 @@ const Stack = createNativeStackNavigator();
 
 const App = () => {
   useEffect(() => {
-    console.log('splash screen call 1');
     SplashScreen.hide();
-    console.log('splash screen call 2');
   }, []);
   return (
     <NavigationContainer>
