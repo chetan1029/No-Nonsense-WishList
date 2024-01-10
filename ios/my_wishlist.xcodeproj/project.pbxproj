@@ -46,6 +46,7 @@
 		89C6BE57DB24E9ADA2F236DE /* Pods-my_wishlist-my_wishlistTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-my_wishlist-my_wishlistTests.release.xcconfig"; path = "Target Support Files/Pods-my_wishlist-my_wishlistTests/Pods-my_wishlist-my_wishlistTests.release.xcconfig"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		F7D7842B2B3B236300559610 /* app_icons.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = app_icons.ttf; sourceTree = "<group>"; };
+		F7E306822B4F496F00B7A503 /* Feather.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = Feather.ttf; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -154,6 +155,7 @@
 		F7D7842A2B3B22EC00559610 /* Fonts */ = {
 			isa = PBXGroup;
 			children = (
+				F7E306822B4F496F00B7A503 /* Feather.ttf */,
 				F7D7842B2B3B236300559610 /* app_icons.ttf */,
 			);
 			path = Fonts;

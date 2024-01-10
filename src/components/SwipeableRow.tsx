@@ -4,6 +4,7 @@ import {Animated, StyleSheet, Text, View, I18nManager} from 'react-native';
 import {RectButton, Swipeable} from 'react-native-gesture-handler';
 import {BORDERRADIUS, COLORS} from '../theme/theme';
 import CustomIcon from './CustomIcon';
+import Feather from 'react-native-vector-icons/Feather';
 
 interface SwipeableRowProps {
   children: any;
@@ -25,7 +26,7 @@ const SwipeableRow: React.FC<SwipeableRowProps> = ({children}) => {
       <RectButton style={styles.leftAction} onPress={close}>
         <Animated.Text
           style={[styles.actionText, {transform: [{translateX: trans}]}]}>
-          <CustomIcon name="cart" size={25} color={COLORS.primaryWhiteHex} />
+          <CustomIcon name="cart" size={20} color={COLORS.primaryWhiteHex} />
         </Animated.Text>
       </RectButton>
     );
@@ -57,7 +58,9 @@ const SwipeableRow: React.FC<SwipeableRowProps> = ({children}) => {
             },
           ]}
           onPress={pressHandler}>
-          <Text style={styles.actionText}>{text}</Text>
+          <Text style={styles.actionText}>
+            <Feather name={text} size={20} color={COLORS.primaryWhiteHex} />
+          </Text>
         </RectButton>
       </Animated.View>
     );
@@ -69,19 +72,19 @@ const SwipeableRow: React.FC<SwipeableRowProps> = ({children}) => {
   ) => {
     const rightActions = [
       renderRightAction(
-        'Link',
+        'external-link',
         COLORS.primaryLightGreyHex,
         192,
         progressAnimatedValue,
       ),
       renderRightAction(
-        'Share',
+        'share',
         COLORS.primaryOrangeHex,
         128,
         progressAnimatedValue,
       ),
       renderRightAction(
-        'Delete',
+        'trash',
         COLORS.primaryRedHex,
         64,
         progressAnimatedValue,
