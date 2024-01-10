@@ -25,6 +25,7 @@ import HeaderBar from '../components/HeaderBar';
 import CustomIcon from '../components/CustomIcon';
 import CoffeeCard from '../components/CoffeeCard';
 import WishListCard from '../components/WishListCard';
+import SwipeableRow from '../components/SwipeableRow';
 
 function getCategories(data: any[]) {
   // Extract unique names from the array
@@ -225,14 +226,7 @@ const HomeScreen = ({navigation}: any) => {
         keyExtractor={item => item.id}
         renderItem={({item}) => {
           return (
-            <TouchableOpacity
-              onPress={() => {
-                navigation.push('Details', {
-                  index: item.index,
-                  id: item.id,
-                  type: item.type,
-                });
-              }}>
+            <SwipeableRow>
               <WishListCard
                 id={item.id}
                 index={item.index}
@@ -241,7 +235,7 @@ const HomeScreen = ({navigation}: any) => {
                 price={item.price}
                 currency={item.currency}
               />
-            </TouchableOpacity>
+            </SwipeableRow>
           );
         }}
       />

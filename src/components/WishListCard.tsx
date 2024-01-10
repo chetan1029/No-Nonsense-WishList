@@ -1,5 +1,5 @@
-import {StyleSheet, Text, View, ImageProps, Image} from 'react-native';
 import React from 'react';
+import {StyleSheet, Text, View, ImageProps, Image} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import {
   BORDERRADIUS,
