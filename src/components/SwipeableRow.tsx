@@ -1,17 +1,51 @@
 import React, {useRef} from 'react';
-import {Animated, StyleSheet, Text, View, I18nManager} from 'react-native';
+import {
+  Animated,
+  StyleSheet,
+  Text,
+  View,
+  I18nManager,
+  Linking,
+  Share,
+} from 'react-native';
 
-import {RectButton, Swipeable} from 'react-native-gesture-handler';
+import {Directions, RectButton, Swipeable} from 'react-native-gesture-handler';
 import {BORDERRADIUS, COLORS} from '../theme/theme';
 import CustomIcon from './CustomIcon';
 import Feather from 'react-native-vector-icons/Feather';
+import {useStore} from '../store/store';
+import Toast from 'react-native-toast-message';
 
 interface SwipeableRowProps {
   children: any;
+  id: string;
+  index: number;
+  title: string;
+  url: string;
 }
 
-const SwipeableRow: React.FC<SwipeableRowProps> = ({children}) => {
+const SwipeableRow: React.FC<SwipeableRowProps> = ({
+  children,
+  id,
+  index,
+  title,
+  url,
+}) => {
   const swipeableRowRef = useRef<Swipeable>(null);
+
+  const addToPurchaseList = useStore((state: any) => state.addToPurchaseList);
+  const PurchaseListitems = useStore((state: any) => state.PurchaseListitems);
+  const deleteFromWishList = useStore((state: any) => state.deleteFromWishList);
+  const WishListItems = useStore((state: any) => state.WishListItems);
+
+  const showToast = (message: any) => {
+    Toast.show({
+      type: 'success',
+      text1: message,
+      visibilityTime: 2000, // Duration in milliseconds
+      position: 'bottom', // You can use 'top' or 'bottom'
+    });
+  };
 
   const renderLeftActions = (
     progress: Animated.AnimatedInterpolation<number>,
@@ -23,7 +57,7 @@ const SwipeableRow: React.FC<SwipeableRowProps> = ({children}) => {
     });
 
     return (
-      <RectButton style={styles.leftAction} onPress={close}>
+      <RectButton style={styles.leftAction} onEnded={close}>
         <Animated.Text
           style={[styles.actionText, {transform: [{translateX: trans}]}]}>
           <CustomIcon name="cart" size={20} color={COLORS.primaryWhiteHex} />
@@ -33,7 +67,8 @@ const SwipeableRow: React.FC<SwipeableRowProps> = ({children}) => {
   };
 
   const renderRightAction = (
-    text: string,
+    onHandle: any,
+    icon: string,
     color: string,
     x: number,
     progress: Animated.AnimatedInterpolation<number>,
@@ -42,11 +77,6 @@ const SwipeableRow: React.FC<SwipeableRowProps> = ({children}) => {
       inputRange: [0, 1],
       outputRange: [x, 0],
     });
-
-    const pressHandler = () => {
-      close();
-      console.log(text);
-    };
 
     return (
       <Animated.View style={{flex: 1, transform: [{translateX: trans}]}}>
@@ -57,9 +87,9 @@ const SwipeableRow: React.FC<SwipeableRowProps> = ({children}) => {
               backgroundColor: color,
             },
           ]}
-          onPress={pressHandler}>
+          onPress={onHandle}>
           <Text style={styles.actionText}>
-            <Feather name={text} size={20} color={COLORS.primaryWhiteHex} />
+            <Feather name={icon} size={20} color={COLORS.primaryWhiteHex} />
           </Text>
         </RectButton>
       </Animated.View>
@@ -72,18 +102,21 @@ const SwipeableRow: React.FC<SwipeableRowProps> = ({children}) => {
   ) => {
     const rightActions = [
       renderRightAction(
+        openLink,
         'external-link',
         COLORS.primaryLightGreyHex,
         192,
         progressAnimatedValue,
       ),
       renderRightAction(
+        handleShare,
         'share',
         COLORS.primaryOrangeHex,
         128,
         progressAnimatedValue,
       ),
       renderRightAction(
+        handleDelete,
         'trash',
         COLORS.primaryRedHex,
         64,
@@ -105,14 +138,71 @@ const SwipeableRow: React.FC<SwipeableRowProps> = ({children}) => {
     swipeableRowRef.current?.close();
   };
 
+  const openLink = async () => {
+    if (url) {
+      Linking.canOpenURL(url)
+        .then(supported => {
+          if (supported) {
+            // Open the URL in the browser
+            Linking.openURL(url);
+          } else {
+            console.error("Don't know how to open URI: " + url);
+          }
+        })
+        .catch(err => console.error('An error occurred', err));
+    }
+    close();
+  };
+
+  const handleShare = async () => {
+    try {
+      const shareOptions = {
+        message: title,
+        url: url,
+      };
+
+      const result = await Share.share(shareOptions);
+
+      if (result.action === Share.sharedAction) {
+        console.log('Shared successfully');
+      } else if (result.action === Share.dismissedAction) {
+        console.log('Share cancelled');
+      }
+    } catch (error: any) {
+      console.error('Error sharing:', error.message);
+    }
+    close();
+  };
+
+  const handleDelete = async () => {
+    try {
+      console.log(WishListItems.length);
+      deleteFromWishList(id);
+      console.log(WishListItems.length);
+    } catch (error: any) {
+      console.error('Error Deleting:', error.message);
+    }
+    close();
+  };
+
+  const handleSwipeableOpen = (direction: any) => {
+    if (direction == 'left') {
+      addToPurchaseList(id);
+      showToast(`${title} is Purchased`);
+      close();
+    }
+  };
+
   return (
     <Swipeable
       ref={swipeableRowRef}
+      key={id}
       friction={2}
-      leftThreshold={30}
-      rightThreshold={40}
+      leftThreshold={40}
+      rightThreshold={0}
       renderLeftActions={renderLeftActions}
-      renderRightActions={renderRightActions}>
+      renderRightActions={renderRightActions}
+      onSwipeableOpen={direction => handleSwipeableOpen(direction)}>
       {children}
     </Swipeable>
   );

@@ -23,7 +23,6 @@ import {
 } from '../theme/theme';
 import HeaderBar from '../components/HeaderBar';
 import CustomIcon from '../components/CustomIcon';
-import CoffeeCard from '../components/CoffeeCard';
 import WishListCard from '../components/WishListCard';
 import SwipeableRow from '../components/SwipeableRow';
 
@@ -33,25 +32,23 @@ function getCategories(data: any[]) {
   return uniqueNames;
 }
 
-function getCoffeeByCategory(category: string, data: any[]) {
+function getWishListByCategory(category: string, data: any[]) {
   // Filter items based on the provided category
   const items = data.filter(item => item.category === category);
   return items;
 }
 
 const HomeScreen = ({navigation}: any) => {
-  const CoffeeList = useStore((state: any) => state.CoffeeList);
+  const WishListItems = useStore((state: any) => state.WishListItems);
   const CategoryList = useStore((state: any) => state.CategoryList);
-  const addToCart = useStore((state: any) => state.addToCart);
-  const calculateCartPrice = useStore((state: any) => state.calculateCartPrice);
 
   const [categories, setCategories] = useState(getCategories(CategoryList));
   const [categoryIndex, setCategoryIndex] = useState({
     index: 0,
     category: categories[0],
   });
-  const [sortedCoffee, setSortedCoffee] = useState(
-    getCoffeeByCategory(categoryIndex.category, CoffeeList),
+  const [sortedWishList, setSortedWishList] = useState(
+    getWishListByCategory(categoryIndex.category, WishListItems),
   );
 
   const ListRef: any = useRef<FlatList>();
@@ -66,8 +63,8 @@ const HomeScreen = ({navigation}: any) => {
         offset: 0,
       });
       setCategoryIndex({index: 0, category: categories[0]});
-      setSortedCoffee([
-        ...CoffeeList.filter((item: any) =>
+      setSortedWishList([
+        ...WishListItems.filter((item: any) =>
           item.title.toLowerCase().includes(search.toLowerCase()),
         ),
       ]);
@@ -80,7 +77,7 @@ const HomeScreen = ({navigation}: any) => {
       offset: 0,
     });
     setCategoryIndex({index: 0, category: categories[0]});
-    setSortedCoffee([...CoffeeList]);
+    setSortedWishList([...WishListItems]);
     setSearchText('');
   };
 
@@ -93,29 +90,7 @@ const HomeScreen = ({navigation}: any) => {
     });
   };
 
-  const CoffeCardAddToCart = ({
-    id,
-    index,
-    name,
-    roasted,
-    imagelink_square,
-    special_ingredient,
-    type,
-    prices,
-  }: any) => {
-    addToCart({
-      id,
-      index,
-      name,
-      roasted,
-      imagelink_square,
-      special_ingredient,
-      type,
-      prices,
-    });
-    calculateCartPrice();
-    showToast(`${name} is Added to Cart`);
-  };
+  // showToast(`${name} is Added to Cart`);
 
   return (
     <View style={styles.ScreenContainer}>
@@ -190,7 +165,7 @@ const HomeScreen = ({navigation}: any) => {
                   index: index,
                   category: categories[index],
                 });
-                setSortedCoffee(getCoffeeByCategory(data, CoffeeList));
+                setSortedWishList(getWishListByCategory(data, WishListItems));
               }}>
               <Text
                 style={[
@@ -221,12 +196,16 @@ const HomeScreen = ({navigation}: any) => {
           </View>
         }
         showsVerticalScrollIndicator={false}
-        data={sortedCoffee}
+        data={sortedWishList}
         contentContainerStyle={styles.FlatListContainer}
         keyExtractor={item => item.id}
         renderItem={({item}) => {
           return (
-            <SwipeableRow>
+            <SwipeableRow
+              id={item.id}
+              index={item.index}
+              title={item.title}
+              url={item.url}>
               <WishListCard
                 id={item.id}
                 index={item.index}
@@ -238,6 +217,7 @@ const HomeScreen = ({navigation}: any) => {
             </SwipeableRow>
           );
         }}
+        style={{marginBottom: tabBarHeight}}
       />
     </View>
   );

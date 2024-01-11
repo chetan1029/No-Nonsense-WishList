@@ -7,6 +7,8 @@ const CoffeeData = [
     imagelink_portrait: require('../assets/coffee_assets/americano/portrait/americano_pic_1_portrait.png'),
     currency: "€",
     price: "599.99",
+    url: "https://google.com",
+    purchase: false,
     index: 0
   },
   {
@@ -17,6 +19,8 @@ const CoffeeData = [
     imagelink_portrait: require('../assets/coffee_assets/americano/portrait/americano_pic_1_portrait.png'),
     currency: "€",
     price: "129.99",
+    url: "https://facebook.com",
+    purchase: false,
     index: 1
   },
   {
@@ -27,6 +31,8 @@ const CoffeeData = [
     imagelink_portrait: require('../assets/coffee_assets/americano/portrait/americano_pic_1_portrait.png'),
     currency: "€",
     price: "149.99",
+    url: "https://x.com",
+    purchase: false,
     index: 2
   },
   {
@@ -37,7 +43,33 @@ const CoffeeData = [
     imagelink_portrait: require('../assets/coffee_assets/americano/portrait/americano_pic_1_portrait.png'),
     currency: "€",
     price: "79.99",
+    url: "https://facebook.com",
+    purchase: false,
     index: 3
+  },
+  {
+    id: "C5",
+    title: "Fitness Tracker - 1",
+    category: "Christmas",
+    imagelink_square: require('../assets/coffee_assets/americano/square/americano_pic_1_square.png'),
+    imagelink_portrait: require('../assets/coffee_assets/americano/portrait/americano_pic_1_portrait.png'),
+    currency: "€",
+    price: "79.99",
+    url: "https://facebook.com",
+    purchase: false,
+    index: 31
+  },
+  {
+    id: "C6",
+    title: "Fitness Tracker - 2",
+    category: "Christmas",
+    imagelink_square: require('../assets/coffee_assets/americano/square/americano_pic_1_square.png'),
+    imagelink_portrait: require('../assets/coffee_assets/americano/portrait/americano_pic_1_portrait.png'),
+    currency: "€",
+    price: "79.99",
+    url: "https://facebook.com",
+    purchase: false,
+    index: 32
   },
   {
     id: "N1",
@@ -47,6 +79,8 @@ const CoffeeData = [
     imagelink_portrait: require('../assets/coffee_assets/americano/portrait/americano_pic_1_portrait.png'),
     currency: "€",
     price: "199.99",
+    url: "https://shein.com",
+    purchase: false,
     index: 4
   },
   {
@@ -57,6 +91,8 @@ const CoffeeData = [
     imagelink_portrait: require('../assets/coffee_assets/americano/portrait/americano_pic_1_portrait.png'),
     currency: "€",
     price: "299.99",
+    url: "https://google.com",
+    purchase: false,
     index: 5
   },
   {
@@ -67,6 +103,8 @@ const CoffeeData = [
     imagelink_portrait: require('../assets/coffee_assets/americano/portrait/americano_pic_1_portrait.png'),
     currency: "€",
     price: "399.99",
+    url: "",
+    purchase: false,
     index: 6
   },
   {
@@ -77,7 +115,33 @@ const CoffeeData = [
     imagelink_portrait: require('../assets/coffee_assets/americano/portrait/americano_pic_1_portrait.png'),
     currency: "€",
     price: "449.99",
+    url: "https://facebook.com",
+    purchase: false,
     index: 7
+  },
+  {
+    id: "N5",
+    title: "Camera 1",
+    category: "New Year",
+    imagelink_square: require('../assets/coffee_assets/americano/square/americano_pic_1_square.png'),
+    imagelink_portrait: require('../assets/coffee_assets/americano/portrait/americano_pic_1_portrait.png'),
+    currency: "€",
+    price: "449.99",
+    url: "https://facebook.com",
+    purchase: false,
+    index: 70
+  },
+  {
+    id: "N6",
+    title: "Camera 2",
+    category: "New Year",
+    imagelink_square: require('../assets/coffee_assets/americano/square/americano_pic_1_square.png'),
+    imagelink_portrait: require('../assets/coffee_assets/americano/portrait/americano_pic_1_portrait.png'),
+    currency: "€",
+    price: "449.99",
+    url: "https://facebook.com",
+    purchase: false,
+    index: 71
   },
   {
     id: "B1",
@@ -87,6 +151,8 @@ const CoffeeData = [
     imagelink_portrait: require('../assets/coffee_assets/americano/portrait/americano_pic_1_portrait.png'),
     currency: "€",
     price: "1299.99",
+    url: "https://facebook.com",
+    purchase: false,
     index: 8
   },
   {
@@ -97,6 +163,8 @@ const CoffeeData = [
     imagelink_portrait: require('../assets/coffee_assets/americano/portrait/americano_pic_1_portrait.png'),
     currency: "€",
     price: "799.99",
+    url: "https://google.com",
+    purchase: false,
     index: 9
   },
   {
@@ -107,6 +175,8 @@ const CoffeeData = [
     imagelink_portrait: require('../assets/coffee_assets/americano/portrait/americano_pic_1_portrait.png'),
     currency: "€",
     price: "799.99",
+    url: "https://x.com",
+    purchase: false,
     index: 10
   },
 ]
