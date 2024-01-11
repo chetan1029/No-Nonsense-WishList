@@ -83,6 +83,7 @@ To learn more about React Native, take a look at the following resources:
 # For iOS Setup
 
 while adding custom icon with react native vector icons in project it doesn't work with the iOS simulator because we have to link the icon file. this guide https://three29.com/how-to-use-react-native-vector-icons-to-add-custom-icons-to-a-react-native-app/ mention how to set it up nicely. only follow "IOS" section.
+if you get pods error make sure you check your targets-> project -> build Phase -> Copy bundle resource and delete the font you added
 
 https://medium.com/handlebar-labs/how-to-add-a-splash-screen-to-a-react-native-app-ios-and-android-30a3cec835ae
 https://github.com/crazycodeboy/react-native-splash-screen/issues/619
