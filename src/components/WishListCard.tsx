@@ -37,7 +37,6 @@ const WishListCard: React.FC<WishListCardProps> = ({
           <Image source={imagelink_square} style={styles.Image} />
           <View style={styles.CardDetailInfoContainer}>
             <Text style={styles.CardTitle}>{title}</Text>
-            <Text style={styles.CardSubtitle}>{title}</Text>
             <Text style={styles.CardCurrency}>
               {currency} <Text style={styles.CardPrice}>{price}</Text>
             </Text>
@@ -50,7 +49,7 @@ const WishListCard: React.FC<WishListCardProps> = ({
 
 const styles = StyleSheet.create({
   CardLinearGradient: {
-    padding: SPACING.space_15,
+    padding: SPACING.space_10,
     borderRadius: BORDERRADIUS.radius_15,
   },
   CardInfoContainer: {
@@ -64,8 +63,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   Image: {
-    height: 90,
-    width: 90,
+    height: 70,
+    width: 70,
     borderRadius: BORDERRADIUS.radius_15,
   },
   CardDetailInfoContainer: {
@@ -74,17 +73,12 @@ const styles = StyleSheet.create({
   },
   CardTitle: {
     fontFamily: FONTFAMILY.poppins_medium,
-    fontSize: FONTSIZE.size_18,
+    fontSize: FONTSIZE.size_16,
     color: COLORS.primaryWhiteHex,
-  },
-  CardSubtitle: {
-    fontFamily: FONTFAMILY.poppins_regular,
-    fontSize: FONTSIZE.size_12,
-    color: COLORS.secondaryLightGreyHex,
   },
   CardCurrency: {
     fontFamily: FONTFAMILY.poppins_semibold,
-    fontSize: FONTSIZE.size_18,
+    fontSize: FONTSIZE.size_14,
     color: COLORS.primaryOrangeHex,
   },
   CardPrice: {

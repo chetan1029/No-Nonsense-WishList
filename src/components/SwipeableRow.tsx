@@ -22,6 +22,8 @@ interface SwipeableRowProps {
   index: number;
   title: string;
   url: string;
+  leftSwipeIcon: string;
+  onSwipeableOpen: (direction: string, id: string, title: string) => void;
 }
 
 const SwipeableRow: React.FC<SwipeableRowProps> = ({
@@ -30,19 +32,18 @@ const SwipeableRow: React.FC<SwipeableRowProps> = ({
   index,
   title,
   url,
+  leftSwipeIcon,
+  onSwipeableOpen,
 }) => {
   const swipeableRowRef = useRef<Swipeable>(null);
 
-  const addToPurchaseList = useStore((state: any) => state.addToPurchaseList);
-  const PurchaseListitems = useStore((state: any) => state.PurchaseListitems);
   const deleteFromWishList = useStore((state: any) => state.deleteFromWishList);
-  const WishListItems = useStore((state: any) => state.WishListItems);
 
   const showToast = (message: any) => {
     Toast.show({
-      type: 'success',
+      type: 'error',
       text1: message,
-      visibilityTime: 2000, // Duration in milliseconds
+      visibilityTime: 1000, // Duration in milliseconds
       position: 'bottom', // You can use 'top' or 'bottom'
     });
   };
@@ -60,7 +61,11 @@ const SwipeableRow: React.FC<SwipeableRowProps> = ({
       <RectButton style={styles.leftAction} onEnded={close}>
         <Animated.Text
           style={[styles.actionText, {transform: [{translateX: trans}]}]}>
-          <CustomIcon name="cart" size={20} color={COLORS.primaryWhiteHex} />
+          <Feather
+            name={leftSwipeIcon}
+            size={20}
+            color={COLORS.primaryWhiteHex}
+          />
         </Animated.Text>
       </RectButton>
     );
@@ -176,21 +181,12 @@ const SwipeableRow: React.FC<SwipeableRowProps> = ({
 
   const handleDelete = async () => {
     try {
-      console.log(WishListItems.length);
       deleteFromWishList(id);
-      console.log(WishListItems.length);
+      showToast(`${title} is Deleted`);
     } catch (error: any) {
       console.error('Error Deleting:', error.message);
     }
     close();
-  };
-
-  const handleSwipeableOpen = (direction: any) => {
-    if (direction == 'left') {
-      addToPurchaseList(id);
-      showToast(`${title} is Purchased`);
-      close();
-    }
   };
 
   return (
@@ -202,7 +198,12 @@ const SwipeableRow: React.FC<SwipeableRowProps> = ({
       rightThreshold={0}
       renderLeftActions={renderLeftActions}
       renderRightActions={renderRightActions}
-      onSwipeableOpen={direction => handleSwipeableOpen(direction)}>
+      onSwipeableOpen={direction => {
+        if (direction == 'left') {
+          onSwipeableOpen(direction, id, title);
+          close();
+        }
+      }}>
       {children}
     </Swipeable>
   );

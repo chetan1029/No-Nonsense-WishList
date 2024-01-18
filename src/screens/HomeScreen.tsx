@@ -10,7 +10,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, {useRef, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {useStore} from '../store/store';
 import {useBottomTabBarHeight} from '@react-navigation/bottom-tabs';
 import Toast from 'react-native-toast-message';
@@ -34,13 +34,16 @@ function getCategories(data: any[]) {
 
 function getWishListByCategory(category: string, data: any[]) {
   // Filter items based on the provided category
-  const items = data.filter(item => item.category === category);
+  const items = data.filter(
+    item => item.category === category && item.purchase == false,
+  );
   return items;
 }
 
 const HomeScreen = ({navigation}: any) => {
   const WishListItems = useStore((state: any) => state.WishListItems);
   const CategoryList = useStore((state: any) => state.CategoryList);
+  const addToPurchaseList = useStore((state: any) => state.addToPurchaseList);
 
   const [categories, setCategories] = useState(getCategories(CategoryList));
   const [categoryIndex, setCategoryIndex] = useState({
@@ -64,8 +67,10 @@ const HomeScreen = ({navigation}: any) => {
       });
       setCategoryIndex({index: 0, category: categories[0]});
       setSortedWishList([
-        ...WishListItems.filter((item: any) =>
-          item.title.toLowerCase().includes(search.toLowerCase()),
+        ...WishListItems.filter(
+          (item: any) =>
+            item.title.toLowerCase().includes(search.toLowerCase()) &&
+            item.purchase == false,
         ),
       ]);
     }
@@ -85,10 +90,33 @@ const HomeScreen = ({navigation}: any) => {
     Toast.show({
       type: 'success',
       text1: message,
-      visibilityTime: 2000, // Duration in milliseconds
+      visibilityTime: 1000, // Duration in milliseconds
       position: 'bottom', // You can use 'top' or 'bottom'
     });
   };
+
+  const handleSwipeableOpen = (
+    direction: string,
+    id: string,
+    title: string,
+  ) => {
+    if (direction == 'left') {
+      addToPurchaseList(id);
+      showToast(`${title} is Purchased`);
+    }
+  };
+
+  // Use useEffect to update sortedWishList after WishListItems change
+  useEffect(() => {
+    // Update sortedWishList based on the updated WishListItems
+    const updatedSortedWishList = getWishListByCategory(
+      categoryIndex.category,
+      WishListItems,
+    );
+
+    // Update the state of sortedWishList
+    setSortedWishList(updatedSortedWishList);
+  }, [WishListItems, categoryIndex.category]);
 
   // showToast(`${name} is Added to Cart`);
 
@@ -146,45 +174,47 @@ const HomeScreen = ({navigation}: any) => {
       </View>
 
       {/* Category Scroller */}
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        contentContainerStyle={styles.CategoryScrollViewStyle}>
-        {categories.map((data, index) => (
-          <View
-            key={index.toString()}
-            style={styles.CategoryScrollViewContainer}>
-            <TouchableOpacity
-              style={styles.CategoryScrollViewItem}
-              onPress={() => {
-                ListRef?.current?.scrollToOffset({
-                  animated: true,
-                  offset: 0,
-                });
-                setCategoryIndex({
-                  index: index,
-                  category: categories[index],
-                });
-                setSortedWishList(getWishListByCategory(data, WishListItems));
-              }}>
-              <Text
-                style={[
-                  styles.CategoryText,
-                  categoryIndex.index == index
-                    ? {color: COLORS.primaryOrangeHex}
-                    : {},
-                ]}>
-                {data}
-              </Text>
-              {categoryIndex.index == index ? (
-                <View style={styles.ActiveCategory} />
-              ) : (
-                <></>
-              )}
-            </TouchableOpacity>
-          </View>
-        ))}
-      </ScrollView>
+      <View style={styles.CategoryViewStyle}>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.CategoryScrollViewStyle}>
+          {categories.map((data, index) => (
+            <View
+              key={index.toString()}
+              style={styles.CategoryScrollViewContainer}>
+              <TouchableOpacity
+                style={styles.CategoryScrollViewItem}
+                onPress={() => {
+                  ListRef?.current?.scrollToOffset({
+                    animated: true,
+                    offset: 0,
+                  });
+                  setCategoryIndex({
+                    index: index,
+                    category: categories[index],
+                  });
+                  setSortedWishList(getWishListByCategory(data, WishListItems));
+                }}>
+                <Text
+                  style={[
+                    styles.CategoryText,
+                    categoryIndex.index == index
+                      ? {color: COLORS.primaryOrangeHex}
+                      : {},
+                  ]}>
+                  {data}
+                </Text>
+                {categoryIndex.index == index ? (
+                  <View style={styles.ActiveCategory} />
+                ) : (
+                  <></>
+                )}
+              </TouchableOpacity>
+            </View>
+          ))}
+        </ScrollView>
+      </View>
 
       {/* Coffee Flatlist */}
       <FlatList
@@ -205,7 +235,9 @@ const HomeScreen = ({navigation}: any) => {
               id={item.id}
               index={item.index}
               title={item.title}
-              url={item.url}>
+              url={item.url}
+              leftSwipeIcon="shopping-cart"
+              onSwipeableOpen={handleSwipeableOpen}>
               <WishListCard
                 id={item.id}
                 index={item.index}
@@ -253,9 +285,11 @@ const styles = StyleSheet.create({
     fontSize: FONTSIZE.size_14,
     color: COLORS.primaryWhiteHex,
   },
+  CategoryViewStyle: {
+    height: SPACING.space_20 * 1.8,
+  },
   CategoryScrollViewStyle: {
     paddingHorizontal: SPACING.space_20,
-    paddingBottom: SPACING.space_15,
   },
   CategoryScrollViewContainer: {
     paddingHorizontal: SPACING.space_15,
@@ -276,9 +310,10 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.primaryOrangeHex,
   },
   FlatListContainer: {
-    gap: SPACING.space_20,
-    paddingVertical: SPACING.space_20,
-    paddingHorizontal: SPACING.space_30,
+    gap: SPACING.space_15,
+    paddingVertical: SPACING.space_15,
+    paddingHorizontal: SPACING.space_20,
+    flexGrow: 1,
   },
   EmptyListContainer: {
     width: Dimensions.get('window').width - SPACING.space_30 * 2,
