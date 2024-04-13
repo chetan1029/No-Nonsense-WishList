@@ -1,65 +1,87 @@
-import {
-  Dimensions,
-  FlatList,
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  TextInput,
-  ToastAndroid,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import {FlatList, StatusBar, StyleSheet, Text, View} from 'react-native';
 import React, {useEffect, useRef, useState} from 'react';
 import {useStore} from '../store/store';
 import {useBottomTabBarHeight} from '@react-navigation/bottom-tabs';
 import Toast from 'react-native-toast-message';
-import {
-  BORDERRADIUS,
-  COLORS,
-  FONTFAMILY,
-  FONTSIZE,
-  SPACING,
-} from '../theme/theme';
+import {COLORS, FONTFAMILY, FONTSIZE, SPACING} from '../theme/theme';
+
+// Components
 import HeaderBar from '../components/HeaderBar';
-import CustomIcon from '../components/CustomIcon';
-import WishListCard from '../components/WishListCard';
-import SwipeableRow from '../components/SwipeableRow';
+import SearchBar from '../components/SearchBar';
+import CategoryScroller from '../components/CategoryScroller';
+import WishListFlatList from '../components/WishListFlatList';
 
-function getCategories(data: any[]) {
-  // Extract unique names from the array
-  const uniqueNames = [...new Set(data.map(item => item.name))];
-  return uniqueNames;
-}
+// Memorized functions
+const getCategories = (data: any[]) => {
+  if (!Array.isArray(data) || data.length === 0) {
+    return [];
+  }
+  return [...new Set(data.map(item => item.name))];
+};
 
-function getWishListByCategory(category: string, data: any[]) {
-  // Filter items based on the provided category
-  const items = data.filter(
-    item => item.category === category && item.purchase == false,
-  );
-  return items;
-}
+const getWishListByCategory = (category: string, data: any[]) => {
+  return data.filter(item => item.category === category && !item.purchase);
+};
 
 const HomeScreen = ({navigation}: any) => {
-  const WishListItems = useStore((state: any) => state.WishListItems);
-  const CategoryList = useStore((state: any) => state.CategoryList);
-  const addToPurchaseList = useStore((state: any) => state.addToPurchaseList);
-
-  const [categories, setCategories] = useState(getCategories(CategoryList));
+  // State
+  const [categories, setCategories] = useState<any>([]);
   const [categoryIndex, setCategoryIndex] = useState({
     index: 0,
     category: categories[0],
   });
-  const [sortedWishList, setSortedWishList] = useState(
-    getWishListByCategory(categoryIndex.category, WishListItems),
-  );
-
-  const ListRef: any = useRef<FlatList>();
+  const [sortedWishList, setSortedWishList] = useState<any>([]);
   const [searchText, setSearchText] = useState('');
 
+  // Store
+  const WishListItems = useStore((state: any) => state.WishListItems);
+  const CategoryList = useStore((state: any) => state.CategoryList);
+  const addToPurchaseList = useStore((state: any) => state.addToPurchaseList);
+  const fetchCategoryList = useStore((state: any) => state.fetchCategoryList);
+  const fetchWishListItems = useStore((state: any) => state.fetchWishListItems);
+
+  // Other variables
+  const ListRef: any = useRef<FlatList>();
   const tabBarHeight = useBottomTabBarHeight();
 
-  const searchCoffee = (search: string) => {
+  // Use effect to fetch category list
+  useEffect(() => {
+    fetchCategoryList();
+  }, [fetchCategoryList]);
+
+  // Use effect to set category list
+  useEffect(() => {
+    if (CategoryList) {
+      const uniqueCategoryList = getCategories(CategoryList);
+      setCategories(uniqueCategoryList);
+    }
+  }, [CategoryList]);
+
+  // Use effect to fetch set category index
+  useEffect(() => {
+    if (categories) {
+      setCategoryIndex({index: 0, category: categories[0]});
+    }
+  }, [categories]);
+
+  // Use effect to fetch wish list
+  useEffect(() => {
+    fetchWishListItems();
+  }, [fetchWishListItems]);
+
+  // Use effect to update sortedWishList after WishListItems change
+  useEffect(() => {
+    if (categoryIndex && WishListItems) {
+      const updatedSortedWishList = getWishListByCategory(
+        categoryIndex.category,
+        WishListItems,
+      );
+      setSortedWishList(updatedSortedWishList);
+    }
+  }, [WishListItems, categoryIndex.category]);
+
+  // Functions
+  const searchWishList = (search: string) => {
     if (search != '') {
       ListRef?.current?.scrollToOffset({
         animated: true,
@@ -76,7 +98,7 @@ const HomeScreen = ({navigation}: any) => {
     }
   };
 
-  const resetSearchCoffee = () => {
+  const resetSearchWishList = () => {
     ListRef?.current?.scrollToOffset({
       animated: true,
       offset: 0,
@@ -90,8 +112,8 @@ const HomeScreen = ({navigation}: any) => {
     Toast.show({
       type: 'success',
       text1: message,
-      visibilityTime: 1000, // Duration in milliseconds
-      position: 'bottom', // You can use 'top' or 'bottom'
+      visibilityTime: 1000,
+      position: 'bottom',
     });
   };
 
@@ -106,150 +128,39 @@ const HomeScreen = ({navigation}: any) => {
     }
   };
 
-  // Use useEffect to update sortedWishList after WishListItems change
-  useEffect(() => {
-    // Update sortedWishList based on the updated WishListItems
-    const updatedSortedWishList = getWishListByCategory(
-      categoryIndex.category,
-      WishListItems,
-    );
-
-    // Update the state of sortedWishList
-    setSortedWishList(updatedSortedWishList);
-  }, [WishListItems, categoryIndex.category]);
-
-  // showToast(`${name} is Added to Cart`);
-
   return (
     <View style={styles.ScreenContainer}>
       <StatusBar backgroundColor={COLORS.primaryBlackHex}></StatusBar>
-      {/* App Header */}
 
+      {/* App Header */}
       <HeaderBar />
       <Text style={styles.ScreenTitle}>Find the Gift{'\n'}You Deserve</Text>
 
       {/* Search Input */}
-
-      <View style={styles.InputContainerComponent}>
-        <TouchableOpacity
-          onPress={() => {
-            searchCoffee(searchText);
-          }}>
-          <CustomIcon
-            style={styles.InputIcon}
-            name="search"
-            size={FONTSIZE.size_18}
-            color={
-              searchText.length > 0
-                ? COLORS.primaryOrangeHex
-                : COLORS.primaryLightGreyHex
-            }
-          />
-        </TouchableOpacity>
-        <TextInput
-          placeholder="Find Your Wish..."
-          placeholderTextColor={COLORS.primaryLightGreyHex}
-          style={styles.TextInputContainer}
-          onChangeText={text => {
-            setSearchText(text);
-            searchCoffee(text);
-          }}
-          value={searchText}
-        />
-        {searchText.length > 0 ? (
-          <TouchableOpacity
-            onPress={() => {
-              resetSearchCoffee();
-            }}>
-            <CustomIcon
-              style={styles.InputIcon}
-              name="close"
-              size={FONTSIZE.size_16}
-              color={COLORS.primaryLightGreyHex}
-            />
-          </TouchableOpacity>
-        ) : (
-          <></>
-        )}
-      </View>
+      <SearchBar
+        searchText={searchText}
+        searchWishList={searchWishList}
+        setSearchText={setSearchText}
+        resetSearchWishList={resetSearchWishList}
+      />
 
       {/* Category Scroller */}
-      <View style={styles.CategoryViewStyle}>
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.CategoryScrollViewStyle}>
-          {categories.map((data, index) => (
-            <View
-              key={index.toString()}
-              style={styles.CategoryScrollViewContainer}>
-              <TouchableOpacity
-                style={styles.CategoryScrollViewItem}
-                onPress={() => {
-                  ListRef?.current?.scrollToOffset({
-                    animated: true,
-                    offset: 0,
-                  });
-                  setCategoryIndex({
-                    index: index,
-                    category: categories[index],
-                  });
-                  setSortedWishList(getWishListByCategory(data, WishListItems));
-                }}>
-                <Text
-                  style={[
-                    styles.CategoryText,
-                    categoryIndex.index == index
-                      ? {color: COLORS.primaryOrangeHex}
-                      : {},
-                  ]}>
-                  {data}
-                </Text>
-                {categoryIndex.index == index ? (
-                  <View style={styles.ActiveCategory} />
-                ) : (
-                  <></>
-                )}
-              </TouchableOpacity>
-            </View>
-          ))}
-        </ScrollView>
-      </View>
+      <CategoryScroller
+        categories={categories}
+        ListRef={ListRef}
+        categoryIndex={categoryIndex}
+        setCategoryIndex={setCategoryIndex}
+        setSortedWishList={setSortedWishList}
+        getWishListByCategory={getWishListByCategory}
+        WishListItems={WishListItems}
+      />
 
-      {/* Coffee Flatlist */}
-      <FlatList
-        ref={ListRef}
-        horizontal={false}
-        ListEmptyComponent={
-          <View style={styles.EmptyListContainer}>
-            <Text style={styles.CategoryText}>No WishList Item Available</Text>
-          </View>
-        }
-        showsVerticalScrollIndicator={false}
-        data={sortedWishList}
-        contentContainerStyle={styles.FlatListContainer}
-        keyExtractor={item => item.id}
-        renderItem={({item}) => {
-          return (
-            <SwipeableRow
-              id={item.id}
-              index={item.index}
-              title={item.title}
-              url={item.url}
-              leftSwipeIcon="shopping-cart"
-              onSwipeableOpen={handleSwipeableOpen}>
-              <WishListCard
-                id={item.id}
-                index={item.index}
-                imagelink_square={item.imagelink_square}
-                title={item.title}
-                price={item.price}
-                currency={item.currency}
-              />
-            </SwipeableRow>
-          );
-        }}
-        style={{marginBottom: tabBarHeight}}
+      {/* WishList Flatlist */}
+      <WishListFlatList
+        ListRef={ListRef}
+        sortedWishList={sortedWishList}
+        handleSwipeableOpen={handleSwipeableOpen}
+        tabBarHeight={tabBarHeight}
       />
     </View>
   );
@@ -267,65 +178,5 @@ const styles = StyleSheet.create({
     fontFamily: FONTFAMILY.poppins_semibold,
     color: COLORS.primaryWhiteHex,
     paddingLeft: SPACING.space_20,
-  },
-  InputContainerComponent: {
-    flexDirection: 'row',
-    margin: SPACING.space_20,
-    borderRadius: BORDERRADIUS.radius_20,
-    backgroundColor: COLORS.primaryDarkGreyHex,
-    alignItems: 'center',
-  },
-  InputIcon: {
-    marginHorizontal: SPACING.space_20,
-  },
-  TextInputContainer: {
-    flex: 1,
-    height: SPACING.space_20 * 2.5,
-    fontFamily: FONTFAMILY.poppins_medium,
-    fontSize: FONTSIZE.size_14,
-    color: COLORS.primaryWhiteHex,
-  },
-  CategoryViewStyle: {
-    height: SPACING.space_20 * 1.8,
-  },
-  CategoryScrollViewStyle: {
-    paddingHorizontal: SPACING.space_20,
-  },
-  CategoryScrollViewContainer: {
-    paddingHorizontal: SPACING.space_15,
-  },
-  CategoryScrollViewItem: {
-    alignItems: 'center',
-  },
-  CategoryText: {
-    fontFamily: FONTFAMILY.poppins_semibold,
-    fontSize: FONTSIZE.size_16,
-    color: COLORS.primaryLightGreyHex,
-    marginBottom: SPACING.space_4,
-  },
-  ActiveCategory: {
-    height: SPACING.space_10,
-    width: SPACING.space_10,
-    borderRadius: BORDERRADIUS.radius_10,
-    backgroundColor: COLORS.primaryOrangeHex,
-  },
-  FlatListContainer: {
-    gap: SPACING.space_15,
-    paddingVertical: SPACING.space_15,
-    paddingHorizontal: SPACING.space_20,
-    flexGrow: 1,
-  },
-  EmptyListContainer: {
-    width: Dimensions.get('window').width - SPACING.space_30 * 2,
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: SPACING.space_36 * 3.1,
-  },
-  CoffeeBeansTitle: {
-    fontSize: FONTSIZE.size_18,
-    marginLeft: SPACING.space_30,
-    marginTop: SPACING.space_20,
-    fontFamily: FONTFAMILY.poppins_medium,
-    color: COLORS.secondaryLightGreyHex,
   },
 });

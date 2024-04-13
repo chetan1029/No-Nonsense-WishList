@@ -1,5 +1,5 @@
 import React from 'react';
-import {StyleSheet, Text, View, ImageProps, Image} from 'react-native';
+import {StyleSheet, Text, View, Image} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import {
   BORDERRADIUS,
@@ -13,9 +13,8 @@ interface WishListCardProps {
   id: string;
   index: number;
   title: string;
-  imagelink_square: ImageProps;
+  imagelink_square: string;
   price: any;
-  currency: string;
 }
 
 const WishListCard: React.FC<WishListCardProps> = ({
@@ -24,7 +23,6 @@ const WishListCard: React.FC<WishListCardProps> = ({
   title,
   imagelink_square,
   price,
-  currency,
 }) => {
   return (
     <LinearGradient
@@ -34,11 +32,11 @@ const WishListCard: React.FC<WishListCardProps> = ({
       style={styles.CardLinearGradient}>
       <View style={styles.CardInfoContainer}>
         <View style={styles.CardImageInfoContainer}>
-          <Image source={imagelink_square} style={styles.Image} />
+          <Image source={{uri: imagelink_square}} style={styles.Image} />
           <View style={styles.CardDetailInfoContainer}>
             <Text style={styles.CardTitle}>{title}</Text>
             <Text style={styles.CardCurrency}>
-              {currency} <Text style={styles.CardPrice}>{price}</Text>
+              <Text style={styles.CardPrice}>{price}</Text>
             </Text>
           </View>
         </View>

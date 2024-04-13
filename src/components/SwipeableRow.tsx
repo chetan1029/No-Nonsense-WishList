@@ -9,9 +9,8 @@ import {
   Share,
 } from 'react-native';
 
-import {Directions, RectButton, Swipeable} from 'react-native-gesture-handler';
+import {RectButton, Swipeable} from 'react-native-gesture-handler';
 import {BORDERRADIUS, COLORS} from '../theme/theme';
-import CustomIcon from './CustomIcon';
 import Feather from 'react-native-vector-icons/Feather';
 import {useStore} from '../store/store';
 import Toast from 'react-native-toast-message';
