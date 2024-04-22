@@ -7,63 +7,43 @@ import {COLORS, FONTFAMILY, FONTSIZE, SPACING} from '../theme/theme';
 // Components
 import HeaderBar from '../components/HeaderBar';
 import SearchBar from '../components/SearchBar';
-import CategoryScroller from '../components/CategoryScroller';
 import WishListFlatList from '../components/WishListFlatList';
 
 // Memorized functions
-import {getCategories, getWishListByCategory, showToast} from '../utils/common';
-import AddLinkInput from '../components/AddLinkInput';
+import {getWishListByCategory, showToast} from '../utils/common';
 
-const HomeScreen = ({navigation}: any) => {
+const PurchaseScreen = ({navigation}: any) => {
   // State
-  const [categories, setCategories] = useState<any>([]);
-  const [categoryIndex, setCategoryIndex] = useState({
-    index: 0,
-    category: categories[0],
-  });
   const [sortedWishList, setSortedWishList] = useState<any>([]);
   const [searchText, setSearchText] = useState('');
 
   // Store
   const WishListItems = useStore((state: any) => state.WishListItems);
-  const addToPurchaseList = useStore((state: any) => state.addToPurchaseList);
+  const removeFromPurchaseList = useStore(
+    (state: any) => state.removeFromPurchaseList,
+  );
   const fetchWishListItems = useStore((state: any) => state.fetchWishListItems);
 
   // Other variables
   const ListRef: any = useRef<FlatList>();
   const tabBarHeight = useBottomTabBarHeight();
 
-  // Use effect to set category list
-  useEffect(() => {
-    if (WishListItems) {
-      const uniqueCategoryList = getCategories(WishListItems);
-      setCategories(uniqueCategoryList);
-    }
-  }, [WishListItems]);
-
-  // Use effect to fetch set category index
-  useEffect(() => {
-    if (categories) {
-      setCategoryIndex({index: 0, category: categories[0]});
-    }
-  }, [categories]);
-
   // Use effect to fetch wish list
   useEffect(() => {
     fetchWishListItems();
   }, [fetchWishListItems]);
 
-  // Use effect to update sortedWishList after WishListItems change
+  // Use effect to set category list
   useEffect(() => {
-    if (categoryIndex && WishListItems) {
+    if (WishListItems) {
       const updatedSortedWishList = getWishListByCategory(
-        categoryIndex.category,
+        '',
         WishListItems,
-        false,
+        true,
       );
       setSortedWishList(updatedSortedWishList);
     }
-  }, [WishListItems, categoryIndex.category]);
+  }, [WishListItems]);
 
   // Functions
   const searchWishList = (search: string) => {
@@ -72,12 +52,13 @@ const HomeScreen = ({navigation}: any) => {
         animated: true,
         offset: 0,
       });
-      setCategoryIndex({index: 0, category: categories[0]});
       setSortedWishList([
         ...WishListItems.filter(
           (item: any) =>
-            item.title.toLowerCase().includes(search.toLowerCase()) &&
-            item.purchase == false,
+            (item.title.toLowerCase().includes(search.toLowerCase()) &&
+              item.purchase == true) ||
+            (item.url.toLowerCase().includes(search.toLowerCase()) &&
+              item.purchase == true),
         ),
       ]);
     }
@@ -88,8 +69,12 @@ const HomeScreen = ({navigation}: any) => {
       animated: true,
       offset: 0,
     });
-    setCategoryIndex({index: 0, category: categories[0]});
-    setSortedWishList([...WishListItems]);
+    const updatedSortedWishList = getWishListByCategory(
+      '',
+      WishListItems,
+      true,
+    );
+    setSortedWishList(updatedSortedWishList);
     setSearchText('');
   };
 
@@ -99,8 +84,8 @@ const HomeScreen = ({navigation}: any) => {
     title: string,
   ) => {
     if (direction == 'left') {
-      addToPurchaseList(id);
-      showToast(`${title} is Purchased`, 'success');
+      removeFromPurchaseList(id);
+      showToast(`${title} is move back to Wishlist`, 'success');
     }
   };
 
@@ -109,22 +94,29 @@ const HomeScreen = ({navigation}: any) => {
       <StatusBar backgroundColor={COLORS.primaryBlackHex}></StatusBar>
 
       {/* App Header */}
-      <HeaderBar />
-
-      <Text style={styles.ScreenTitle}>Find the Gift You Deserve</Text>
+      <HeaderBar title="My Purchase List" />
 
       {/* Search Input */}
-      <AddLinkInput
+      <SearchBar
         searchText={searchText}
         searchWishList={searchWishList}
         setSearchText={setSearchText}
         resetSearchWishList={resetSearchWishList}
       />
+
+      {/* WishList Flatlist */}
+      <WishListFlatList
+        ListRef={ListRef}
+        sortedWishList={sortedWishList}
+        handleSwipeableOpen={handleSwipeableOpen}
+        tabBarHeight={tabBarHeight}
+        leftSwipeIcon="corner-up-left"
+      />
     </View>
   );
 };
 
-export default HomeScreen;
+export default PurchaseScreen;
 
 const styles = StyleSheet.create({
   ScreenContainer: {

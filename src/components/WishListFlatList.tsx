@@ -9,6 +9,7 @@ interface WishListFlatListProps {
   sortedWishList: any;
   handleSwipeableOpen: any;
   tabBarHeight: any;
+  leftSwipeIcon: string;
 }
 
 const WishListFlatList: React.FC<WishListFlatListProps> = ({
@@ -16,6 +17,7 @@ const WishListFlatList: React.FC<WishListFlatListProps> = ({
   sortedWishList,
   handleSwipeableOpen,
   tabBarHeight,
+  leftSwipeIcon,
 }) => {
   return (
     <FlatList
@@ -37,13 +39,13 @@ const WishListFlatList: React.FC<WishListFlatListProps> = ({
             index={item.index}
             title={item.title}
             url={item.url}
-            leftSwipeIcon="shopping-cart"
+            leftSwipeIcon={leftSwipeIcon}
             onSwipeableOpen={handleSwipeableOpen}>
             <WishListCard
               id={item.id}
               index={item.index}
-              imagelink_square={item.imagelink_square}
-              title={item.title}
+              image={item.image}
+              title={item.title ? item.title : item.url}
               price={item.price}
             />
           </SwipeableRow>

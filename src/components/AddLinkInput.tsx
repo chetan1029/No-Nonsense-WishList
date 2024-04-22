@@ -8,51 +8,49 @@ import {
   SPACING,
 } from '../theme/theme';
 import CustomIcon from '../components/CustomIcon';
+import Feather from 'react-native-vector-icons/Feather';
 
-interface SearchBarProp {
-  searchText: string;
-  searchWishList: any;
-  setSearchText: any;
-  resetSearchWishList: any;
+interface AddLinkInputProp {
+  value: string;
+  handleOnChageText: any;
+  resetUrlField: any;
+  urlError: any;
 }
 
-const SearchBar: React.FC<SearchBarProp> = ({
-  searchText,
-  searchWishList,
-  setSearchText,
-  resetSearchWishList,
+const AddLinkInput: React.FC<AddLinkInputProp> = ({
+  resetUrlField,
+  handleOnChageText,
+  value,
+  urlError,
 }) => {
   return (
-    <View style={styles.InputContainerComponent}>
-      <TouchableOpacity
-        onPress={() => {
-          searchWishList(searchText);
-        }}>
-        <CustomIcon
+    <View
+      style={[
+        styles.InputContainerComponent,
+        {
+          borderColor: urlError ? COLORS.primaryRedHex : '',
+          borderWidth: urlError ? 1 : 0,
+        },
+      ]}>
+      <TouchableOpacity>
+        <Feather
+          name="link"
+          size={20}
+          color={urlError ? COLORS.primaryRedHex : COLORS.primaryWhiteHex}
           style={styles.InputIcon}
-          name="search"
-          size={FONTSIZE.size_18}
-          color={
-            searchText.length > 0
-              ? COLORS.primaryOrangeHex
-              : COLORS.primaryLightGreyHex
-          }
         />
       </TouchableOpacity>
       <TextInput
-        placeholder="Find Your Wish..."
+        placeholder="Paste your link here..."
         placeholderTextColor={COLORS.primaryLightGreyHex}
         style={styles.TextInputContainer}
-        onChangeText={text => {
-          setSearchText(text);
-          searchWishList(text);
-        }}
-        value={searchText}
+        onChangeText={handleOnChageText}
+        value={value}
       />
-      {searchText.length > 0 ? (
+      {value.length > 0 ? (
         <TouchableOpacity
           onPress={() => {
-            resetSearchWishList();
+            resetUrlField();
           }}>
           <CustomIcon
             style={styles.InputIcon}
@@ -68,7 +66,7 @@ const SearchBar: React.FC<SearchBarProp> = ({
   );
 };
 
-export default SearchBar;
+export default AddLinkInput;
 
 const styles = StyleSheet.create({
   InputContainerComponent: {

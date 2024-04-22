@@ -1,14 +1,36 @@
-import {StyleSheet, Text, View} from 'react-native';
+import {StyleSheet, Text, View, TouchableOpacity} from 'react-native';
 import React from 'react';
 import {COLORS, FONTFAMILY, FONTSIZE, SPACING} from '../theme/theme';
+import GradientBGIcon from '../components/GradientBGIcon';
 
 interface HeaderBarProps {
+  navigation?: any;
   title?: string;
+  backButton?: boolean;
 }
 
-const HeaderBar: React.FC<HeaderBarProps> = ({title}) => {
+const HeaderBar: React.FC<HeaderBarProps> = ({
+  navigation,
+  title,
+  backButton,
+}) => {
   return (
     <View style={styles.HeaderContainer}>
+      {backButton ? (
+        <TouchableOpacity
+          onPress={() => {
+            //navigation.pop();
+            navigation.goBack();
+          }}>
+          <GradientBGIcon
+            name="left"
+            color={COLORS.primaryLightGreyHex}
+            size={FONTSIZE.size_16}
+          />
+        </TouchableOpacity>
+      ) : (
+        <></>
+      )}
       <Text style={styles.HeaderText}>{title}</Text>
     </View>
   );

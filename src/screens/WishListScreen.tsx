@@ -1,4 +1,4 @@
-import {FlatList, StatusBar, StyleSheet, Text, View} from 'react-native';
+import {FlatList, StatusBar, StyleSheet, View} from 'react-native';
 import React, {useEffect, useRef, useState} from 'react';
 import {useStore} from '../store/store';
 import {useBottomTabBarHeight} from '@react-navigation/bottom-tabs';
@@ -6,15 +6,13 @@ import {COLORS, FONTFAMILY, FONTSIZE, SPACING} from '../theme/theme';
 
 // Components
 import HeaderBar from '../components/HeaderBar';
-import SearchBar from '../components/SearchBar';
 import CategoryScroller from '../components/CategoryScroller';
 import WishListFlatList from '../components/WishListFlatList';
 
 // Memorized functions
 import {getCategories, getWishListByCategory, showToast} from '../utils/common';
-import AddLinkInput from '../components/AddLinkInput';
 
-const HomeScreen = ({navigation}: any) => {
+const WishListScreen = ({route, navigation}: any) => {
   // State
   const [categories, setCategories] = useState<any>([]);
   const [categoryIndex, setCategoryIndex] = useState({
@@ -22,7 +20,6 @@ const HomeScreen = ({navigation}: any) => {
     category: categories[0],
   });
   const [sortedWishList, setSortedWishList] = useState<any>([]);
-  const [searchText, setSearchText] = useState('');
 
   // Store
   const WishListItems = useStore((state: any) => state.WishListItems);
@@ -44,9 +41,16 @@ const HomeScreen = ({navigation}: any) => {
   // Use effect to fetch set category index
   useEffect(() => {
     if (categories) {
-      setCategoryIndex({index: 0, category: categories[0]});
+      if (route.params && route.params.category) {
+        setCategoryIndex({
+          index: categories.indexOf(route.params.category),
+          category: route.params.category,
+        });
+      } else {
+        setCategoryIndex({index: 0, category: categories[0]});
+      }
     }
-  }, [categories]);
+  }, [categories, route]);
 
   // Use effect to fetch wish list
   useEffect(() => {
@@ -65,34 +69,6 @@ const HomeScreen = ({navigation}: any) => {
     }
   }, [WishListItems, categoryIndex.category]);
 
-  // Functions
-  const searchWishList = (search: string) => {
-    if (search != '') {
-      ListRef?.current?.scrollToOffset({
-        animated: true,
-        offset: 0,
-      });
-      setCategoryIndex({index: 0, category: categories[0]});
-      setSortedWishList([
-        ...WishListItems.filter(
-          (item: any) =>
-            item.title.toLowerCase().includes(search.toLowerCase()) &&
-            item.purchase == false,
-        ),
-      ]);
-    }
-  };
-
-  const resetSearchWishList = () => {
-    ListRef?.current?.scrollToOffset({
-      animated: true,
-      offset: 0,
-    });
-    setCategoryIndex({index: 0, category: categories[0]});
-    setSortedWishList([...WishListItems]);
-    setSearchText('');
-  };
-
   const handleSwipeableOpen = (
     direction: string,
     id: string,
@@ -109,22 +85,32 @@ const HomeScreen = ({navigation}: any) => {
       <StatusBar backgroundColor={COLORS.primaryBlackHex}></StatusBar>
 
       {/* App Header */}
-      <HeaderBar />
+      <HeaderBar title="My WishList" />
 
-      <Text style={styles.ScreenTitle}>Find the Gift You Deserve</Text>
+      {/* Category Scroller */}
+      <CategoryScroller
+        categories={categories}
+        ListRef={ListRef}
+        categoryIndex={categoryIndex}
+        setCategoryIndex={setCategoryIndex}
+        setSortedWishList={setSortedWishList}
+        getWishListByCategory={getWishListByCategory}
+        WishListItems={WishListItems}
+      />
 
-      {/* Search Input */}
-      <AddLinkInput
-        searchText={searchText}
-        searchWishList={searchWishList}
-        setSearchText={setSearchText}
-        resetSearchWishList={resetSearchWishList}
+      {/* WishList Flatlist */}
+      <WishListFlatList
+        ListRef={ListRef}
+        sortedWishList={sortedWishList}
+        handleSwipeableOpen={handleSwipeableOpen}
+        tabBarHeight={tabBarHeight}
+        leftSwipeIcon="shopping-cart"
       />
     </View>
   );
 };
 
-export default HomeScreen;
+export default WishListScreen;
 
 const styles = StyleSheet.create({
   ScreenContainer: {
@@ -132,9 +118,10 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.primaryBlackHex,
   },
   ScreenTitle: {
-    fontSize: FONTSIZE.size_28,
+    fontSize: FONTSIZE.size_20,
     fontFamily: FONTFAMILY.poppins_semibold,
     color: COLORS.primaryWhiteHex,
     paddingLeft: SPACING.space_20,
+    paddingBottom: SPACING.space_20,
   },
 });

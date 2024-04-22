@@ -13,7 +13,7 @@ interface WishListCardProps {
   id: string;
   index: number;
   title: string;
-  imagelink_square: string;
+  image: string;
   price: any;
 }
 
@@ -21,7 +21,7 @@ const WishListCard: React.FC<WishListCardProps> = ({
   id,
   index,
   title,
-  imagelink_square,
+  image,
   price,
 }) => {
   return (
@@ -32,9 +32,14 @@ const WishListCard: React.FC<WishListCardProps> = ({
       style={styles.CardLinearGradient}>
       <View style={styles.CardInfoContainer}>
         <View style={styles.CardImageInfoContainer}>
-          <Image source={{uri: imagelink_square}} style={styles.Image} />
+          <Image source={{uri: image}} style={styles.Image} />
           <View style={styles.CardDetailInfoContainer}>
-            <Text style={styles.CardTitle}>{title}</Text>
+            <Text
+              numberOfLines={1}
+              ellipsizeMode="tail"
+              style={styles.CardTitle}>
+              {title}
+            </Text>
             <Text style={styles.CardCurrency}>
               <Text style={styles.CardPrice}>{price}</Text>
             </Text>
