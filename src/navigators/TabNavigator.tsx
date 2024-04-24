@@ -43,6 +43,7 @@ const TabNavigator = () => {
                     color: focused
                       ? COLORS.primaryOrangeHex
                       : COLORS.primaryLightGreyHex,
+                    paddingTop: -5,
                   },
                 ]}>
                 Wishlists

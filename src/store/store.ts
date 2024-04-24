@@ -4,6 +4,7 @@ import {fetchWishListItemsFromFirebase, updatePurchaseStatusInFirebase, deleteWi
 import { CategoryItem, WishListItem } from './types';
 import axios from 'axios';
 import { parseHTMLContent } from '../utils/parsehtml';
+import { getTitleFromText } from '../utils/common';
 
 interface StoreState {
   CategoryList: CategoryItem[];
@@ -63,17 +64,19 @@ export const useStore = create<StoreState>(
         console.error("Error Updating data", error);
         }
       },
-      addWishList: async(category: string, url: string) => {
+      addWishList: async(category: string, url: string, rawUrl: string) => {
+        console.log(category, url, rawUrl);
         try {
           const response = await axios.get(url);
           const {title, thumbnailImage, price} = parseHTMLContent(response.data);
-          await addWishListInFirebase(category, url, title, price);
+          await addWishListInFirebase(category, url, title, price, thumbnailImage);
           
           // Fetch updated wishlist items from Firebase
           await get().fetchWishListItems();
         } catch (error: any) {
           if (axios.isAxiosError(error)) {
-            await addWishListInFirebase(category, url, "", "");
+            const title = getTitleFromText(rawUrl);
+            await addWishListInFirebase(category, url, title, "", "");
           }else {
             console.error("Error Updating data:", error);
           }

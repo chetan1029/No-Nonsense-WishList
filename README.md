@@ -84,3 +84,15 @@ https://github.com/crazycodeboy/react-native-splash-screen/issues/619
 xcode -> windows -> device and simulator -> add device
 xcode -> your project name -> signing and capabities (near general tab) -> choose team
 xcode -> build -> select device and run
+
+# Problems I faced
+
+1. It was taking a while for wishlist to load so I added loading bar
+2. While adding wishlist it will go and scrap title so I wanted to show Activity indicator but on top of the form.
+3. Double clicking on category name load nothing. (need to implement debouncing for that)
+4. Implemeted safe area and setup gradiant color because we have two different color on header and footer of the screen.
+5. Added custom icon from Feather.
+6. Click on input field show keyboard but input hide behind it so implemented that.
+7. Implemented push down to refresh on flatlist.
+8. If list is not full page pull down to refresh doens't work.
+9. If you do pulldown to refresh on one cateogory it will reload and open the first category by default.

@@ -7,7 +7,11 @@ const parseHTMLContent = (htmlContent: string) => {
     const title = $('meta[property="og:title"]').attr('content')  ?? $('title').text();
   
     // Extract thumbnail image
-    const thumbnailImage = $('meta[property="og:image"]').attr('content')  ?? '';
+    let thumbnailImage = $('meta[property="og:image"]').attr('content')  ?? '';
+
+    if(!thumbnailImage){
+      thumbnailImage = $('#landingImage').attr('src') ?? '';
+    }
   
     // Extract price amount
     let priceAmount = '';
@@ -37,8 +41,17 @@ const parseHTMLContent = (htmlContent: string) => {
         });
     }
   
-    // Combine price amount and currency
-    const price = `${priceCurrency} ${priceAmount}`;
+    let price = ''
+    if(priceAmount && priceCurrency){
+      // Combine price amount and currency
+      price = `${priceCurrency} ${priceAmount}`;
+    }else{
+      // Scrape price
+      price = $('#priceblock_ourprice').text().trim();
+      if (!price) {
+        price = $('#priceblock_dealprice').text().trim();
+      }
+    }
   
     return { title, thumbnailImage, price };
   };

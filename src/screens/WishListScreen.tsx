@@ -1,8 +1,15 @@
-import {FlatList, StatusBar, StyleSheet, View} from 'react-native';
+import {
+  ActivityIndicator,
+  FlatList,
+  StatusBar,
+  StyleSheet,
+  View,
+} from 'react-native';
 import React, {useEffect, useRef, useState} from 'react';
 import {useStore} from '../store/store';
 import {useBottomTabBarHeight} from '@react-navigation/bottom-tabs';
 import {COLORS, FONTFAMILY, FONTSIZE, SPACING} from '../theme/theme';
+import _ from 'lodash';
 
 // Components
 import HeaderBar from '../components/HeaderBar';
@@ -20,6 +27,8 @@ const WishListScreen = ({route, navigation}: any) => {
     category: categories[0],
   });
   const [sortedWishList, setSortedWishList] = useState<any>([]);
+  const [refreshing, setRefreshing] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   // Store
   const WishListItems = useStore((state: any) => state.WishListItems);
@@ -54,7 +63,13 @@ const WishListScreen = ({route, navigation}: any) => {
 
   // Use effect to fetch wish list
   useEffect(() => {
-    fetchWishListItems();
+    const fetchData = async () => {
+      setLoading(true);
+      await fetchWishListItems();
+      setLoading(false);
+    };
+
+    fetchData();
   }, [fetchWishListItems]);
 
   // Use effect to update sortedWishList after WishListItems change
@@ -69,6 +84,7 @@ const WishListScreen = ({route, navigation}: any) => {
     }
   }, [WishListItems, categoryIndex.category]);
 
+  // functions
   const handleSwipeableOpen = (
     direction: string,
     id: string,
@@ -80,6 +96,42 @@ const WishListScreen = ({route, navigation}: any) => {
     }
   };
 
+  const onRefresh = () => {
+    setRefreshing(true);
+    fetchWishListItems();
+    setTimeout(() => {
+      setRefreshing(false);
+    }, 1000);
+  };
+
+  // Define debounced function outside of the component
+  const handleCategorySelectionDebounced = _.debounce(
+    (
+      index: number,
+      category: string,
+      ListRef: any,
+      setCategoryIndex: any,
+      setSortedWishList: any,
+      getWishListByCategory: any,
+      WishListItems: any,
+    ) => {
+      ListRef?.current?.scrollToOffset({
+        animated: true,
+        offset: 0,
+      });
+      setCategoryIndex({
+        index: index,
+        category: category,
+      });
+      setSortedWishList(getWishListByCategory(category, WishListItems));
+    },
+    300, // Debounce delay in milliseconds
+    {
+      leading: true, // load first click then apply debounced
+      trailing: false,
+    },
+  );
+
   return (
     <View style={styles.ScreenContainer}>
       <StatusBar backgroundColor={COLORS.primaryBlackHex}></StatusBar>
@@ -87,25 +139,37 @@ const WishListScreen = ({route, navigation}: any) => {
       {/* App Header */}
       <HeaderBar title="My WishList" />
 
-      {/* Category Scroller */}
-      <CategoryScroller
-        categories={categories}
-        ListRef={ListRef}
-        categoryIndex={categoryIndex}
-        setCategoryIndex={setCategoryIndex}
-        setSortedWishList={setSortedWishList}
-        getWishListByCategory={getWishListByCategory}
-        WishListItems={WishListItems}
-      />
+      {loading ? (
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color={COLORS.primaryWhiteHex} />
+        </View>
+      ) : (
+        <>
+          {/* Category Scroller */}
+          <CategoryScroller
+            categories={categories}
+            ListRef={ListRef}
+            categoryIndex={categoryIndex}
+            setCategoryIndex={setCategoryIndex}
+            setSortedWishList={setSortedWishList}
+            getWishListByCategory={getWishListByCategory}
+            WishListItems={WishListItems}
+            onCategorySelectionDebounced={handleCategorySelectionDebounced}
+          />
 
-      {/* WishList Flatlist */}
-      <WishListFlatList
-        ListRef={ListRef}
-        sortedWishList={sortedWishList}
-        handleSwipeableOpen={handleSwipeableOpen}
-        tabBarHeight={tabBarHeight}
-        leftSwipeIcon="shopping-cart"
-      />
+          {/* WishList Flatlist */}
+          <WishListFlatList
+            ListRef={ListRef}
+            categoryIndex={categoryIndex}
+            sortedWishList={sortedWishList}
+            handleSwipeableOpen={handleSwipeableOpen}
+            tabBarHeight={tabBarHeight}
+            leftSwipeIcon="shopping-cart"
+            onRefresh={onRefresh}
+            refreshing={refreshing}
+          />
+        </>
+      )}
     </View>
   );
 };
@@ -123,5 +187,10 @@ const styles = StyleSheet.create({
     color: COLORS.primaryWhiteHex,
     paddingLeft: SPACING.space_20,
     paddingBottom: SPACING.space_20,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });

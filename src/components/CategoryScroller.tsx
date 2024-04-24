@@ -22,6 +22,7 @@ interface CategoryScrollerProps {
   setSortedWishList: any;
   getWishListByCategory: any;
   WishListItems: any;
+  onCategorySelectionDebounced: any;
 }
 
 const CategoryScroller: React.FC<CategoryScrollerProps> = ({
@@ -32,6 +33,7 @@ const CategoryScroller: React.FC<CategoryScrollerProps> = ({
   setSortedWishList,
   getWishListByCategory,
   WishListItems,
+  onCategorySelectionDebounced,
 }) => {
   return (
     <View style={styles.CategoryViewStyle}>
@@ -45,17 +47,19 @@ const CategoryScroller: React.FC<CategoryScrollerProps> = ({
             style={styles.CategoryScrollViewContainer}>
             <TouchableOpacity
               style={styles.CategoryScrollViewItem}
-              onPress={() => {
-                ListRef?.current?.scrollToOffset({
-                  animated: true,
-                  offset: 0,
-                });
-                setCategoryIndex({
-                  index: index,
-                  category: categories[index],
-                });
-                setSortedWishList(getWishListByCategory(data, WishListItems));
-              }}>
+              onPress={() =>
+                categoryIndex.index == index
+                  ? {}
+                  : onCategorySelectionDebounced(
+                      index,
+                      categories[index],
+                      ListRef,
+                      setCategoryIndex,
+                      setSortedWishList,
+                      getWishListByCategory,
+                      WishListItems,
+                    )
+              }>
               <Text
                 style={[
                   styles.CategoryText,

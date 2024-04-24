@@ -35,22 +35,9 @@ const filterUrl = (text: string) => {
   }
 }
 
-async function checkRedirection(url: string) {
-  try {
-    const response = await axios.get(url, { maxRedirects: 0 });
-    console.log('No redirection:', response.status);
-  } catch (error: any) {
-    if (error.response) {
-      if (error.response.status === 301 || error.response.status === 302) {
-        console.log('Redirection detected. Location:', error.response.headers['location']);
-      } else {
-        console.log('Error:', error.response.status);
-      }
-    } else {
-      console.error('Error:', error.message);
-    }
-  }
+const getTitleFromText = (text: string) => {
+  const title = text.replace(/https?:\/\/[^\s]+/g, '');
+  return title
 }
 
-
-export {getCategories, getWishListByCategory, showToast, filterUrl, checkRedirection};
+export {getCategories, getWishListByCategory, showToast, filterUrl, getTitleFromText};

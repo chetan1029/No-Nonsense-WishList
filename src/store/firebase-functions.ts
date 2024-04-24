@@ -41,8 +41,11 @@ const deleteWishListInFirebase = async(id: string) => {
     await deleteDoc(WishlistRef);
 }
 
-const addWishListInFirebase = async(category: string, url: string, title: string, price: string) => {
+const addWishListInFirebase = async(category: string, url: string, title: string, price: string, thumbnailImage: string) => {
     const wishListCollection = collection(db, "Wishlist");
+    if(!thumbnailImage){
+        thumbnailImage = "https://picsum.photos/seed/picsum/200";
+    }
     await addDoc(
         wishListCollection,
         {
@@ -51,7 +54,7 @@ const addWishListInFirebase = async(category: string, url: string, title: string
             "title": title, 
             "price": price, 
             "purchase": false, 
-            "image": "https://picsum.photos/seed/picsum/200",
+            "image": thumbnailImage,
             "createDate": serverTimestamp()
         },
         )

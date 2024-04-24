@@ -8,6 +8,7 @@ import {
   View,
   KeyboardAvoidingView,
   Platform,
+  ActivityIndicator,
 } from 'react-native';
 import React, {useEffect, useRef, useState} from 'react';
 import {
@@ -39,6 +40,8 @@ const AddWishListScreen = ({navigation}: any) => {
   const [selectCategory, setSelectCategory] = useState<string>('');
   const [newCategory, setNewCategory] = useState<string>('');
   const [showNextPart, setShowNextPart] = useState<boolean>(false);
+  const [rawUrl, setRawUrl] = useState<string>('');
+  const [loading, setLoading] = useState(false);
 
   // Form
   const formRef = useRef<any>(null);
@@ -102,6 +105,13 @@ const AddWishListScreen = ({navigation}: any) => {
         {/* Overlay View with Opacity */}
         <View style={styles.Overlay}></View>
 
+        {/* ActivityIndicator overlay */}
+        {loading && (
+          <View style={styles.loadingOverlay}>
+            <ActivityIndicator size="large" color={COLORS.primaryWhiteHex} />
+          </View>
+        )}
+
         {/* App Header */}
         <HeaderBar />
 
@@ -113,8 +123,9 @@ const AddWishListScreen = ({navigation}: any) => {
           validateOnBlur={false}
           onSubmit={async (values, actions) => {
             try {
+              setLoading(true);
               actions.resetForm();
-              addWishList(selectCategory, values.url);
+              await addWishList(selectCategory, values.url, rawUrl);
               setShowNextPart(false);
               navigation.navigate('WishList', {
                 category: selectCategory,
@@ -123,6 +134,8 @@ const AddWishListScreen = ({navigation}: any) => {
             } catch (error) {
               console.error('Error adding to wishlist:', error);
               showToast('Error adding to Wishlist', 'error');
+            } finally {
+              setLoading(false);
             }
           }}>
           {({
@@ -139,6 +152,7 @@ const AddWishListScreen = ({navigation}: any) => {
               <AddLinkInput
                 value={values.url}
                 handleOnChageText={(value: string) => {
+                  setRawUrl(value);
                   handleChange('url')(filterUrl(value));
                   setFieldError('url', undefined);
                   setShowNextPart(true);
@@ -308,5 +322,12 @@ const styles = StyleSheet.create({
     paddingStart: SPACING.space_10,
     fontSize: FONTSIZE.size_12,
     color: COLORS.primaryRedHex,
+  },
+  loadingOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    zIndex: 9999,
   },
 });

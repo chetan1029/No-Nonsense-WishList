@@ -1,4 +1,11 @@
-import {FlatList, StatusBar, StyleSheet, Text, View} from 'react-native';
+import {
+  ActivityIndicator,
+  FlatList,
+  StatusBar,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
 import React, {useEffect, useRef, useState} from 'react';
 import {useStore} from '../store/store';
 import {useBottomTabBarHeight} from '@react-navigation/bottom-tabs';
@@ -16,6 +23,8 @@ const PurchaseScreen = ({navigation}: any) => {
   // State
   const [sortedWishList, setSortedWishList] = useState<any>([]);
   const [searchText, setSearchText] = useState('');
+  const [refreshing, setRefreshing] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   // Store
   const WishListItems = useStore((state: any) => state.WishListItems);
@@ -30,7 +39,13 @@ const PurchaseScreen = ({navigation}: any) => {
 
   // Use effect to fetch wish list
   useEffect(() => {
-    fetchWishListItems();
+    const fetchData = async () => {
+      setLoading(true);
+      await fetchWishListItems();
+      setLoading(false);
+    };
+
+    fetchData();
   }, [fetchWishListItems]);
 
   // Use effect to set category list
@@ -89,6 +104,14 @@ const PurchaseScreen = ({navigation}: any) => {
     }
   };
 
+  const onRefresh = () => {
+    setRefreshing(true);
+    fetchWishListItems();
+    setTimeout(() => {
+      setRefreshing(false);
+    }, 1000);
+  };
+
   return (
     <View style={styles.ScreenContainer}>
       <StatusBar backgroundColor={COLORS.primaryBlackHex}></StatusBar>
@@ -103,15 +126,24 @@ const PurchaseScreen = ({navigation}: any) => {
         setSearchText={setSearchText}
         resetSearchWishList={resetSearchWishList}
       />
-
-      {/* WishList Flatlist */}
-      <WishListFlatList
-        ListRef={ListRef}
-        sortedWishList={sortedWishList}
-        handleSwipeableOpen={handleSwipeableOpen}
-        tabBarHeight={tabBarHeight}
-        leftSwipeIcon="corner-up-left"
-      />
+      {loading ? (
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color={COLORS.primaryWhiteHex} />
+        </View>
+      ) : (
+        <>
+          {/* WishList Flatlist */}
+          <WishListFlatList
+            ListRef={ListRef}
+            sortedWishList={sortedWishList}
+            handleSwipeableOpen={handleSwipeableOpen}
+            tabBarHeight={tabBarHeight}
+            leftSwipeIcon="corner-up-left"
+            onRefresh={onRefresh}
+            refreshing={refreshing}
+          />
+        </>
+      )}
     </View>
   );
 };
@@ -128,5 +160,10 @@ const styles = StyleSheet.create({
     fontFamily: FONTFAMILY.poppins_semibold,
     color: COLORS.primaryWhiteHex,
     paddingLeft: SPACING.space_20,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });

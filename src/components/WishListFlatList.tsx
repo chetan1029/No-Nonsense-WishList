@@ -1,4 +1,11 @@
-import {Dimensions, StyleSheet, View, FlatList, Text} from 'react-native';
+import {
+  Dimensions,
+  StyleSheet,
+  View,
+  FlatList,
+  Text,
+  ActivityIndicator,
+} from 'react-native';
 import React from 'react';
 import {COLORS, FONTFAMILY, FONTSIZE, SPACING} from '../theme/theme';
 import WishListCard from '../components/WishListCard';
@@ -6,10 +13,13 @@ import SwipeableRow from '../components/SwipeableRow';
 
 interface WishListFlatListProps {
   ListRef: any;
+  categoryIndex: any;
   sortedWishList: any;
   handleSwipeableOpen: any;
   tabBarHeight: any;
   leftSwipeIcon: string;
+  onRefresh: () => void; // callback for refresh
+  refreshing: boolean; // indicator for refreshing
 }
 
 const WishListFlatList: React.FC<WishListFlatListProps> = ({
@@ -18,6 +28,8 @@ const WishListFlatList: React.FC<WishListFlatListProps> = ({
   handleSwipeableOpen,
   tabBarHeight,
   leftSwipeIcon,
+  onRefresh,
+  refreshing,
 }) => {
   return (
     <FlatList
@@ -52,6 +64,13 @@ const WishListFlatList: React.FC<WishListFlatListProps> = ({
         );
       }}
       style={{marginBottom: tabBarHeight}}
+      onRefresh={onRefresh}
+      refreshing={refreshing}
+      ListHeaderComponent={
+        refreshing ? (
+          <ActivityIndicator size="large" color={COLORS.primaryWhiteHex} />
+        ) : null
+      }
     />
   );
 };
