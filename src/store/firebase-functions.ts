@@ -1,5 +1,5 @@
 import db from '../utils/db';
-import { addDoc, collection, deleteDoc, doc, getDocs, updateDoc, serverTimestamp, query, orderBy } from "firebase/firestore/lite";
+import { addDoc, collection, deleteDoc, doc, getDocs, updateDoc, serverTimestamp, query, orderBy, where } from "firebase/firestore/lite";
 
 const fetchCategoryListFromFirebase = async() => {
     const categoryCollection = collection(db, "Category");
@@ -60,4 +60,15 @@ const addWishListInFirebase = async(category: string, url: string, title: string
         )
 }
 
-export {fetchCategoryListFromFirebase, fetchWishListItemsFromFirebase, updatePurchaseStatusInFirebase, deleteWishListInFirebase, addWishListInFirebase}
+const deleteCategoryInFirebase = async(categoryName: string) => {
+    const wishListCollection = collection(db, "Wishlist");
+    const querySnapshot = await getDocs(query(wishListCollection, where("category", "==", categoryName)));
+
+    // Iterate through the documents and delete each one
+    const deletePromises = querySnapshot.docs.map(async(doc) => {
+        await deleteDoc(doc.ref);
+    });
+    await Promise.all(deletePromises);
+}
+
+export {fetchCategoryListFromFirebase, fetchWishListItemsFromFirebase, updatePurchaseStatusInFirebase, deleteWishListInFirebase, addWishListInFirebase, deleteCategoryInFirebase}

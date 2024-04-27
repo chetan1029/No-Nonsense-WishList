@@ -1,6 +1,6 @@
 import {create} from 'zustand';
 import {produce} from 'immer';
-import {fetchWishListItemsFromFirebase, updatePurchaseStatusInFirebase, deleteWishListInFirebase, addWishListInFirebase} from "./firebase-functions";
+import {fetchWishListItemsFromFirebase, updatePurchaseStatusInFirebase, deleteWishListInFirebase, addWishListInFirebase, deleteCategoryInFirebase} from "./firebase-functions";
 import { CategoryItem, WishListItem } from './types';
 import axios from 'axios';
 import { parseHTMLContent } from '../utils/parsehtml';
@@ -89,6 +89,16 @@ export const useStore = create<StoreState>(
         } catch (error) {
           console.error("Error fetching data", error);
         }
-      }
+      },
+      deleteCategory: async(categoryName: string) => {
+        try {
+        await deleteCategoryInFirebase(categoryName);
+        
+        // Fetch updated wishlist items from Firebase
+        await get().fetchWishListItems();
+        } catch (error) {
+        console.error("Error Deleteting category", error);
+        }
+      },
     }),
   );

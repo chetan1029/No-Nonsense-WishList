@@ -9,6 +9,8 @@ import {
   KeyboardAvoidingView,
   Platform,
   ActivityIndicator,
+  Pressable,
+  Keyboard,
 } from 'react-native';
 import React, {useEffect, useRef, useState} from 'react';
 import {
@@ -93,139 +95,147 @@ const AddWishListScreen = ({navigation}: any) => {
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'} // Adjust behavior based on platform
       keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0} // Optional: Adjust keyboard offset
     >
-      <View style={styles.ScreenContainer}>
-        <StatusBar backgroundColor={COLORS.primaryBlackHex}></StatusBar>
+      <Pressable
+        style={{flex: 1}}
+        onPress={() => {
+          Keyboard.dismiss();
+        }}>
+        <View style={styles.ScreenContainer}>
+          <StatusBar backgroundColor={COLORS.primaryBlackHex}></StatusBar>
 
-        {/* Background Image */}
-        <Image
-          source={require('../assets/bg.png')}
-          style={styles.BackgroundImage}
-        />
+          {/* Background Image */}
+          <Image
+            source={require('../assets/bg.png')}
+            style={styles.BackgroundImage}
+          />
 
-        {/* Overlay View with Opacity */}
-        <View style={styles.Overlay}></View>
+          {/* Overlay View with Opacity */}
+          <View style={styles.Overlay}></View>
 
-        {/* ActivityIndicator overlay */}
-        {loading && (
-          <View style={styles.loadingOverlay}>
-            <ActivityIndicator size="large" color={COLORS.primaryWhiteHex} />
-          </View>
-        )}
-
-        {/* App Header */}
-        <HeaderBar />
-
-        <Formik
-          innerRef={formRef}
-          initialValues={initialFormValues}
-          validationSchema={wishListValidationSchema}
-          validateOnChange={false}
-          validateOnBlur={false}
-          onSubmit={async (values, actions) => {
-            try {
-              setLoading(true);
-              actions.resetForm();
-              await addWishList(selectCategory, values.url, rawUrl);
-              setShowNextPart(false);
-              navigation.navigate('WishList', {
-                category: selectCategory,
-              });
-              showToast(`Added to WishList`, 'success');
-            } catch (error) {
-              console.error('Error adding to wishlist:', error);
-              showToast('Error adding to Wishlist', 'error');
-            } finally {
-              setLoading(false);
-            }
-          }}>
-          {({
-            handleChange,
-            handleBlur,
-            handleSubmit,
-            setFieldError,
-            values,
-            errors,
-          }) => (
-            <View style={styles.ScreenView}>
-              {/* Search Input */}
-              <Text style={styles.ScreenTitle}>Find the Gift You Deserve</Text>
-              <AddLinkInput
-                value={values.url}
-                handleOnChageText={(value: string) => {
-                  setRawUrl(value);
-                  handleChange('url')(filterUrl(value));
-                  setFieldError('url', undefined);
-                  setShowNextPart(true);
-                }}
-                resetUrlField={() => {
-                  handleChange('url')('');
-                }}
-                urlError={errors.url}
-              />
-              {showNextPart && showNextPart ? (
-                <>
-                  <View style={styles.SizeOuterContainer}>
-                    {categories.map((category: string, index: any) => (
-                      <TouchableOpacity
-                        key={index}
-                        style={[
-                          styles.SizeBox,
-                          {
-                            backgroundColor:
-                              selectCategory == category
-                                ? COLORS.primaryOrangeHex
-                                : COLORS.primaryGreyHex,
-                          },
-                        ]}
-                        onPress={() => {
-                          setSelectCategory(category);
-                        }}>
-                        <Text
-                          style={[
-                            styles.SizeText,
-                            {
-                              color:
-                                selectCategory == category
-                                  ? COLORS.primaryBlackHex
-                                  : COLORS.primaryOrangeHex,
-                            },
-                          ]}>
-                          {category}
-                        </Text>
-                      </TouchableOpacity>
-                    ))}
-                    <View
-                      style={[
-                        styles.SizeBox,
-                        {backgroundColor: COLORS.primaryGreyHex},
-                      ]}>
-                      <TextInput
-                        placeholder="Add new ..."
-                        placeholderTextColor={COLORS.primaryLightGreyHex}
-                        style={styles.TextInputContainer}
-                        onChangeText={text => {
-                          setNewCategory(text);
-                        }}
-                        onSubmitEditing={handleAddNewCategory}
-                        value={newCategory}
-                      />
-                    </View>
-                  </View>
-                  <View style={styles.ButtonContainerComponent}>
-                    <TouchableOpacity
-                      style={styles.ButtonContainer}
-                      onPress={() => handleSubmit()}>
-                      <Text style={styles.ButtonText}>Add to WishList</Text>
-                    </TouchableOpacity>
-                  </View>
-                </>
-              ) : (
-                ''
-              )}
+          {/* ActivityIndicator overlay */}
+          {loading && (
+            <View style={styles.loadingOverlay}>
+              <ActivityIndicator size="large" color={COLORS.primaryWhiteHex} />
             </View>
           )}
-        </Formik>
-      </View>
+
+          {/* App Header */}
+          <HeaderBar />
+
+          <Formik
+            innerRef={formRef}
+            initialValues={initialFormValues}
+            validationSchema={wishListValidationSchema}
+            validateOnChange={false}
+            validateOnBlur={false}
+            onSubmit={async (values, actions) => {
+              try {
+                setLoading(true);
+                actions.resetForm();
+                await addWishList(selectCategory, values.url, rawUrl);
+                setShowNextPart(false);
+                navigation.navigate('WishList', {
+                  category: selectCategory,
+                });
+                showToast(`Added to WishList`, 'success');
+              } catch (error) {
+                console.error('Error adding to wishlist:', error);
+                showToast('Error adding to Wishlist', 'error');
+              } finally {
+                setLoading(false);
+              }
+            }}>
+            {({
+              handleChange,
+              handleBlur,
+              handleSubmit,
+              setFieldError,
+              values,
+              errors,
+            }) => (
+              <View style={styles.ScreenView}>
+                {/* Search Input */}
+                <Text style={styles.ScreenTitle}>
+                  Find the Gift You Deserve
+                </Text>
+                <AddLinkInput
+                  value={values.url}
+                  handleOnChageText={(value: string) => {
+                    setRawUrl(value);
+                    handleChange('url')(filterUrl(value));
+                    setFieldError('url', undefined);
+                    setShowNextPart(true);
+                  }}
+                  resetUrlField={() => {
+                    handleChange('url')('');
+                  }}
+                  urlError={errors.url}
+                />
+                {showNextPart && showNextPart ? (
+                  <>
+                    <View style={styles.SizeOuterContainer}>
+                      {categories.map((category: string, index: any) => (
+                        <TouchableOpacity
+                          key={index}
+                          style={[
+                            styles.SizeBox,
+                            {
+                              backgroundColor:
+                                selectCategory == category
+                                  ? COLORS.primaryOrangeHex
+                                  : COLORS.primaryGreyHex,
+                            },
+                          ]}
+                          onPress={() => {
+                            setSelectCategory(category);
+                          }}>
+                          <Text
+                            style={[
+                              styles.SizeText,
+                              {
+                                color:
+                                  selectCategory == category
+                                    ? COLORS.primaryBlackHex
+                                    : COLORS.primaryOrangeHex,
+                              },
+                            ]}>
+                            {category}
+                          </Text>
+                        </TouchableOpacity>
+                      ))}
+                      <View
+                        style={[
+                          styles.SizeBox,
+                          {backgroundColor: COLORS.primaryGreyHex},
+                        ]}>
+                        <TextInput
+                          placeholder="Add new ..."
+                          placeholderTextColor={COLORS.primaryLightGreyHex}
+                          style={styles.TextInputContainer}
+                          onChangeText={text => {
+                            setNewCategory(text);
+                          }}
+                          onSubmitEditing={handleAddNewCategory}
+                          value={newCategory}
+                        />
+                      </View>
+                    </View>
+                    <View style={styles.ButtonContainerComponent}>
+                      <TouchableOpacity
+                        style={styles.ButtonContainer}
+                        onPress={() => handleSubmit()}>
+                        <Text style={styles.ButtonText}>Add to WishList</Text>
+                      </TouchableOpacity>
+                    </View>
+                  </>
+                ) : (
+                  ''
+                )}
+              </View>
+            )}
+          </Formik>
+        </View>
+      </Pressable>
     </KeyboardAvoidingView>
   );
 };
@@ -327,7 +337,7 @@ const styles = StyleSheet.create({
     ...StyleSheet.absoluteFillObject,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    backgroundColor: COLORS.secondaryBlackRGBA,
     zIndex: 9999,
   },
 });

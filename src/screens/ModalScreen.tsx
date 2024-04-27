@@ -12,6 +12,7 @@ import {
 import {useCardAnimation} from '@react-navigation/stack';
 import {COLORS, SPACING} from '../theme/theme';
 import Feather from 'react-native-vector-icons/Feather';
+import {useStore} from '../store/store';
 
 const DATA = [
   {
@@ -32,45 +33,57 @@ const DATA = [
 ];
 
 type ItemProps = {
-  title: string;
+  itemTitle: string;
   icon: string;
   categoryIndex: any;
   navigation: any;
 };
 
-const handleShare = async (title: string, link: string, navigation: any) => {
-  try {
-    const shareOptions = {
-      message: title,
-      url: link,
-    };
+const Item = ({itemTitle, icon, categoryIndex, navigation}: ItemProps) => {
+  // Store
+  const deleteCategory = useStore((state: any) => state.deleteCategory);
 
-    const result = await Share.share(shareOptions);
+  const handleShare = async (title: string, link: string, action: string) => {
+    if (action == 'Share') {
+      try {
+        const shareOptions = {
+          message: title,
+          url: link,
+        };
 
-    if (result.action === Share.sharedAction) {
-      console.log('Shared successfully');
-    } else if (result.action === Share.dismissedAction) {
-      console.log('Share cancelled');
+        const result = await Share.share(shareOptions);
+
+        if (result.action === Share.sharedAction) {
+          console.log('Shared successfully');
+        } else if (result.action === Share.dismissedAction) {
+          console.log('Share cancelled');
+        }
+      } catch (error: any) {
+        console.error('Error sharing:', error.message);
+      }
+    } else if (action === 'Edit Category') {
+      // Implement edit category logic here
+    } else if (action === 'Delete') {
+      // Implement delete category logic here
+      deleteCategory(title);
     }
-  } catch (error: any) {
-    console.error('Error sharing:', error.message);
-  }
-  navigation.goBack();
-};
+    navigation.goBack();
+  };
 
-const Item = ({title, icon, categoryIndex, navigation}: ItemProps) => (
-  <TouchableOpacity
-    onPress={() =>
-      handleShare(categoryIndex.category, 'https://github.com', navigation)
-    }>
-    <View style={styles.item}>
-      <View style={styles.iconContainer}>
-        <Feather name={icon} size={16} style={styles.icon} />
+  return (
+    <TouchableOpacity
+      onPress={() =>
+        handleShare(categoryIndex.category, 'https://github.com', itemTitle)
+      }>
+      <View style={styles.item}>
+        <View style={styles.iconContainer}>
+          <Feather name={icon} size={16} style={styles.icon} />
+        </View>
+        <Text style={styles.title}>{itemTitle}</Text>
       </View>
-      <Text style={styles.title}>{title}</Text>
-    </View>
-  </TouchableOpacity>
-);
+    </TouchableOpacity>
+  );
+};
 
 function ModalScreen({navigation, route}: any) {
   const {current} = useCardAnimation();
@@ -106,7 +119,7 @@ function ModalScreen({navigation, route}: any) {
           data={DATA}
           renderItem={({item}) => (
             <Item
-              title={item.title}
+              itemTitle={item.title}
               icon={item.icon}
               categoryIndex={categoryIndex}
               navigation={navigation}
