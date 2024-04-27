@@ -8,11 +8,13 @@ import {
   FlatList,
   Share,
   TouchableOpacity,
+  Alert,
 } from 'react-native';
 import {useCardAnimation} from '@react-navigation/stack';
 import {COLORS, SPACING} from '../theme/theme';
 import Feather from 'react-native-vector-icons/Feather';
 import {useStore} from '../store/store';
+import {update} from 'lodash';
 
 const DATA = [
   {
@@ -42,6 +44,7 @@ type ItemProps = {
 const Item = ({itemTitle, icon, categoryIndex, navigation}: ItemProps) => {
   // Store
   const deleteCategory = useStore((state: any) => state.deleteCategory);
+  const updateCategory = useStore((state: any) => state.updateCategory);
 
   const handleShare = async (title: string, link: string, action: string) => {
     if (action == 'Share') {
@@ -63,6 +66,24 @@ const Item = ({itemTitle, icon, categoryIndex, navigation}: ItemProps) => {
       }
     } else if (action === 'Edit Category') {
       // Implement edit category logic here
+      Alert.prompt(
+        'Edit Category',
+        'Enter the new category name:',
+        [
+          {
+            text: 'Cancel',
+            style: 'cancel',
+          },
+          {
+            text: 'Save',
+            onPress: newCategory => {
+              updateCategory(title, newCategory);
+            },
+          },
+        ],
+        'plain-text', // Specify the input type
+        title, // Default value for the input field
+      );
     } else if (action === 'Delete') {
       // Implement delete category logic here
       deleteCategory(title);

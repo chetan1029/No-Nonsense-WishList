@@ -71,4 +71,25 @@ const deleteCategoryInFirebase = async(categoryName: string) => {
     await Promise.all(deletePromises);
 }
 
-export {fetchCategoryListFromFirebase, fetchWishListItemsFromFirebase, updatePurchaseStatusInFirebase, deleteWishListInFirebase, addWishListInFirebase, deleteCategoryInFirebase}
+const updateCategoryInFirebase = async(oldCategory: string, newCategory: string) => {
+    const wishListCollection = collection(db, "Wishlist");
+    const querySnapshot = await getDocs(query(wishListCollection, where("category", "==", oldCategory)));
+
+    // Iterate through the documents and update the category field
+    const updatePromises = querySnapshot.docs.map(async (docSnapshot) => {
+        const docRef = doc(db, "Wishlist", docSnapshot.id);
+        await updateDoc(docRef, { category: newCategory });
+    });
+    
+    await Promise.all(updatePromises);
+}
+
+export {
+    fetchCategoryListFromFirebase, 
+    fetchWishListItemsFromFirebase, 
+    updatePurchaseStatusInFirebase, 
+    deleteWishListInFirebase, 
+    addWishListInFirebase, 
+    deleteCategoryInFirebase, 
+    updateCategoryInFirebase
+}
