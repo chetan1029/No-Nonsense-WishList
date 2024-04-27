@@ -1,5 +1,5 @@
 import React from 'react';
-import {StyleSheet, Text, View, Image} from 'react-native';
+import {StyleSheet, Text, View, Image, Dimensions} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import {
   BORDERRADIUS,
@@ -73,11 +73,13 @@ const styles = StyleSheet.create({
   CardDetailInfoContainer: {
     flexDirection: 'column',
     gap: SPACING.space_10,
+    maxWidth: Dimensions.get('window').width - 150,
   },
   CardTitle: {
     fontFamily: FONTFAMILY.poppins_medium,
     fontSize: FONTSIZE.size_16,
     color: COLORS.primaryWhiteHex,
+    maxWidth: '100%',
   },
   CardCurrency: {
     fontFamily: FONTFAMILY.poppins_semibold,

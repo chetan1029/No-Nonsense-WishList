@@ -114,12 +114,6 @@ const HomeScreen = ({navigation}: any) => {
       <Text style={styles.ScreenTitle}>Find the Gift You Deserve</Text>
 
       {/* Search Input */}
-      <AddLinkInput
-        searchText={searchText}
-        searchWishList={searchWishList}
-        setSearchText={setSearchText}
-        resetSearchWishList={resetSearchWishList}
-      />
     </View>
   );
 };

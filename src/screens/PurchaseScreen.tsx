@@ -141,6 +141,8 @@ const PurchaseScreen = ({navigation}: any) => {
             leftSwipeIcon="corner-up-left"
             onRefresh={onRefresh}
             refreshing={refreshing}
+            showMoreModal={false}
+            navigation={navigation}
           />
         </>
       )}

@@ -13,8 +13,11 @@ import {
 import {View} from 'react-native';
 import {COLORS} from './src/theme/theme';
 import LinearGradient from 'react-native-linear-gradient';
+import {TransitionPresets, createStackNavigator} from '@react-navigation/stack';
+import {Screen} from 'react-native-screens';
+import ModalScreen from './src/screens/ModalScreen';
 
-const Stack = createNativeStackNavigator();
+const Stack = createStackNavigator();
 
 const App = () => {
   useEffect(() => {
@@ -43,11 +46,15 @@ const AppContent = () => {
       }}>
       <GestureHandlerRootView style={{flex: 1}}>
         <NavigationContainer>
-          <Stack.Navigator screenOptions={{headerShown: false}}>
-            <Stack.Screen
-              name="Tab"
-              component={TabNavigator}
-              options={{animation: 'slide_from_bottom'}}></Stack.Screen>
+          <Stack.Navigator
+            screenOptions={{
+              headerMode: 'screen',
+              headerShown: false,
+              presentation: 'transparentModal',
+              ...TransitionPresets.ModalPresentationIOS,
+            }}>
+            <Stack.Screen name="Tab" component={TabNavigator}></Stack.Screen>
+            <Stack.Screen name="ModalScreen" component={ModalScreen} />
           </Stack.Navigator>
         </NavigationContainer>
         <Toast />

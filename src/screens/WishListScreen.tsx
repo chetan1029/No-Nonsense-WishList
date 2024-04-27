@@ -136,6 +136,9 @@ const WishListScreen = ({route, navigation}: any) => {
     <View style={styles.ScreenContainer}>
       <StatusBar backgroundColor={COLORS.primaryBlackHex}></StatusBar>
 
+      {/* Overlay View with Opacity */}
+      <View style={styles.Overlay}></View>
+
       {/* App Header */}
       <HeaderBar title="My WishList" />
 
@@ -167,6 +170,8 @@ const WishListScreen = ({route, navigation}: any) => {
             leftSwipeIcon="shopping-cart"
             onRefresh={onRefresh}
             refreshing={refreshing}
+            showMoreModal={true}
+            navigation={navigation}
           />
         </>
       )}
@@ -192,5 +197,9 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  Overlay: {
+    flex: 1,
+    backgroundColor: COLORS.primaryBlackRGBA,
   },
 });
