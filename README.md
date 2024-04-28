@@ -79,6 +79,10 @@ https://www.youtube.com/watch?v=W1Co2M-gsQE&t=1831s
 https://medium.com/handlebar-labs/how-to-add-a-splash-screen-to-a-react-native-app-ios-and-android-30a3cec835ae
 https://github.com/crazycodeboy/react-native-splash-screen/issues/619
 
+# Error handling
+
+1. some time we can get pod install problem via flipper so read this and try step 1 & 2 https://stackoverflow.com/questions/78244457/reactnative-app-build-failing-with-flipper-error
+
 # To run on your iphone
 
 xcode -> windows -> device and simulator -> add device
