@@ -1,5 +1,5 @@
 import React from 'react';
-import {StyleSheet, Text, View, ImageProps, Image} from 'react-native';
+import {StyleSheet, Text, View, Image, Dimensions} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import {
   BORDERRADIUS,
@@ -13,18 +13,16 @@ interface WishListCardProps {
   id: string;
   index: number;
   title: string;
-  imagelink_square: ImageProps;
+  image: string;
   price: any;
-  currency: string;
 }
 
 const WishListCard: React.FC<WishListCardProps> = ({
   id,
   index,
   title,
-  imagelink_square,
+  image,
   price,
-  currency,
 }) => {
   return (
     <LinearGradient
@@ -34,12 +32,16 @@ const WishListCard: React.FC<WishListCardProps> = ({
       style={styles.CardLinearGradient}>
       <View style={styles.CardInfoContainer}>
         <View style={styles.CardImageInfoContainer}>
-          <Image source={imagelink_square} style={styles.Image} />
+          <Image source={{uri: image}} style={styles.Image} />
           <View style={styles.CardDetailInfoContainer}>
-            <Text style={styles.CardTitle}>{title}</Text>
-            <Text style={styles.CardSubtitle}>{title}</Text>
+            <Text
+              numberOfLines={1}
+              ellipsizeMode="tail"
+              style={styles.CardTitle}>
+              {title}
+            </Text>
             <Text style={styles.CardCurrency}>
-              {currency} <Text style={styles.CardPrice}>{price}</Text>
+              <Text style={styles.CardPrice}>{price}</Text>
             </Text>
           </View>
         </View>
@@ -50,7 +52,7 @@ const WishListCard: React.FC<WishListCardProps> = ({
 
 const styles = StyleSheet.create({
   CardLinearGradient: {
-    padding: SPACING.space_15,
+    padding: SPACING.space_10,
     borderRadius: BORDERRADIUS.radius_15,
   },
   CardInfoContainer: {
@@ -64,27 +66,24 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   Image: {
-    height: 90,
-    width: 90,
+    height: 70,
+    width: 70,
     borderRadius: BORDERRADIUS.radius_15,
   },
   CardDetailInfoContainer: {
     flexDirection: 'column',
     gap: SPACING.space_10,
+    maxWidth: Dimensions.get('window').width - 150,
   },
   CardTitle: {
     fontFamily: FONTFAMILY.poppins_medium,
-    fontSize: FONTSIZE.size_18,
+    fontSize: FONTSIZE.size_16,
     color: COLORS.primaryWhiteHex,
-  },
-  CardSubtitle: {
-    fontFamily: FONTFAMILY.poppins_regular,
-    fontSize: FONTSIZE.size_12,
-    color: COLORS.secondaryLightGreyHex,
+    maxWidth: '100%',
   },
   CardCurrency: {
     fontFamily: FONTFAMILY.poppins_semibold,
-    fontSize: FONTSIZE.size_18,
+    fontSize: FONTSIZE.size_14,
     color: COLORS.primaryOrangeHex,
   },
   CardPrice: {

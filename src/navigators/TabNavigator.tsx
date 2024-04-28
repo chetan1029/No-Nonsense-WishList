@@ -1,23 +1,24 @@
 import React from 'react';
-import {StyleSheet} from 'react-native';
+import {StyleSheet, Text} from 'react-native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import {COLORS} from '../theme/theme';
+import {COLORS, FONTSIZE, SPACING} from '../theme/theme';
 import {BlurView} from '@react-native-community/blur';
-import HomeScreen from '../screens/HomeScreen';
-import FavoritesScreen from '../screens/FavoritesScreen';
-import CartScreen from '../screens/CartScreen';
-import OrderHistoryScreen from '../screens/OrderHistoryScreen';
-import CustomIcon from '../components/CustomIcon';
+import PurchaseScreen from '../screens/PurchaseScreen';
+import AddWishListScreen from '../screens/AddWishScreen';
+import WishListScreen from '../screens/WishListScreen';
+import Feather from 'react-native-vector-icons/Feather';
+import AddWishListScreenExtra from '../screens/AddWishScreenExtra';
 
 const Tab = createBottomTabNavigator();
 
 const TabNavigator = () => {
   return (
     <Tab.Navigator
+      initialRouteName="AddWishList"
       screenOptions={{
         headerShown: false,
         tabBarHideOnKeyboard: true,
-        tabBarShowLabel: false,
+        tabBarShowLabel: true,
         tabBarStyle: styles.tabBarStyle,
         tabBarBackground: () => {
           return (
@@ -30,14 +31,30 @@ const TabNavigator = () => {
         },
       }}>
       <Tab.Screen
-        name="Home"
-        component={HomeScreen}
+        name="WishList"
+        component={WishListScreen}
         options={{
+          tabBarLabel: ({focused, color}) => {
+            return (
+              <Text
+                style={[
+                  styles.tabBarLabel,
+                  {
+                    color: focused
+                      ? COLORS.primaryOrangeHex
+                      : COLORS.primaryLightGreyHex,
+                    paddingTop: -5,
+                  },
+                ]}>
+                Wishlists
+              </Text>
+            );
+          },
           tabBarIcon: ({focused, color, size}) => {
             return (
-              <CustomIcon
-                name="home"
-                size={25}
+              <Feather
+                name="gift"
+                size={30}
                 color={
                   focused ? COLORS.primaryOrangeHex : COLORS.primaryLightGreyHex
                 }
@@ -46,14 +63,29 @@ const TabNavigator = () => {
           },
         }}></Tab.Screen>
       <Tab.Screen
-        name="Cart"
-        component={CartScreen}
+        name="PurchaseList"
+        component={PurchaseScreen}
         options={{
+          tabBarLabel: ({focused, color}) => {
+            return (
+              <Text
+                style={[
+                  styles.tabBarLabel,
+                  {
+                    color: focused
+                      ? COLORS.primaryOrangeHex
+                      : COLORS.primaryLightGreyHex,
+                  },
+                ]}>
+                Purchase
+              </Text>
+            );
+          },
           tabBarIcon: ({focused, color, size}) => {
             return (
-              <CustomIcon
-                name="cart"
-                size={25}
+              <Feather
+                name="shopping-bag"
+                size={30}
                 color={
                   focused ? COLORS.primaryOrangeHex : COLORS.primaryLightGreyHex
                 }
@@ -62,14 +94,82 @@ const TabNavigator = () => {
           },
         }}></Tab.Screen>
       <Tab.Screen
-        name="History"
-        component={OrderHistoryScreen}
+        name="AddWishList"
+        component={AddWishListScreen}
         options={{
+          tabBarLabel: ({focused, color}) => {
+            return '';
+          },
           tabBarIcon: ({focused, color, size}) => {
             return (
-              <CustomIcon
-                name="bell"
-                size={25}
+              <Feather
+                name="arrow-up-circle"
+                size={50}
+                color={
+                  focused ? COLORS.primaryOrangeHex : COLORS.primaryLightGreyHex
+                }
+                style={{
+                  marginTop: -40,
+                }}
+              />
+            );
+          },
+        }}></Tab.Screen>
+      <Tab.Screen
+        name="Friends"
+        component={AddWishListScreenExtra}
+        options={{
+          tabBarLabel: ({focused, color}) => {
+            return (
+              <Text
+                style={[
+                  styles.tabBarLabel,
+                  {
+                    color: focused
+                      ? COLORS.primaryOrangeHex
+                      : COLORS.primaryLightGreyHex,
+                  },
+                ]}>
+                Friends
+              </Text>
+            );
+          },
+          tabBarIcon: ({focused, color, size}) => {
+            return (
+              <Feather
+                name="users"
+                size={30}
+                color={
+                  focused ? COLORS.primaryOrangeHex : COLORS.primaryLightGreyHex
+                }
+              />
+            );
+          },
+        }}></Tab.Screen>
+      <Tab.Screen
+        name="Settings"
+        component={AddWishListScreenExtra}
+        options={{
+          tabBarLabel: ({focused, color}) => {
+            return (
+              <Text
+                style={[
+                  styles.tabBarLabel,
+                  {
+                    color: focused
+                      ? COLORS.primaryOrangeHex
+                      : COLORS.primaryLightGreyHex,
+                  },
+                ]}>
+                Settings
+              </Text>
+            );
+          },
+          tabBarIcon: ({focused, color, size}) => {
+            return (
+              <Feather
+                name="settings"
+                size={30}
                 color={
                   focused ? COLORS.primaryOrangeHex : COLORS.primaryLightGreyHex
                 }
@@ -83,12 +183,13 @@ const TabNavigator = () => {
 
 const styles = StyleSheet.create({
   tabBarStyle: {
-    height: 80,
+    height: 78,
     position: 'absolute',
     backgroundColor: COLORS.primaryBlackRGBA,
     borderTopWidth: 0,
     elevation: 0,
     borderTopColor: 'transparent',
+    paddingBottom: SPACING.space_16,
   },
   blurViewStyle: {
     position: 'absolute',
@@ -96,6 +197,9 @@ const styles = StyleSheet.create({
     bottom: 0,
     right: 0,
     left: 0,
+  },
+  tabBarLabel: {
+    fontSize: FONTSIZE.size_12,
   },
 });
 
