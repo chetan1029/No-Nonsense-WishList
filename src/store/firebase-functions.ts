@@ -1,91 +1,74 @@
 import db from '../utils/db';
 import { addDoc, collection, deleteDoc, doc, getDocs, updateDoc, serverTimestamp, query, orderBy, where } from "firebase/firestore/lite";
+import firestore from '@react-native-firebase/firestore';
+import { WishListItem } from './types';
 
-const fetchCategoryListFromFirebase = async() => {
-    const categoryCollection = collection(db, "Category");
-    const categorySnapshot = await getDocs(categoryCollection);
-    
-    return categorySnapshot.docs.map((doc, index) => ({
-        id: doc.id,
-        name: doc.data().name as string,
-        index: index as number,
-    }));
+const fetchWishListItemsFromFirebase = async(userId: string) => {
+    let wishlistItems: WishListItem[] = [];
+    await firestore().collection('Wishlist').where("userId", "==" , userId).orderBy('createDate', 'desc').get().then((wishlistSnapshot) => {
+        if (!wishlistSnapshot.empty) {
+            wishlistItems = wishlistSnapshot.docs.map((doc) => ({
+                id: doc.id,
+                category: doc.data().category,
+                url: doc.data().url,
+                title: doc.data().title,
+                price: doc.data().price,
+                image: doc.data().image,
+                createdDate: doc.data().createdDate,
+                purchase: doc.data().purchase,
+            }));
+        }
+    });
+    return wishlistItems;
 }
 
-const fetchWishListItemsFromFirebase = async() => {
-    const wishListCollection = collection(db, "Wishlist");
-    const wishListQuery = query(wishListCollection, orderBy("createDate", "desc"));
-    const wishlistSnapshot = await getDocs(wishListQuery);
-    
-    return wishlistSnapshot.docs.map((doc, index) => ({
-        id: doc.id,
-        title: doc.data().title as string,
-        category: doc.data().category as string,
-        price: doc.data().price as number,
-        image: doc.data().image as string,
-        url: doc.data().url as string,
-        purchase: doc.data().purchase as boolean,
-        index: index as number,
-    }));
+const updatePurchaseStatusInFirebase = async(id: string, status: boolean, userId: string) => {
+    await firestore().collection('Wishlist').doc(id).update({ "purchase": status});
 }
 
-const updatePurchaseStatusInFirebase = async(id: string, status: boolean) => {
-    const WishlistRef = doc(db, "Wishlist", id);
-
-    const updateData = { "purchase": status};
-    await updateDoc(WishlistRef, updateData);
+const deleteWishListInFirebase = async(id: string, userId: string) => {
+    await firestore().collection('Wishlist').doc(id).delete();
 }
 
-const deleteWishListInFirebase = async(id: string) => {
-    const WishlistRef = doc(db, "Wishlist", id);
-    await deleteDoc(WishlistRef);
-}
-
-const addWishListInFirebase = async(category: string, url: string, title: string, price: string, thumbnailImage: string) => {
-    const wishListCollection = collection(db, "Wishlist");
+const addWishListInFirebase = async(category: string, url: string, title: string, price: string, thumbnailImage: string, userId: string) => {
     if(!thumbnailImage){
         thumbnailImage = "https://picsum.photos/seed/picsum/200";
     }
-    await addDoc(
-        wishListCollection,
-        {
+    await firestore().collection('Wishlist').add(
+        { 
             "category": category, 
             "url": url,
             "title": title, 
             "price": price, 
             "purchase": false, 
             "image": thumbnailImage,
-            "createDate": serverTimestamp()
-        },
-        )
+            "createDate": serverTimestamp(),
+            "userId": userId,
+        }
+    )
 }
 
-const deleteCategoryInFirebase = async(categoryName: string) => {
-    const wishListCollection = collection(db, "Wishlist");
-    const querySnapshot = await getDocs(query(wishListCollection, where("category", "==", categoryName)));
+const deleteCategoryInFirebase = async(categoryName: string, userId: string) => {
+    const wishListCollection =  await firestore().collection('Wishlist').where("userId", "==", userId).where("category", "==", categoryName).get()
 
-    // Iterate through the documents and delete each one
-    const deletePromises = querySnapshot.docs.map(async(doc) => {
-        await deleteDoc(doc.ref);
-    });
-    await Promise.all(deletePromises);
+    const batch = firestore().batch();
+    wishListCollection.forEach(documentSnapshot => {
+        batch.delete(documentSnapshot.ref);
+      });
+    return batch.commit();
 }
 
-const updateCategoryInFirebase = async(oldCategory: string, newCategory: string) => {
-    const wishListCollection = collection(db, "Wishlist");
-    const querySnapshot = await getDocs(query(wishListCollection, where("category", "==", oldCategory)));
-
-    // Iterate through the documents and update the category field
-    const updatePromises = querySnapshot.docs.map(async (docSnapshot) => {
-        const docRef = doc(db, "Wishlist", docSnapshot.id);
-        await updateDoc(docRef, { category: newCategory });
-    });
+const updateCategoryInFirebase = async(oldCategory: string, newCategory: string, userId: string) => {
+    const wishListCollection =  await firestore().collection('Wishlist').where("userId", "==", userId).where("category", "==", oldCategory).get()
     
-    await Promise.all(updatePromises);
+    const batch = firestore().batch();
+    wishListCollection.forEach(documentSnapshot => {
+        batch.update(documentSnapshot.ref, {"category": newCategory});
+      });
+    return batch.commit();
 }
 
-export {
-    fetchCategoryListFromFirebase, 
+export { 
     fetchWishListItemsFromFirebase, 
     updatePurchaseStatusInFirebase, 
     deleteWishListInFirebase, 

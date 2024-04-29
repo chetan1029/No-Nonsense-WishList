@@ -11,4 +11,13 @@ export interface WishListItem{
     price: number,
     image: string,
     url: string,
+    purchase: boolean,
+    createdDate: any,
+}
+
+export interface UserType{
+    uid: string,
+    displayName: string,
+    email: string,
+    isAnonymous: boolean,
 }

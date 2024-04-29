@@ -1,4 +1,5 @@
 #import "AppDelegate.h"
+#import <Firebase.h> // For Firebase setup
 
 #import <React/RCTBundleURLProvider.h>
 #import "RNSplashScreen.h" // for react native splash screen
@@ -13,6 +14,7 @@
   self.initialProps = @{};
 
   [super application:application didFinishLaunchingWithOptions:launchOptions];
+  [FIRApp configure]; // For Firebase setup
   [RNSplashScreen show]; // for react native splash screen
   return YES;
 }

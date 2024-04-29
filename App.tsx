@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import TabNavigator from './src/navigators/TabNavigator';
@@ -16,13 +16,48 @@ import LinearGradient from 'react-native-linear-gradient';
 import {TransitionPresets, createStackNavigator} from '@react-navigation/stack';
 import {Screen} from 'react-native-screens';
 import ModalScreen from './src/screens/ModalScreen';
+import auth from '@react-native-firebase/auth';
+import {useStore} from './src/store/store';
 
 const Stack = createStackNavigator();
 
 const App = () => {
+  // state
+  const [userLogin, setUserLogin] = useState(false);
+
+  // store
+  const setUserDetail = useStore((state: any) => state.setUserDetail);
+
+  // use Effect to show Splash screen
   useEffect(() => {
     SplashScreen.hide();
   }, []);
+
+  // Signing in Anonymously user
+  useEffect(() => {
+    const subscriber = auth().onAuthStateChanged(user => {
+      if (user) {
+        setUserDetail(user);
+        setUserLogin(true);
+      } else {
+        auth()
+          .signInAnonymously()
+          .then(userCredential => {
+            setUserDetail(userCredential.user);
+            setUserLogin(true);
+          })
+          .catch(error => {
+            console.log(error);
+          });
+      }
+    });
+    return subscriber;
+  }, []);
+
+  if (!userLogin) {
+    return null;
+  }
+
   return (
     <SafeAreaProvider>
       <AppContent></AppContent>

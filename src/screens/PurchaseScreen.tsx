@@ -32,6 +32,7 @@ const PurchaseScreen = ({navigation}: any) => {
     (state: any) => state.removeFromPurchaseList,
   );
   const fetchWishListItems = useStore((state: any) => state.fetchWishListItems);
+  const UserDetail = useStore((state: any) => state.UserDetail);
 
   // Other variables
   const ListRef: any = useRef<FlatList>();
@@ -41,7 +42,7 @@ const PurchaseScreen = ({navigation}: any) => {
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
-      await fetchWishListItems();
+      await fetchWishListItems(UserDetail);
       setLoading(false);
     };
 
@@ -99,7 +100,7 @@ const PurchaseScreen = ({navigation}: any) => {
     title: string,
   ) => {
     if (direction == 'left') {
-      removeFromPurchaseList(id);
+      removeFromPurchaseList(id, UserDetail);
       showToast(`${title} is move back to Wishlist`, 'success');
     }
   };

@@ -1,5 +1,6 @@
 import Toast from 'react-native-toast-message';
 import axios from 'axios';
+import NetInfo from "@react-native-community/netinfo";
 
 const getCategories = (data: any[]) => {
     if (!Array.isArray(data) || data.length === 0) {
@@ -40,4 +41,18 @@ const getTitleFromText = (text: string) => {
   return title
 }
 
-export {getCategories, getWishListByCategory, showToast, filterUrl, getTitleFromText};
+const isConnectedToNetwork = async () => {
+  try {
+    const state = await NetInfo.fetch();
+    if (state.isConnected !== null && state.isConnected !== undefined) {
+      return state.isConnected;
+    } else {
+      return false;
+    }
+  } catch (error) {
+    console.error("Error checking network connection:", error);
+    return false;
+  }
+};
+
+export {getCategories, getWishListByCategory, showToast, filterUrl, getTitleFromText, isConnectedToNetwork};
