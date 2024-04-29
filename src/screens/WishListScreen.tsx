@@ -34,6 +34,7 @@ const WishListScreen = ({route, navigation}: any) => {
   const WishListItems = useStore((state: any) => state.WishListItems);
   const addToPurchaseList = useStore((state: any) => state.addToPurchaseList);
   const fetchWishListItems = useStore((state: any) => state.fetchWishListItems);
+  const UserDetail = useStore((state: any) => state.UserDetail);
 
   // Other variables
   const ListRef: any = useRef<FlatList>();
@@ -65,12 +66,14 @@ const WishListScreen = ({route, navigation}: any) => {
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
-      await fetchWishListItems();
+      if (UserDetail) {
+        await fetchWishListItems(UserDetail);
+      }
       setLoading(false);
     };
 
     fetchData();
-  }, [fetchWishListItems]);
+  }, [fetchWishListItems, UserDetail]);
 
   // Use effect to update sortedWishList after WishListItems change
   useEffect(() => {
@@ -91,14 +94,14 @@ const WishListScreen = ({route, navigation}: any) => {
     title: string,
   ) => {
     if (direction == 'left') {
-      addToPurchaseList(id);
+      addToPurchaseList(id, UserDetail);
       showToast(`${title} is Purchased`, 'success');
     }
   };
 
   const onRefresh = () => {
     setRefreshing(true);
-    fetchWishListItems();
+    fetchWishListItems(UserDetail);
     setTimeout(() => {
       setRefreshing(false);
     }, 1000);

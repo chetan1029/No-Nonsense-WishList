@@ -45,6 +45,7 @@ const Item = ({itemTitle, icon, categoryIndex, navigation}: ItemProps) => {
   // Store
   const deleteCategory = useStore((state: any) => state.deleteCategory);
   const updateCategory = useStore((state: any) => state.updateCategory);
+  const UserDetail = useStore((state: any) => state.UserDetail);
 
   const handleShare = async (title: string, link: string, action: string) => {
     if (action == 'Share') {
@@ -77,7 +78,7 @@ const Item = ({itemTitle, icon, categoryIndex, navigation}: ItemProps) => {
           {
             text: 'Save',
             onPress: newCategory => {
-              updateCategory(title, newCategory);
+              updateCategory(title, newCategory, UserDetail);
             },
           },
         ],
@@ -86,7 +87,23 @@ const Item = ({itemTitle, icon, categoryIndex, navigation}: ItemProps) => {
       );
     } else if (action === 'Delete') {
       // Implement delete category logic here
-      deleteCategory(title);
+      Alert.alert(
+        'Confirmation',
+        `Are you sure you want to delete the category '${title}'?`,
+        [
+          {
+            text: 'Cancel',
+            style: 'cancel',
+          },
+          {
+            text: 'Delete',
+            onPress: () => {
+              deleteCategory(title, UserDetail);
+              navigation.goBack();
+            },
+          },
+        ],
+      );
     }
     navigation.goBack();
   };

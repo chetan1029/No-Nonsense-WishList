@@ -82,6 +82,7 @@ https://github.com/crazycodeboy/react-native-splash-screen/issues/619
 # Error handling
 
 1. some time we can get pod install problem via flipper so read this and try step 1 & 2 https://stackoverflow.com/questions/78244457/reactnative-app-build-failing-with-flipper-error
+   instead cd ios && pod install use cd ios && NO_FLIPPER=1 pod install
 
 # To run on your iphone
 
@@ -100,3 +101,9 @@ xcode -> build -> select device and run
 7. Implemented push down to refresh on flatlist.
 8. If list is not full page pull down to refresh doens't work.
 9. If you do pulldown to refresh on one cateogory it will reload and open the first category by default.
+10. after install react-native-firebase and build application give me pod install problem for flipper.
+11. anonymously login
+
+# TODO
+
+1. Need to test network connectivity in the live device test.
