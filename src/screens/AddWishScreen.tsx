@@ -55,10 +55,11 @@ const AddWishListScreen = ({navigation}: any) => {
   const WishListItems = useStore((state: any) => state.WishListItems);
   const addWishList = useStore((state: any) => state.addWishList);
   const fetchWishListItems = useStore((state: any) => state.fetchWishListItems);
+  const UserDetail = useStore((state: any) => state.UserDetail);
 
   // Use effect to fetch wish list
   useEffect(() => {
-    fetchWishListItems();
+    fetchWishListItems(UserDetail);
   }, [fetchWishListItems]);
 
   // Use effect to set category list
@@ -132,7 +133,12 @@ const AddWishListScreen = ({navigation}: any) => {
               try {
                 setLoading(true);
                 actions.resetForm();
-                await addWishList(selectCategory, values.url, rawUrl);
+                await addWishList(
+                  selectCategory,
+                  values.url,
+                  rawUrl,
+                  UserDetail,
+                );
                 setShowNextPart(false);
                 navigation.navigate('WishList', {
                   category: selectCategory,

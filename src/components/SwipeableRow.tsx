@@ -7,6 +7,7 @@ import {
   I18nManager,
   Linking,
   Share,
+  Alert,
 } from 'react-native';
 
 import {RectButton, Swipeable} from 'react-native-gesture-handler';
@@ -179,12 +180,24 @@ const SwipeableRow: React.FC<SwipeableRowProps> = ({
   };
 
   const handleDelete = async () => {
-    try {
-      deleteFromWishList(id);
-      showToast(`${title} is Deleted`);
-    } catch (error: any) {
-      console.error('Error Deleting:', error.message);
-    }
+    // Implement delete category logic here
+    Alert.alert('Confirmation', `Are you sure you want to delete this item?`, [
+      {
+        text: 'Cancel',
+        style: 'cancel',
+      },
+      {
+        text: 'Delete',
+        onPress: () => {
+          try {
+            deleteFromWishList(id);
+            showToast(`${title} is Deleted`);
+          } catch (error: any) {
+            console.error('Error Deleting:', error.message);
+          }
+        },
+      },
+    ]);
     close();
   };
 

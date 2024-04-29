@@ -28,6 +28,9 @@ end
 
 target 'my_wishlist' do
   config = use_native_modules!
+  # added below two line for react-native-firebase
+  use_frameworks! :linkage => :static
+  $RNFirebaseAsStaticFramework = true
 
   use_react_native!(
     :path => config[:reactNativePath],

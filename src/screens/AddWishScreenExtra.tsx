@@ -44,6 +44,7 @@ const AddWishListScreenExtra = ({navigation}: any) => {
   const fetchWebPageContent = useStore(
     (state: any) => state.fetchWebPageContent,
   );
+  const UserDetail = useStore((state: any) => state.UserDetail);
 
   const formRef = useRef<any>(null);
   const tabBarHeight = useBottomTabBarHeight();
@@ -58,7 +59,7 @@ const AddWishListScreenExtra = ({navigation}: any) => {
 
   // Use effect to fetch wish list
   useEffect(() => {
-    fetchWishListItems();
+    fetchWishListItems(UserDetail);
   }, [fetchWishListItems]);
 
   // Use effect to set category list
