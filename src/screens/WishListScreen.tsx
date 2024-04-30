@@ -56,7 +56,7 @@ const WishListScreen = ({route, navigation}: any) => {
           index: categories.indexOf(route.params.category),
           category: route.params.category,
         });
-      } else {
+      } else if (categoryIndex.index == 0) {
         setCategoryIndex({index: 0, category: categories[0]});
       }
     }
@@ -99,9 +99,9 @@ const WishListScreen = ({route, navigation}: any) => {
     }
   };
 
-  const onRefresh = () => {
+  const onRefresh = async () => {
     setRefreshing(true);
-    fetchWishListItems(UserDetail);
+    await fetchWishListItems(UserDetail);
     setTimeout(() => {
       setRefreshing(false);
     }, 1000);

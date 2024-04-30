@@ -9,12 +9,14 @@ import {
   Share,
   TouchableOpacity,
   Alert,
+  ActivityIndicator,
 } from 'react-native';
 import {useCardAnimation} from '@react-navigation/stack';
 import {COLORS, SPACING} from '../theme/theme';
 import Feather from 'react-native-vector-icons/Feather';
 import {useStore} from '../store/store';
 import {update} from 'lodash';
+import {useState} from 'react';
 
 const DATA = [
   {
@@ -65,6 +67,7 @@ const Item = ({itemTitle, icon, categoryIndex, navigation}: ItemProps) => {
       } catch (error: any) {
         console.error('Error sharing:', error.message);
       }
+      navigation.goBack();
     } else if (action === 'Edit Category') {
       // Implement edit category logic here
       Alert.prompt(
@@ -77,8 +80,11 @@ const Item = ({itemTitle, icon, categoryIndex, navigation}: ItemProps) => {
           },
           {
             text: 'Save',
-            onPress: newCategory => {
-              updateCategory(title, newCategory, UserDetail);
+            onPress: async newCategory => {
+              await updateCategory(title, newCategory, UserDetail);
+              navigation.navigate('WishList', {
+                category: newCategory,
+              });
             },
           },
         ],
@@ -105,7 +111,6 @@ const Item = ({itemTitle, icon, categoryIndex, navigation}: ItemProps) => {
         ],
       );
     }
-    navigation.goBack();
   };
 
   return (
@@ -179,6 +184,11 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'column',
     justifyContent: 'flex-end',
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   animatedView: {
     borderTopEndRadius: SPACING.space_16,
