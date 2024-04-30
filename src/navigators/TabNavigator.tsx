@@ -8,6 +8,7 @@ import AddWishListScreen from '../screens/AddWishScreen';
 import WishListScreen from '../screens/WishListScreen';
 import Feather from 'react-native-vector-icons/Feather';
 import AddWishListScreenExtra from '../screens/AddWishScreenExtra';
+import SettingScreen from '../screens/SettingScreen';
 
 const Tab = createBottomTabNavigator();
 
@@ -148,7 +149,7 @@ const TabNavigator = () => {
         }}></Tab.Screen>
       <Tab.Screen
         name="Settings"
-        component={AddWishListScreenExtra}
+        component={SettingScreen}
         options={{
           tabBarLabel: ({focused, color}) => {
             return (
