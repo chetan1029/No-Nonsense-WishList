@@ -37,7 +37,9 @@ const SwipeableRow: React.FC<SwipeableRowProps> = ({
 }) => {
   const swipeableRowRef = useRef<Swipeable>(null);
 
+  // store
   const deleteFromWishList = useStore((state: any) => state.deleteFromWishList);
+  const UserDetail = useStore((state: any) => state.UserDetail);
 
   const showToast = (message: any) => {
     Toast.show({
@@ -190,7 +192,7 @@ const SwipeableRow: React.FC<SwipeableRowProps> = ({
         text: 'Delete',
         onPress: () => {
           try {
-            deleteFromWishList(id);
+            deleteFromWishList(id, UserDetail);
             showToast(`${title} is Deleted`);
           } catch (error: any) {
             console.error('Error Deleting:', error.message);

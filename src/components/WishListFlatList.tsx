@@ -49,7 +49,7 @@ const WishListFlatList: React.FC<WishListFlatListProps> = ({
       {showMoreModal && (
         <TouchableOpacity
           onPress={() => {
-            navigation.navigate('ModalScreen', {categoryIndex});
+            navigation.navigate('ModalScreen', {categoryIndex}, onRefresh);
           }}>
           <Feather
             name="more-horizontal"
