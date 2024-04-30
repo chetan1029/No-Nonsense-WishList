@@ -21,3 +21,8 @@ export interface UserType{
     email: string,
     isAnonymous: boolean,
 }
+
+export interface SettingsType{
+    themeMode: string,
+    language: string
+}

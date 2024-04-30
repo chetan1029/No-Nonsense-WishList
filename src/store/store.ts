@@ -1,11 +1,11 @@
 import {create} from 'zustand';
 import {produce} from 'immer';
 import {fetchWishListItemsFromFirebase, updatePurchaseStatusInFirebase, deleteWishListInFirebase, addWishListInFirebase, deleteCategoryInFirebase, updateCategoryInFirebase} from "./firebase-functions";
-import { CategoryItem, UserType, WishListItem } from './types';
+import { CategoryItem, SettingsType, UserType, WishListItem } from './types';
 import axios from 'axios';
 import { parseHTMLContent } from '../utils/parsehtml';
 import { getTitleFromText, isConnectedToNetwork, showToast } from '../utils/common';
-import firebase from '@react-native-firebase/app';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 interface StoreState {
@@ -14,6 +14,7 @@ interface StoreState {
   WishListItems: WishListItem[];
   PurchaseListitems: WishListItem[];
   WebPageContent: string;
+  Settings: SettingsType;
   setUserDetail: (user: any) => void;
   fetchWishListItems: (user: any) => Promise<void>;
   addToPurchaseList: (id: string, user:any) => Promise<void>;
@@ -21,6 +22,7 @@ interface StoreState {
   deleteFromWishList: (id: string, user:any) => Promise<void>;
   addWishList: (category: string, url: string, title: string, price: string, user:any) => Promise<void>;
   fetchWebPageContent: (url: string) => Promise<void>;
+  updateSettings: (settings: SettingsType) => Promise<void>;
 }
 
 
@@ -31,6 +33,7 @@ export const useStore = create<StoreState>(
       WishListItems: [],
       PurchaseListitems: [],
       WebPageContent: '',
+      Settings: {themeMode: "Automatic", language: "English"},
       setUserDetail: async(user: any) => {
         set({UserDetail: user})
       },
@@ -128,5 +131,13 @@ export const useStore = create<StoreState>(
         console.error("Error Deleteting category", error);
         }
       },
+      updateSettings: async(settings: SettingsType) => {
+        try {
+          await AsyncStorage.setItem('settings', JSON.stringify(settings));
+          set({ Settings: settings });
+        } catch (error) {
+          console.error("Error updating settings", error);
+        }
+      }
     }),
   );
