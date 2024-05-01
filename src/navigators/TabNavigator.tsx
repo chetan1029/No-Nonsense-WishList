@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {StyleSheet, Text} from 'react-native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {COLORS, FONTSIZE, SPACING} from '../theme/theme';
@@ -9,10 +9,28 @@ import WishListScreen from '../screens/WishListScreen';
 import Feather from 'react-native-vector-icons/Feather';
 import AddWishListScreenExtra from '../screens/AddWishScreenExtra';
 import SettingScreen from '../screens/SettingScreen';
+import 'intl-pluralrules';
+import {useTranslation} from 'react-i18next';
+import i18n from '../utils/i18n';
+import {useOfflineStore} from '../store/offline-store';
 
 const Tab = createBottomTabNavigator();
 
 const TabNavigator = () => {
+  // Store
+  const Settings = useOfflineStore((state: any) => state.Settings);
+  const ThemeColor = useOfflineStore((state: any) => state.ThemeColor);
+
+  // Const
+  const {t} = useTranslation();
+
+  // use effect to use language
+  useEffect(() => {
+    if (Settings.language) {
+      i18n.changeLanguage(Settings.language);
+    }
+  }, [Settings]);
+
   return (
     <Tab.Navigator
       initialRouteName="AddWishList"
@@ -20,7 +38,10 @@ const TabNavigator = () => {
         headerShown: false,
         tabBarHideOnKeyboard: true,
         tabBarShowLabel: true,
-        tabBarStyle: styles.tabBarStyle,
+        tabBarStyle: [
+          styles.tabBarStyle,
+          {backgroundColor: COLORS.primaryBlackRGBA},
+        ],
         tabBarBackground: () => {
           return (
             <BlurView
@@ -47,7 +68,7 @@ const TabNavigator = () => {
                     paddingTop: -5,
                   },
                 ]}>
-                Wishlists
+                {t('wishlists')}
               </Text>
             );
           },
@@ -78,7 +99,7 @@ const TabNavigator = () => {
                       : COLORS.primaryLightGreyHex,
                   },
                 ]}>
-                Purchase
+                {t('purchase')}
               </Text>
             );
           },
@@ -131,7 +152,7 @@ const TabNavigator = () => {
                       : COLORS.primaryLightGreyHex,
                   },
                 ]}>
-                Friends
+                {t('friends')}
               </Text>
             );
           },
@@ -162,7 +183,7 @@ const TabNavigator = () => {
                       : COLORS.primaryLightGreyHex,
                   },
                 ]}>
-                Settings
+                {t('settings')}
               </Text>
             );
           },

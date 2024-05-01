@@ -33,15 +33,15 @@ const WishListScreen = ({route, navigation}: any) => {
   const themeMode = Settings.themeMode;
   const language = Settings.language;
   const themeModeData = [
-    {label: 'Automatic', value: 'Automatic'},
-    {label: 'Light', value: 'Light'},
-    {label: 'Dark', value: 'Dark'},
+    {label: 'Automatic', value: ''},
+    {label: 'Light', value: 'light'},
+    {label: 'Dark', value: 'dark'},
   ];
 
   const languageData = [
-    {label: 'English', value: 'English'},
-    {label: 'Swedish', value: 'Swedish'},
-    {label: 'Russian', value: 'Russian'},
+    {label: 'English', value: 'en'},
+    {label: 'Swedish', value: 'sv'},
+    {label: 'Russian', value: 'ru'},
   ];
 
   return (

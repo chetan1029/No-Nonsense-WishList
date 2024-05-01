@@ -49,6 +49,10 @@ interface Color {
   secondaryBlackRGBA: string;
   bgBlackRGBA: string;
   bgGreyRGBA: string;
+  primaryBg: string;
+  secondaryBg: string;
+  primaryText: string;
+  secondaryText: string;
 }
 
 export const COLORS: Color = {
@@ -66,6 +70,10 @@ export const COLORS: Color = {
   secondaryBlackRGBA: 'rgba(0,0,0,0.7)',
   bgBlackRGBA: 'rgba(12,15,20,1)',
   bgGreyRGBA: 'rgba(12,15,20,0.9412)',
+  primaryBg: '#0C0F14',
+  secondaryBg: '#0C0F14',
+  primaryText: '#0C0F14',
+  secondaryText: '#0C0F14',
 };
 
 interface FontFamily {
@@ -135,3 +143,31 @@ export const BORDERRADIUS: BorderRadius = {
   radius_20: 20,
   radius_25: 25,
 };
+
+interface ColorTheme {
+  primaryBg: string;
+  secondaryBg: string;
+  priamryText: string;
+  secondaryText: string;
+};
+
+interface ColorScheme {
+  dark: ColorTheme,
+  light: ColorTheme,
+};
+
+export const COLORSCHEME: ColorScheme = {
+  dark: {
+  primaryBg: '#0C0F14',
+  secondaryBg: '#D17842',
+  priamryText: '#0C0F14',
+  secondaryText: '#141921',
+  },
+  light: {
+  primaryBg: '#0C0F14',
+  secondaryBg: '#D17842',
+  priamryText: '#0C0F14',
+  secondaryText: '#141921',
+  }
+};
+

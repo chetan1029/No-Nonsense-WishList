@@ -21,8 +21,6 @@ import {getCategories, getWishListByCategory, showToast} from '../utils/common';
 import {useOfflineStore} from '../store/offline-store';
 
 const WishListScreen = ({route, navigation}: any) => {
-  const Settings = useOfflineStore((state: any) => state.Settings);
-  console.log(Settings);
   // State
   const [categories, setCategories] = useState<any>([]);
   const [categoryIndex, setCategoryIndex] = useState({
