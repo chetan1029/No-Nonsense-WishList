@@ -21,6 +21,7 @@ import {
   BORDERRADIUS,
 } from '../theme/theme';
 import {useStore} from '../store/store';
+import {useOfflineStore} from '../store/offline-store';
 import {Formik} from 'formik';
 import * as yup from 'yup';
 
@@ -56,6 +57,7 @@ const AddWishListScreen = ({navigation}: any) => {
   const addWishList = useStore((state: any) => state.addWishList);
   const fetchWishListItems = useStore((state: any) => state.fetchWishListItems);
   const UserDetail = useStore((state: any) => state.UserDetail);
+  const themeColor = useOfflineStore((state: any) => state.themeColor);
 
   // Use effect to fetch wish list
   useEffect(() => {
@@ -101,8 +103,12 @@ const AddWishListScreen = ({navigation}: any) => {
         onPress={() => {
           Keyboard.dismiss();
         }}>
-        <View style={styles.ScreenContainer}>
-          <StatusBar backgroundColor={COLORS.primaryBlackHex}></StatusBar>
+        <View
+          style={[
+            styles.ScreenContainer,
+            {backgroundColor: themeColor.primaryBg},
+          ]}>
+          <StatusBar backgroundColor={themeColor.primaryBg}></StatusBar>
 
           {/* Background Image */}
           <Image
@@ -111,17 +117,24 @@ const AddWishListScreen = ({navigation}: any) => {
           />
 
           {/* Overlay View with Opacity */}
-          <View style={styles.Overlay}></View>
+          <View
+            style={[
+              styles.Overlay,
+              {backgroundColor: themeColor.primaryBgOpacity5},
+            ]}></View>
 
           {/* ActivityIndicator overlay */}
           {loading && (
             <View style={styles.loadingOverlay}>
-              <ActivityIndicator size="large" color={COLORS.primaryWhiteHex} />
+              <ActivityIndicator
+                size="large"
+                color={themeColor.secondaryText}
+              />
             </View>
           )}
 
           {/* App Header */}
-          <HeaderBar />
+          <HeaderBar themeColor={themeColor} />
 
           <Formik
             innerRef={formRef}
@@ -159,9 +172,17 @@ const AddWishListScreen = ({navigation}: any) => {
               values,
               errors,
             }) => (
-              <View style={styles.ScreenView}>
+              <View
+                style={[
+                  styles.ScreenView,
+                  {backgroundColor: themeColor.primaryBgLight},
+                ]}>
                 {/* Search Input */}
-                <Text style={styles.ScreenTitle}>
+                <Text
+                  style={[
+                    styles.ScreenTitle,
+                    {color: themeColor.secondaryText},
+                  ]}>
                   Find the Gift You Deserve
                 </Text>
                 <AddLinkInput
@@ -176,6 +197,7 @@ const AddWishListScreen = ({navigation}: any) => {
                     handleChange('url')('');
                   }}
                   urlError={errors.url}
+                  themeColor={themeColor}
                 />
                 {showNextPart && showNextPart ? (
                   <>
@@ -189,7 +211,7 @@ const AddWishListScreen = ({navigation}: any) => {
                               backgroundColor:
                                 selectCategory == category
                                   ? COLORS.primaryOrangeHex
-                                  : COLORS.primaryGreyHex,
+                                  : themeColor.primaryBgLight,
                             },
                           ]}
                           onPress={() => {
@@ -201,7 +223,7 @@ const AddWishListScreen = ({navigation}: any) => {
                               {
                                 color:
                                   selectCategory == category
-                                    ? COLORS.primaryBlackHex
+                                    ? themeColor.primaryBg
                                     : COLORS.primaryOrangeHex,
                               },
                             ]}>
@@ -212,12 +234,15 @@ const AddWishListScreen = ({navigation}: any) => {
                       <View
                         style={[
                           styles.SizeBox,
-                          {backgroundColor: COLORS.primaryGreyHex},
+                          {backgroundColor: themeColor.primaryBgLight},
                         ]}>
                         <TextInput
                           placeholder="Add new ..."
                           placeholderTextColor={COLORS.primaryLightGreyHex}
-                          style={styles.TextInputContainer}
+                          style={[
+                            styles.TextInputContainer,
+                            {color: themeColor.secondaryText},
+                          ]}
                           onChangeText={text => {
                             setNewCategory(text);
                           }}
@@ -251,7 +276,6 @@ export default AddWishListScreen;
 const styles = StyleSheet.create({
   ScreenContainer: {
     flex: 1,
-    backgroundColor: COLORS.primaryBlackHex,
   },
   BackgroundImage: {
     position: 'absolute',
@@ -267,7 +291,6 @@ const styles = StyleSheet.create({
     left: 0,
     width: '100%',
     height: '100%',
-    backgroundColor: COLORS.primaryBlackRGBA,
   },
   ScreenView: {
     position: 'absolute',
@@ -276,16 +299,17 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
+    marginBottom: SPACING.space_40,
     paddingBottom: SPACING.space_40 * 2.5,
     paddingTop: SPACING.space_40 * 1.2,
-    backgroundColor: COLORS.primaryGreyHex,
+
     borderTopLeftRadius: BORDERRADIUS.radius_20,
     borderTopRightRadius: BORDERRADIUS.radius_20,
   },
   ScreenTitle: {
     fontSize: FONTSIZE.size_28,
     fontFamily: FONTFAMILY.poppins_semibold,
-    color: COLORS.primaryWhiteHex,
+
     paddingHorizontal: SPACING.space_20,
     paddingBottom: SPACING.space_30,
   },
@@ -312,7 +336,6 @@ const styles = StyleSheet.create({
     flex: 1,
     fontFamily: FONTFAMILY.poppins_medium,
     fontSize: FONTSIZE.size_14,
-    color: COLORS.primaryWhiteHex,
   },
   ButtonContainerComponent: {
     flexDirection: 'row',

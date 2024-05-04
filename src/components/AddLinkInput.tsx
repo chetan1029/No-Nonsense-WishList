@@ -15,6 +15,7 @@ interface AddLinkInputProp {
   handleOnChageText: any;
   resetUrlField: any;
   urlError: any;
+  themeColor: any;
 }
 
 const AddLinkInput: React.FC<AddLinkInputProp> = ({
@@ -22,6 +23,7 @@ const AddLinkInput: React.FC<AddLinkInputProp> = ({
   handleOnChageText,
   value,
   urlError,
+  themeColor,
 }) => {
   return (
     <View
@@ -30,20 +32,21 @@ const AddLinkInput: React.FC<AddLinkInputProp> = ({
         {
           borderColor: urlError ? COLORS.primaryRedHex : '',
           borderWidth: urlError ? 1 : 0,
+          backgroundColor: themeColor.priamryDarkBg,
         },
       ]}>
       <TouchableOpacity>
         <Feather
           name="link"
           size={20}
-          color={urlError ? COLORS.primaryRedHex : COLORS.primaryWhiteHex}
+          color={urlError ? COLORS.primaryRedHex : themeColor.primaryText}
           style={styles.InputIcon}
         />
       </TouchableOpacity>
       <TextInput
         placeholder="Paste your link here..."
         placeholderTextColor={COLORS.primaryLightGreyHex}
-        style={styles.TextInputContainer}
+        style={[styles.TextInputContainer, {color: themeColor.secondaryText}]}
         onChangeText={handleOnChageText}
         value={value}
       />
@@ -74,7 +77,7 @@ const styles = StyleSheet.create({
     marginHorizontal: SPACING.space_20,
     marginBottom: SPACING.space_8,
     borderRadius: BORDERRADIUS.radius_20,
-    backgroundColor: COLORS.primaryDarkGreyHex,
+
     alignItems: 'center',
   },
   InputIcon: {
@@ -85,6 +88,5 @@ const styles = StyleSheet.create({
     height: SPACING.space_20 * 2.5,
     fontFamily: FONTFAMILY.poppins_medium,
     fontSize: FONTSIZE.size_14,
-    color: COLORS.primaryWhiteHex,
   },
 });

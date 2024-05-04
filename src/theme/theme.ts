@@ -49,10 +49,16 @@ interface Color {
   secondaryBlackRGBA: string;
   bgBlackRGBA: string;
   bgGreyRGBA: string;
-  primaryBg: string;
-  secondaryBg: string;
-  primaryText: string;
-  secondaryText: string;
+
+  // primaryBg: string;
+  // priamryDarkBg: string;
+  // primaryBgLight: string;
+  // secondaryBg: string;
+  // primaryText: string;
+  // primaryTextFocus: string;
+  // secondaryText: string;
+  // primaryBgOpacity5: string;
+  // primaryBgOpacity9: string;
 }
 
 export const COLORS: Color = {
@@ -70,10 +76,28 @@ export const COLORS: Color = {
   secondaryBlackRGBA: 'rgba(0,0,0,0.7)',
   bgBlackRGBA: 'rgba(12,15,20,1)',
   bgGreyRGBA: 'rgba(12,15,20,0.9412)',
+  
+  /* // dark
   primaryBg: '#0C0F14',
-  secondaryBg: '#0C0F14',
-  primaryText: '#0C0F14',
+  priamryDarkBg: '#141921',
+  primaryBgLight: '#252A32',
+  secondaryBg: '#D17842',
+  primaryText: '#52555A',
+  primaryTextFocus: '#D17842',
+  secondaryText: '#FFFFFF',
+  primaryBgOpacity5: 'rgba(12,15,20,0.5)',
+  primaryBgOpacity9: 'rgba(12,15,20,0.9412)',
+
+  // light
+  primaryBg: '#f5f6f8',
+  priamryDarkBg: '#FFFFFF',
+  primaryBgLight: '#ededed',
+  secondaryBg: '#D17842',
+  primaryText: '#141921',
+  primaryTextFocus: '#D17842',
   secondaryText: '#0C0F14',
+  primaryBgOpacity5: 'rgba(255,255,255,0.5)',
+  primaryBgOpacity9: 'rgba(255,255,255,0.9412)', */
 };
 
 interface FontFamily {
@@ -146,9 +170,14 @@ export const BORDERRADIUS: BorderRadius = {
 
 interface ColorTheme {
   primaryBg: string;
+  priamryDarkBg: string;
+  primaryBgLight: string;
   secondaryBg: string;
-  priamryText: string;
+  primaryText: string;
+  primaryTextFocus: string;
   secondaryText: string;
+  primaryBgOpacity5: string;
+  primaryBgOpacity9: string;
 };
 
 interface ColorScheme {
@@ -158,16 +187,26 @@ interface ColorScheme {
 
 export const COLORSCHEME: ColorScheme = {
   dark: {
-  primaryBg: '#0C0F14',
-  secondaryBg: '#D17842',
-  priamryText: '#0C0F14',
-  secondaryText: '#141921',
+    primaryBg: '#0C0F14',
+    priamryDarkBg: '#141921',
+    primaryBgLight: '#252A32',
+    secondaryBg: '#D17842',
+    primaryText: '#52555A',
+    primaryTextFocus: '#D17842',
+    secondaryText: '#FFFFFF',
+    primaryBgOpacity5: 'rgba(12,15,20,0.5)',
+    primaryBgOpacity9: 'rgba(12,15,20,0.9412)',
   },
   light: {
-  primaryBg: '#0C0F14',
-  secondaryBg: '#D17842',
-  priamryText: '#0C0F14',
-  secondaryText: '#141921',
+    primaryBg: '#f5f6f8',
+    priamryDarkBg: '#FFFFFF',
+    primaryBgLight: '#ededed',
+    secondaryBg: '#D17842',
+    primaryText: '#141921',
+    primaryTextFocus: '#D17842',
+    secondaryText: '#0C0F14',
+    primaryBgOpacity5: 'rgba(255,255,255,0.5)',
+    primaryBgOpacity9: 'rgba(255,255,255,0.9412)',
   }
 };
 

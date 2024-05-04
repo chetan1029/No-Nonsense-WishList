@@ -15,6 +15,7 @@ interface WishListCardProps {
   title: string;
   image: string;
   price: any;
+  themeColor: any;
 }
 
 const WishListCard: React.FC<WishListCardProps> = ({
@@ -23,13 +24,14 @@ const WishListCard: React.FC<WishListCardProps> = ({
   title,
   image,
   price,
+  themeColor,
 }) => {
   return (
-    <LinearGradient
-      start={{x: 0, y: 0}}
-      end={{x: 1, y: 1}}
-      colors={[COLORS.primaryGreyHex, COLORS.primaryBlackHex]}
-      style={styles.CardLinearGradient}>
+    <View
+      style={[
+        styles.CardLinearGradient,
+        {backgroundColor: themeColor.priamryDarkBg},
+      ]}>
       <View style={styles.CardInfoContainer}>
         <View style={styles.CardImageInfoContainer}>
           <Image source={{uri: image}} style={styles.Image} />
@@ -37,23 +39,23 @@ const WishListCard: React.FC<WishListCardProps> = ({
             <Text
               numberOfLines={1}
               ellipsizeMode="tail"
-              style={styles.CardTitle}>
+              style={[styles.CardTitle, {color: themeColor.secondaryText}]}>
               {title}
             </Text>
             <Text style={styles.CardCurrency}>
-              <Text style={styles.CardPrice}>{price}</Text>
+              <Text style={{color: themeColor.secondaryText}}>{price}</Text>
             </Text>
           </View>
         </View>
       </View>
-    </LinearGradient>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   CardLinearGradient: {
     padding: SPACING.space_10,
-    borderRadius: BORDERRADIUS.radius_15,
+    borderRadius: BORDERRADIUS.radius_10,
   },
   CardInfoContainer: {
     flexDirection: 'row',
@@ -78,16 +80,13 @@ const styles = StyleSheet.create({
   CardTitle: {
     fontFamily: FONTFAMILY.poppins_medium,
     fontSize: FONTSIZE.size_16,
-    color: COLORS.primaryWhiteHex,
+
     maxWidth: '100%',
   },
   CardCurrency: {
     fontFamily: FONTFAMILY.poppins_semibold,
     fontSize: FONTSIZE.size_14,
     color: COLORS.primaryOrangeHex,
-  },
-  CardPrice: {
-    color: COLORS.primaryWhiteHex,
   },
 });
 

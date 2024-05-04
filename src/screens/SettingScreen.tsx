@@ -1,6 +1,4 @@
 import {
-  ActivityIndicator,
-  FlatList,
   Linking,
   StatusBar,
   StyleSheet,
@@ -8,8 +6,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, {useEffect, useRef, useState} from 'react';
-import {useBottomTabBarHeight} from '@react-navigation/bottom-tabs';
+import React from 'react';
 import {
   BORDERRADIUS,
   COLORS,
@@ -28,6 +25,7 @@ const WishListScreen = ({route, navigation}: any) => {
   // Store
   const Settings = useOfflineStore((state: any) => state.Settings);
   const updateSettings = useOfflineStore((state: any) => state.updateSettings);
+  const themeColor = useOfflineStore((state: any) => state.themeColor);
 
   // Data
   const themeMode = Settings.themeMode;
@@ -45,17 +43,26 @@ const WishListScreen = ({route, navigation}: any) => {
   ];
 
   return (
-    <View style={styles.ScreenContainer}>
-      <StatusBar backgroundColor={COLORS.primaryBlackHex}></StatusBar>
+    <View
+      style={[styles.ScreenContainer, {backgroundColor: themeColor.primaryBg}]}>
+      <StatusBar backgroundColor={themeColor.primaryBg}></StatusBar>
       {/* App Header */}
-      <HeaderBar title="Settings" />
+      <HeaderBar title="Settings" themeColor={themeColor} />
 
-      <View style={styles.InputContainerComponent}>
+      <View
+        style={[
+          styles.InputContainerComponent,
+          {backgroundColor: themeColor.priamryDarkBg},
+        ]}>
         <View style={styles.titleContainer}>
           <View style={styles.iconContainer}>
-            <Feather name="sunrise" size={16} color={COLORS.primaryWhiteHex} />
+            <Feather
+              name="sunrise"
+              size={16}
+              color={themeColor.secondaryText}
+            />
           </View>
-          <Text style={styles.label}>Theme Mode</Text>
+          <Text style={{color: themeColor.secondaryText}}>Theme Mode</Text>
         </View>
         <RNPickerSelect
           items={themeModeData}
@@ -63,14 +70,24 @@ const WishListScreen = ({route, navigation}: any) => {
             updateSettings({themeMode: value, language: language});
           }}
           value={themeMode}
-          style={pickerSelectStyles}
+          style={{
+            ...pickerSelectStyles,
+            inputIOS: {
+              ...pickerSelectStyles.inputIOS,
+              color: themeColor.secondaryText,
+            },
+            inputAndroid: {
+              ...pickerSelectStyles.inputAndroid,
+              color: themeColor.secondaryText,
+            },
+          }}
           placeholder={{}}
           Icon={() => {
             return (
               <Feather
                 name="chevron-right"
                 size={20}
-                color={COLORS.primaryWhiteHex}
+                color={themeColor.secondaryText}
                 style={styles.pickerIcon}
               />
             );
@@ -78,12 +95,16 @@ const WishListScreen = ({route, navigation}: any) => {
         />
       </View>
 
-      <View style={styles.InputContainerComponent}>
+      <View
+        style={[
+          styles.InputContainerComponent,
+          {backgroundColor: themeColor.priamryDarkBg},
+        ]}>
         <View style={styles.titleContainer}>
           <View style={styles.iconContainer}>
-            <Feather name="globe" size={16} color={COLORS.primaryWhiteHex} />
+            <Feather name="globe" size={16} color={themeColor.secondaryText} />
           </View>
-          <Text style={styles.label}>Language</Text>
+          <Text style={{color: themeColor.secondaryText}}>Language</Text>
         </View>
         <RNPickerSelect
           items={languageData}
@@ -91,14 +112,24 @@ const WishListScreen = ({route, navigation}: any) => {
             updateSettings({themeMode: themeMode, language: value});
           }}
           value={language}
-          style={pickerSelectStyles}
+          style={{
+            ...pickerSelectStyles,
+            inputIOS: {
+              ...pickerSelectStyles.inputIOS,
+              color: themeColor.secondaryText,
+            },
+            inputAndroid: {
+              ...pickerSelectStyles.inputAndroid,
+              color: themeColor.secondaryText,
+            },
+          }}
           placeholder={{}}
           Icon={() => {
             return (
               <Feather
                 name="chevron-right"
                 size={20}
-                color={COLORS.primaryWhiteHex}
+                color={themeColor.secondaryText}
                 style={styles.pickerIcon}
               />
             );
@@ -107,15 +138,18 @@ const WishListScreen = ({route, navigation}: any) => {
       </View>
 
       <TouchableOpacity
-        style={styles.InputContainerComponent}
+        style={[
+          styles.InputContainerComponent,
+          {backgroundColor: themeColor.priamryDarkBg},
+        ]}
         onPress={() => {
           Linking.openURL('https://google.com');
         }}>
         <View style={styles.titleContainer}>
           <View style={styles.iconContainer}>
-            <Feather name="info" size={16} color={COLORS.primaryWhiteHex} />
+            <Feather name="info" size={16} color={themeColor.secondaryText} />
           </View>
-          <Text style={styles.label}>About</Text>
+          <Text style={{color: themeColor.secondaryText}}>About</Text>
         </View>
       </TouchableOpacity>
     </View>
@@ -127,37 +161,22 @@ export default WishListScreen;
 const styles = StyleSheet.create({
   ScreenContainer: {
     flex: 1,
-    backgroundColor: COLORS.primaryBlackHex,
   },
   InputContainerComponent: {
     flexDirection: 'row',
     marginHorizontal: SPACING.space_20,
     marginVertical: SPACING.space_8,
     borderRadius: BORDERRADIUS.radius_10,
-    backgroundColor: COLORS.primaryDarkGreyHex,
+
     paddingHorizontal: SPACING.space_20,
     alignItems: 'center',
     justifyContent: 'space-between',
     height: SPACING.space_20 * 2.5,
   },
-  ScreenTitle: {
-    fontSize: FONTSIZE.size_20,
-    fontFamily: FONTFAMILY.poppins_semibold,
-    color: COLORS.primaryWhiteHex,
-    paddingLeft: SPACING.space_20,
-    paddingBottom: SPACING.space_20,
-  },
   loadingContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  Overlay: {
-    flex: 1,
-    backgroundColor: COLORS.primaryBlackRGBA,
-  },
-  label: {
-    color: COLORS.primaryWhiteHex,
   },
   pickerIcon: {
     marginVertical: SPACING.space_15,
@@ -180,14 +199,12 @@ const pickerSelectStyles = StyleSheet.create({
     height: SPACING.space_20 * 2.5,
     fontFamily: FONTFAMILY.poppins_medium,
     fontSize: FONTSIZE.size_14,
-    color: COLORS.primaryWhiteHex,
     marginHorizontal: SPACING.space_20,
   },
   inputAndroid: {
     height: SPACING.space_20 * 2.5,
     fontFamily: FONTFAMILY.poppins_medium,
     fontSize: FONTSIZE.size_14,
-    color: COLORS.primaryWhiteHex,
     marginHorizontal: SPACING.space_20,
   },
 });

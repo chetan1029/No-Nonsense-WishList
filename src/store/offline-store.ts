@@ -19,18 +19,21 @@ const colorScheme = Appearance.getColorScheme();
 interface OfflineStoreState {
   Settings: SettingsType;
   updateSettings: (settings: SettingsType) => Promise<void>;
-  ThemeColor: any;
+  themeColor: any;
 }
 
 export const useOfflineStore = create<OfflineStoreState>(
   persist(
     (set) => ({
-      ThemeColor: colorScheme == "dark" ? COLORSCHEME.dark : COLORSCHEME.light,
+      themeColor: colorScheme == "dark" ? COLORSCHEME.dark : COLORSCHEME.light,
       Settings: { themeMode: colorScheme, language: defaultLanguage },
       updateSettings: async (settings: SettingsType) => {
         set(produce((state) => {
           state.Settings = { ...settings }; // Update settings immutably
         }));
+        set(produce((state) =>{
+          state.themeColor = settings.themeMode == "dark" ? COLORSCHEME.dark : COLORSCHEME.light; // Update theme color immutably
+        }))
       },
     }),
     {
