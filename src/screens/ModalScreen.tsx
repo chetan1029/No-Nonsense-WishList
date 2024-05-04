@@ -15,6 +15,7 @@ import {useCardAnimation} from '@react-navigation/stack';
 import {COLORS, SPACING} from '../theme/theme';
 import Feather from 'react-native-vector-icons/Feather';
 import {useStore} from '../store/store';
+import {useOfflineStore} from '../store/offline-store';
 import {update} from 'lodash';
 import {useState} from 'react';
 
@@ -41,9 +42,16 @@ type ItemProps = {
   icon: string;
   categoryIndex: any;
   navigation: any;
+  themeColor: any;
 };
 
-const Item = ({itemTitle, icon, categoryIndex, navigation}: ItemProps) => {
+const Item = ({
+  itemTitle,
+  icon,
+  categoryIndex,
+  navigation,
+  themeColor,
+}: ItemProps) => {
   // Store
   const deleteCategory = useStore((state: any) => state.deleteCategory);
   const updateCategory = useStore((state: any) => state.updateCategory);
@@ -118,11 +126,17 @@ const Item = ({itemTitle, icon, categoryIndex, navigation}: ItemProps) => {
       onPress={() =>
         handleShare(categoryIndex.category, 'https://github.com', itemTitle)
       }>
-      <View style={styles.item}>
+      <View style={[styles.item, {backgroundColor: themeColor.priamryDarkBg}]}>
         <View style={styles.iconContainer}>
-          <Feather name={icon} size={16} style={styles.icon} />
+          <Feather
+            name={icon}
+            size={16}
+            style={{color: themeColor.secondaryText}}
+          />
         </View>
-        <Text style={styles.title}>{itemTitle}</Text>
+        <Text style={[styles.title, {color: themeColor.secondaryText}]}>
+          {itemTitle}
+        </Text>
       </View>
     </TouchableOpacity>
   );
@@ -131,13 +145,14 @@ const Item = ({itemTitle, icon, categoryIndex, navigation}: ItemProps) => {
 function ModalScreen({navigation, route}: any) {
   const {current} = useCardAnimation();
   const {categoryIndex} = route.params;
+  const themeColor = useOfflineStore((state: any) => state.themeColor);
 
   return (
     <View style={styles.modalContainer}>
       <Pressable
         style={[
           StyleSheet.absoluteFill,
-          {backgroundColor: COLORS.primaryBlackRGBA},
+          {backgroundColor: themeColor.primaryBgOpacity5},
         ]}
         onPress={navigation.goBack}
       />
@@ -155,6 +170,7 @@ function ModalScreen({navigation, route}: any) {
                 }),
               },
             ],
+            backgroundColor: themeColor.primaryBgLight,
           },
         ]}>
         <Feather name="minus" size={30} color={COLORS.primaryLightGreyHex} />
@@ -166,11 +182,19 @@ function ModalScreen({navigation, route}: any) {
               icon={item.icon}
               categoryIndex={categoryIndex}
               navigation={navigation}
+              themeColor={themeColor}
             />
           )}
           keyExtractor={item => item.id}
           style={styles.modelFlatList}
-          ItemSeparatorComponent={() => <View style={styles.separator} />}
+          ItemSeparatorComponent={() => (
+            <View
+              style={[
+                styles.separator,
+                {backgroundColor: themeColor.primaryBg},
+              ]}
+            />
+          )}
         />
       </Animated.View>
     </View>
@@ -194,9 +218,9 @@ const styles = StyleSheet.create({
     borderTopEndRadius: SPACING.space_16,
     borderTopStartRadius: SPACING.space_16,
     paddingHorizontal: SPACING.space_20,
-    paddingBottom: SPACING.space_40,
+    paddingBottom: SPACING.space_40 * 2,
     width: '100%',
-    backgroundColor: COLORS.primaryGreyHex,
+
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -204,25 +228,21 @@ const styles = StyleSheet.create({
   modelFlatList: {
     width: '100%',
     borderRadius: SPACING.space_10,
+    marginTop: SPACING.space_20,
   },
   item: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: COLORS.primaryLightGreyHex,
+
     padding: 20,
   },
   title: {
     fontSize: 16,
-    color: COLORS.primaryWhiteHex,
   },
   separator: {
     height: 1,
-    backgroundColor: 'gray',
   },
   iconContainer: {
     marginRight: 10,
-  },
-  icon: {
-    color: COLORS.primaryWhiteHex,
   },
 });

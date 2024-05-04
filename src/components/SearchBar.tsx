@@ -14,6 +14,7 @@ interface SearchBarProp {
   searchWishList: any;
   setSearchText: any;
   resetSearchWishList: any;
+  themeColor: any;
 }
 
 const SearchBar: React.FC<SearchBarProp> = ({
@@ -21,9 +22,14 @@ const SearchBar: React.FC<SearchBarProp> = ({
   searchWishList,
   setSearchText,
   resetSearchWishList,
+  themeColor,
 }) => {
   return (
-    <View style={styles.InputContainerComponent}>
+    <View
+      style={[
+        styles.InputContainerComponent,
+        {backgroundColor: themeColor.priamryDarkBg},
+      ]}>
       <TouchableOpacity
         onPress={() => {
           searchWishList(searchText);
@@ -42,7 +48,7 @@ const SearchBar: React.FC<SearchBarProp> = ({
       <TextInput
         placeholder="Find Your Wish..."
         placeholderTextColor={COLORS.primaryLightGreyHex}
-        style={styles.TextInputContainer}
+        style={[styles.TextInputContainer, {color: themeColor.secondaryText}]}
         onChangeText={text => {
           setSearchText(text);
           searchWishList(text);
@@ -76,7 +82,7 @@ const styles = StyleSheet.create({
     marginHorizontal: SPACING.space_20,
     marginBottom: SPACING.space_8,
     borderRadius: BORDERRADIUS.radius_20,
-    backgroundColor: COLORS.primaryDarkGreyHex,
+
     alignItems: 'center',
   },
   InputIcon: {
@@ -87,6 +93,5 @@ const styles = StyleSheet.create({
     height: SPACING.space_20 * 2.5,
     fontFamily: FONTFAMILY.poppins_medium,
     fontSize: FONTSIZE.size_14,
-    color: COLORS.primaryWhiteHex,
   },
 });

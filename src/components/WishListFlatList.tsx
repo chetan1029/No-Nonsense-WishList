@@ -26,6 +26,7 @@ interface WishListFlatListProps {
   refreshing: boolean; // indicator for refreshing
   showMoreModal: boolean;
   navigation: any;
+  themeColor: any;
 }
 
 const WishListFlatList: React.FC<WishListFlatListProps> = ({
@@ -39,6 +40,7 @@ const WishListFlatList: React.FC<WishListFlatListProps> = ({
   refreshing,
   showMoreModal,
   navigation,
+  themeColor,
 }) => {
   const [modalVisible, setModalVisible] = useState(false);
   const closeModal = () => {
@@ -54,7 +56,7 @@ const WishListFlatList: React.FC<WishListFlatListProps> = ({
           <Feather
             name="more-horizontal"
             size={24}
-            color={COLORS.primaryWhiteHex}
+            color={themeColor.secondaryText}
           />
         </TouchableOpacity>
       )}
@@ -85,6 +87,7 @@ const WishListFlatList: React.FC<WishListFlatListProps> = ({
                 image={item.image}
                 title={item.title ? item.title : item.url}
                 price={item.price}
+                themeColor={themeColor}
               />
             </SwipeableRow>
           );
@@ -92,11 +95,6 @@ const WishListFlatList: React.FC<WishListFlatListProps> = ({
         style={{marginBottom: tabBarHeight}}
         onRefresh={onRefresh}
         refreshing={refreshing}
-        ListHeaderComponent={
-          refreshing ? (
-            <ActivityIndicator size="large" color={COLORS.primaryWhiteHex} />
-          ) : null
-        }
       />
     </View>
   );
@@ -112,7 +110,7 @@ const styles = StyleSheet.create({
     marginBottom: SPACING.space_4,
   },
   FlatListContainer: {
-    gap: SPACING.space_15,
+    gap: SPACING.space_10,
     paddingVertical: SPACING.space_15,
     paddingHorizontal: SPACING.space_20,
     flexGrow: 1,

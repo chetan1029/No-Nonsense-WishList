@@ -3,11 +3,11 @@ import {
   FlatList,
   StatusBar,
   StyleSheet,
-  Text,
   View,
 } from 'react-native';
 import React, {useEffect, useRef, useState} from 'react';
 import {useStore} from '../store/store';
+import {useOfflineStore} from '../store/offline-store';
 import {useBottomTabBarHeight} from '@react-navigation/bottom-tabs';
 import {COLORS, FONTFAMILY, FONTSIZE, SPACING} from '../theme/theme';
 
@@ -33,6 +33,7 @@ const PurchaseScreen = ({navigation}: any) => {
   );
   const fetchWishListItems = useStore((state: any) => state.fetchWishListItems);
   const UserDetail = useStore((state: any) => state.UserDetail);
+  const themeColor = useOfflineStore((state: any) => state.themeColor);
 
   // Other variables
   const ListRef: any = useRef<FlatList>();
@@ -107,18 +108,19 @@ const PurchaseScreen = ({navigation}: any) => {
 
   const onRefresh = () => {
     setRefreshing(true);
-    fetchWishListItems();
+    fetchWishListItems(UserDetail);
     setTimeout(() => {
       setRefreshing(false);
     }, 1000);
   };
 
   return (
-    <View style={styles.ScreenContainer}>
-      <StatusBar backgroundColor={COLORS.primaryBlackHex}></StatusBar>
+    <View
+      style={[styles.ScreenContainer, {backgroundColor: themeColor.primaryBg}]}>
+      <StatusBar backgroundColor={themeColor.primaryBg}></StatusBar>
 
       {/* App Header */}
-      <HeaderBar title="My Purchase List" />
+      <HeaderBar title="My Purchase List" themeColor={themeColor} />
 
       {/* Search Input */}
       <SearchBar
@@ -126,10 +128,11 @@ const PurchaseScreen = ({navigation}: any) => {
         searchWishList={searchWishList}
         setSearchText={setSearchText}
         resetSearchWishList={resetSearchWishList}
+        themeColor={themeColor}
       />
       {loading ? (
         <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color={COLORS.primaryWhiteHex} />
+          <ActivityIndicator size="large" color={themeColor.secondaryText} />
         </View>
       ) : (
         <>
@@ -144,6 +147,7 @@ const PurchaseScreen = ({navigation}: any) => {
             refreshing={refreshing}
             showMoreModal={false}
             navigation={navigation}
+            themeColor={themeColor}
           />
         </>
       )}
@@ -156,13 +160,6 @@ export default PurchaseScreen;
 const styles = StyleSheet.create({
   ScreenContainer: {
     flex: 1,
-    backgroundColor: COLORS.primaryBlackHex,
-  },
-  ScreenTitle: {
-    fontSize: FONTSIZE.size_28,
-    fontFamily: FONTFAMILY.poppins_semibold,
-    color: COLORS.primaryWhiteHex,
-    paddingLeft: SPACING.space_20,
   },
   loadingContainer: {
     flex: 1,

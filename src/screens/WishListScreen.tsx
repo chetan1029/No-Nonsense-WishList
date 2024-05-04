@@ -7,6 +7,7 @@ import {
 } from 'react-native';
 import React, {useEffect, useRef, useState} from 'react';
 import {useStore} from '../store/store';
+import {useOfflineStore} from '../store/offline-store';
 import {useBottomTabBarHeight} from '@react-navigation/bottom-tabs';
 import {COLORS, FONTFAMILY, FONTSIZE, SPACING} from '../theme/theme';
 import _ from 'lodash';
@@ -18,7 +19,6 @@ import WishListFlatList from '../components/WishListFlatList';
 
 // Memorized functions
 import {getCategories, getWishListByCategory, showToast} from '../utils/common';
-import {useOfflineStore} from '../store/offline-store';
 
 const WishListScreen = ({route, navigation}: any) => {
   // State
@@ -36,6 +36,7 @@ const WishListScreen = ({route, navigation}: any) => {
   const addToPurchaseList = useStore((state: any) => state.addToPurchaseList);
   const fetchWishListItems = useStore((state: any) => state.fetchWishListItems);
   const UserDetail = useStore((state: any) => state.UserDetail);
+  const themeColor = useOfflineStore((state: any) => state.themeColor);
 
   // Other variables
   const ListRef: any = useRef<FlatList>();
@@ -137,18 +138,23 @@ const WishListScreen = ({route, navigation}: any) => {
   );
 
   return (
-    <View style={styles.ScreenContainer}>
-      <StatusBar backgroundColor={COLORS.primaryBlackHex}></StatusBar>
+    <View
+      style={[styles.ScreenContainer, {backgroundColor: themeColor.primaryBg}]}>
+      <StatusBar backgroundColor={themeColor.primaryBg}></StatusBar>
 
       {/* Overlay View with Opacity */}
-      <View style={styles.Overlay}></View>
+      <View
+        style={[
+          styles.Overlay,
+          {backgroundColor: themeColor.primaryBgOpacity5},
+        ]}></View>
 
       {/* App Header */}
-      <HeaderBar title="My WishList" />
+      <HeaderBar title="My WishList" themeColor={themeColor} />
 
       {loading ? (
         <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color={COLORS.primaryWhiteHex} />
+          <ActivityIndicator size="large" color={themeColor.secondaryText} />
         </View>
       ) : (
         <>
@@ -176,6 +182,7 @@ const WishListScreen = ({route, navigation}: any) => {
             refreshing={refreshing}
             showMoreModal={true}
             navigation={navigation}
+            themeColor={themeColor}
           />
         </>
       )}
@@ -188,14 +195,6 @@ export default WishListScreen;
 const styles = StyleSheet.create({
   ScreenContainer: {
     flex: 1,
-    backgroundColor: COLORS.primaryBlackHex,
-  },
-  ScreenTitle: {
-    fontSize: FONTSIZE.size_20,
-    fontFamily: FONTFAMILY.poppins_semibold,
-    color: COLORS.primaryWhiteHex,
-    paddingLeft: SPACING.space_20,
-    paddingBottom: SPACING.space_20,
   },
   loadingContainer: {
     flex: 1,
@@ -204,6 +203,5 @@ const styles = StyleSheet.create({
   },
   Overlay: {
     flex: 1,
-    backgroundColor: COLORS.primaryBlackRGBA,
   },
 });

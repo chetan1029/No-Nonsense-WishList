@@ -7,12 +7,14 @@ interface HeaderBarProps {
   navigation?: any;
   title?: string;
   backButton?: boolean;
+  themeColor: any;
 }
 
 const HeaderBar: React.FC<HeaderBarProps> = ({
   navigation,
   title,
   backButton,
+  themeColor,
 }) => {
   return (
     <View style={styles.HeaderContainer}>
@@ -31,7 +33,9 @@ const HeaderBar: React.FC<HeaderBarProps> = ({
       ) : (
         <></>
       )}
-      <Text style={styles.HeaderText}>{title}</Text>
+      <Text style={[styles.HeaderText, {color: themeColor.secondaryText}]}>
+        {title}
+      </Text>
     </View>
   );
 };
@@ -47,7 +51,6 @@ const styles = StyleSheet.create({
   HeaderText: {
     fontFamily: FONTFAMILY.poppins_semibold,
     fontSize: FONTSIZE.size_20,
-    color: COLORS.primaryWhiteHex,
   },
 });
 
