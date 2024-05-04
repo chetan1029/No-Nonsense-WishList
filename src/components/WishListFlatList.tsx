@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   Button,
   Modal,
+  RefreshControl,
 } from 'react-native';
 import React, {useState} from 'react';
 import {COLORS, FONTFAMILY, FONTSIZE, SPACING} from '../theme/theme';
@@ -48,7 +49,7 @@ const WishListFlatList: React.FC<WishListFlatListProps> = ({
   };
   return (
     <View style={styles.dropdownButtonContainer}>
-      {showMoreModal && (
+      {showMoreModal && categoryIndex.category && (
         <TouchableOpacity
           onPress={() => {
             navigation.navigate('ModalScreen', {categoryIndex}, onRefresh);
@@ -95,6 +96,15 @@ const WishListFlatList: React.FC<WishListFlatListProps> = ({
         style={{marginBottom: tabBarHeight}}
         onRefresh={onRefresh}
         refreshing={refreshing}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            title="Pull to refresh"
+            tintColor={themeColor.secondaryText}
+            titleColor={themeColor.secondaryText}
+          />
+        }
       />
     </View>
   );

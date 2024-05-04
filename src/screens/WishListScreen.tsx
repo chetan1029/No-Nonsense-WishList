@@ -36,6 +36,8 @@ const WishListScreen = ({route, navigation}: any) => {
   const addToPurchaseList = useStore((state: any) => state.addToPurchaseList);
   const fetchWishListItems = useStore((state: any) => state.fetchWishListItems);
   const UserDetail = useStore((state: any) => state.UserDetail);
+  const CategoryList = useStore((state: any) => state.CategoryList);
+  const fetchCateogryList = useStore((state: any) => state.fetchCateogryList);
   const themeColor = useOfflineStore((state: any) => state.themeColor);
 
   // Other variables
@@ -53,11 +55,18 @@ const WishListScreen = ({route, navigation}: any) => {
   // Use effect to fetch set category index
   useEffect(() => {
     if (categories) {
-      if (route.params && route.params.category) {
-        setCategoryIndex({
-          index: categories.indexOf(route.params.category),
-          category: route.params.category,
-        });
+      if (route.params) {
+        if (route.params.category) {
+          setCategoryIndex({
+            index: categories.indexOf(route.params.category),
+            category: route.params.category,
+          });
+        } else if (route.params.index == 0) {
+          setCategoryIndex({
+            index: route.params.index,
+            category: categories[route.params.index],
+          });
+        }
       } else if (categoryIndex.index == 0) {
         setCategoryIndex({index: 0, category: categories[0]});
       }
@@ -70,12 +79,13 @@ const WishListScreen = ({route, navigation}: any) => {
       setLoading(true);
       if (UserDetail) {
         await fetchWishListItems(UserDetail);
+        await fetchCateogryList(UserDetail);
       }
       setLoading(false);
     };
 
     fetchData();
-  }, [fetchWishListItems, UserDetail]);
+  }, [fetchWishListItems, fetchCateogryList, UserDetail]);
 
   // Use effect to update sortedWishList after WishListItems change
   useEffect(() => {
@@ -104,6 +114,7 @@ const WishListScreen = ({route, navigation}: any) => {
   const onRefresh = async () => {
     setRefreshing(true);
     await fetchWishListItems(UserDetail);
+    await fetchCateogryList(UserDetail);
     setTimeout(() => {
       setRefreshing(false);
     }, 1000);

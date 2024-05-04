@@ -1,7 +1,6 @@
 export interface CategoryItem{
     id: string,
     name: string,
-    index: number,
 }
 
 export interface WishListItem{
