@@ -1,6 +1,6 @@
 import {create} from 'zustand';
 import {produce} from 'immer';
-import {fetchWishListItemsFromFirebase, updatePurchaseStatusInFirebase, deleteWishListInFirebase, addWishListInFirebase, deleteCategoryInFirebase, updateCategoryInFirebase} from "./firebase-functions";
+import {fetchWishListItemsFromFirebase, updatePurchaseStatusInFirebase, deleteWishListInFirebase, addWishListInFirebase, deleteCategoryInFirebase, updateCategoryInFirebase, fetchCategoryListFromFirebase} from "./firebase-functions";
 import { CategoryItem, SettingsType, UserType, WishListItem } from './types';
 import axios from 'axios';
 import { parseHTMLContent } from '../utils/parsehtml';
@@ -17,6 +17,7 @@ interface StoreState {
   Settings: SettingsType;
   setUserDetail: (user: any) => void;
   fetchWishListItems: (user: any) => Promise<void>;
+  fetchCateogryList: (user: any) => Promise<void>;
   addToPurchaseList: (id: string, user:any) => Promise<void>;
   removeFromPurchaseList: (id: string, user:any) => Promise<void>;
   deleteFromWishList: (id: string, user:any) => Promise<void>;
@@ -45,6 +46,14 @@ export const useStore = create<StoreState>(
          console.error("Error fetching data", error);
         }
        }, 
+      fetchCateogryList: async (user: any) => {
+        try {
+        const category = await fetchCategoryListFromFirebase(user.uid);
+        set({CategoryList: category});
+        } catch (error) {
+        console.error("Error fetching data", error);
+        }
+      }, 
       addToPurchaseList: async(id: string, user:any) => {
         try {
           console.log("user"+user.uid)
@@ -52,6 +61,7 @@ export const useStore = create<StoreState>(
           
           // Fetch updated wishlist items from Firebase
           await get().fetchWishListItems(user);
+          await get().fetchCateogryList(user);
         } catch (error) {
         console.error("Error Updating data", error);
         }
@@ -62,6 +72,7 @@ export const useStore = create<StoreState>(
           
           // Fetch updated wishlist items from Firebase
           await get().fetchWishListItems(user);
+          await get().fetchCateogryList(user);
         } catch (error) {
         console.error("Error Updating data", error);
         }
@@ -72,6 +83,7 @@ export const useStore = create<StoreState>(
         
         // Fetch updated wishlist items from Firebase
         await get().fetchWishListItems(user);
+        await get().fetchCateogryList(user);
         } catch (error) {
         console.error("Error Updating data", error);
         }
@@ -89,6 +101,7 @@ export const useStore = create<StoreState>(
           
           // Fetch updated wishlist items from Firebase
           await get().fetchWishListItems(user);
+          await get().fetchCateogryList(user);
         } catch (error: any) {
           if (error.message === "No internet connection") {
             // TODO: we can show a toast message that
@@ -117,6 +130,7 @@ export const useStore = create<StoreState>(
         
         // Fetch updated wishlist items from Firebase
         await get().fetchWishListItems(user);
+        await get().fetchCateogryList(user);
         } catch (error) {
         console.error("Error Deleteting category", error);
         }
@@ -127,6 +141,7 @@ export const useStore = create<StoreState>(
         
         // Fetch updated wishlist items from Firebase
         await get().fetchWishListItems(user);
+        await get().fetchCateogryList(user);
         } catch (error) {
         console.error("Error Deleteting category", error);
         }

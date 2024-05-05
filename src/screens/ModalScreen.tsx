@@ -16,8 +16,6 @@ import {COLORS, SPACING} from '../theme/theme';
 import Feather from 'react-native-vector-icons/Feather';
 import {useStore} from '../store/store';
 import {useOfflineStore} from '../store/offline-store';
-import {update} from 'lodash';
-import {useState} from 'react';
 
 const DATA = [
   {
@@ -56,12 +54,23 @@ const Item = ({
   const deleteCategory = useStore((state: any) => state.deleteCategory);
   const updateCategory = useStore((state: any) => state.updateCategory);
   const UserDetail = useStore((state: any) => state.UserDetail);
+  const CategoryList = useStore((state: any) => state.CategoryList);
 
-  const handleShare = async (title: string, link: string, action: string) => {
+  const handleShare = async (title: string, action: string) => {
+    const categoryItem = CategoryList.find(
+      (c: {name: string}) => c.name === title,
+    );
+    let link = '';
+    if (categoryItem && categoryItem.id) {
+      link =
+        'https://sports-afaf5.web.app/' +
+        UserDetail?.uid +
+        '/' +
+        categoryItem.id;
+    }
     if (action == 'Share') {
       try {
         const shareOptions = {
-          message: title,
           url: link,
         };
 
@@ -111,9 +120,11 @@ const Item = ({
           },
           {
             text: 'Delete',
-            onPress: () => {
-              deleteCategory(title, UserDetail);
-              navigation.goBack();
+            onPress: async () => {
+              await deleteCategory(title, UserDetail);
+              navigation.navigate('WishList', {
+                index: 0,
+              });
             },
           },
         ],
@@ -123,9 +134,7 @@ const Item = ({
 
   return (
     <TouchableOpacity
-      onPress={() =>
-        handleShare(categoryIndex.category, 'https://github.com', itemTitle)
-      }>
+      onPress={() => handleShare(categoryIndex.category, itemTitle)}>
       <View style={[styles.item, {backgroundColor: themeColor.priamryDarkBg}]}>
         <View style={styles.iconContainer}>
           <Feather
