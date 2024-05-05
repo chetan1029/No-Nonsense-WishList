@@ -19,6 +19,7 @@ import WishListFlatList from '../components/WishListFlatList';
 
 // Memorized functions
 import {getCategories, getWishListByCategory, showToast} from '../utils/common';
+import {useFocusEffect} from '@react-navigation/native';
 
 const WishListScreen = ({route, navigation}: any) => {
   // State
@@ -97,7 +98,7 @@ const WishListScreen = ({route, navigation}: any) => {
       );
       setSortedWishList(updatedSortedWishList);
     }
-  }, [WishListItems, categoryIndex.category]);
+  }, [WishListItems, CategoryList, categoryIndex.category]);
 
   // functions
   const handleSwipeableOpen = (
@@ -115,9 +116,8 @@ const WishListScreen = ({route, navigation}: any) => {
     setRefreshing(true);
     await fetchWishListItems(UserDetail);
     await fetchCateogryList(UserDetail);
-    setTimeout(() => {
-      setRefreshing(false);
-    }, 1000);
+    setCategoryIndex(categoryIndex);
+    setRefreshing(false);
   };
 
   // Define debounced function outside of the component

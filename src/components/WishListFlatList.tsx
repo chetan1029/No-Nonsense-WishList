@@ -94,8 +94,6 @@ const WishListFlatList: React.FC<WishListFlatListProps> = ({
           );
         }}
         style={{marginBottom: tabBarHeight}}
-        onRefresh={onRefresh}
-        refreshing={refreshing}
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
