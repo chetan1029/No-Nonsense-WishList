@@ -25,3 +25,12 @@ export interface SettingsType{
     themeMode: string,
     language: string
 }
+
+export interface SharedWishListItem{
+    id: string,
+    categoryId: string,
+    categoryName: string,
+    sharedWithUserId: string,
+    userId: string,
+    createdDate: any,
+}

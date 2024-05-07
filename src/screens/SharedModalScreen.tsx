@@ -20,17 +20,7 @@ import {useOfflineStore} from '../store/offline-store';
 const DATA = [
   {
     id: '1',
-    title: 'Edit Category',
-    icon: 'edit',
-  },
-  {
-    id: '2',
-    title: 'Share',
-    icon: 'share',
-  },
-  {
-    id: '3',
-    title: 'Delete',
+    title: 'Remove WishList',
     icon: 'trash',
   },
 ];
@@ -51,80 +41,31 @@ const Item = ({
   themeColor,
 }: ItemProps) => {
   // Store
-  const deleteCategory = useStore((state: any) => state.deleteCategory);
-  const updateCategory = useStore((state: any) => state.updateCategory);
+  const removeFromSharedWishList = useStore(
+    (state: any) => state.removeFromSharedWishList,
+  );
   const UserDetail = useStore((state: any) => state.UserDetail);
-  const CategoryList = useStore((state: any) => state.CategoryList);
 
-  const handleShare = async (title: string, action: string) => {
-    const categoryItem = CategoryList.find(
-      (c: {name: string}) => c.name === title,
-    );
-    let link = '';
-    if (categoryItem && categoryItem.id) {
-      link =
-        'https://sports-afaf5.web.app/' +
-        UserDetail?.uid +
-        '/' +
-        categoryItem.id;
-    }
-    if (action == 'Share') {
-      try {
-        const shareOptions = {
-          url: link,
-        };
-
-        const result = await Share.share(shareOptions);
-
-        if (result.action === Share.sharedAction) {
-          console.log('Shared successfully');
-        } else if (result.action === Share.dismissedAction) {
-          console.log('Share cancelled');
-        }
-      } catch (error: any) {
-        console.error('Error sharing:', error.message);
-      }
-      navigation.goBack();
-    } else if (action === 'Edit Category') {
-      // Implement edit category logic here
-      Alert.prompt(
-        'Edit Category',
-        'Enter the new category name:',
-        [
-          {
-            text: 'Cancel',
-            style: 'cancel',
-          },
-          {
-            text: 'Save',
-            onPress: async newCategory => {
-              await updateCategory(title, newCategory, UserDetail);
-              navigation.navigate('WishList', {
-                category: newCategory,
-              });
-            },
-          },
-        ],
-        'plain-text', // Specify the input type
-        title, // Default value for the input field
-      );
-    } else if (action === 'Delete') {
+  const handleAction = async (
+    title: string,
+    action: string,
+    sharedWishListId: string,
+  ) => {
+    if (action === 'Remove WishList') {
       // Implement delete category logic here
       Alert.alert(
         'Confirmation',
-        `Are you sure you want to delete the category '${title}'?`,
+        `Are you sure you want to remove '${title}' WishList?`,
         [
           {
             text: 'Cancel',
             style: 'cancel',
           },
           {
-            text: 'Delete',
+            text: 'Remove',
             onPress: async () => {
-              await deleteCategory(title, UserDetail);
-              navigation.navigate('WishList', {
-                index: 0,
-              });
+              await removeFromSharedWishList(UserDetail, sharedWishListId);
+              navigation.navigate('SharedWishListScreen');
             },
           },
         ],
@@ -134,7 +75,13 @@ const Item = ({
 
   return (
     <TouchableOpacity
-      onPress={() => handleShare(categoryIndex.category, itemTitle)}>
+      onPress={() =>
+        handleAction(
+          categoryIndex.category,
+          itemTitle,
+          categoryIndex.sharedWishListId,
+        )
+      }>
       <View style={[styles.item, {backgroundColor: themeColor.priamryDarkBg}]}>
         <View style={styles.iconContainer}>
           <Feather
@@ -151,7 +98,7 @@ const Item = ({
   );
 };
 
-function ModalScreen({navigation, route}: any) {
+function SharedModalScreen({navigation, route}: any) {
   const {current} = useCardAnimation();
   const categoryIndex = route?.params?.categoryIndex;
   const themeColor = useOfflineStore((state: any) => state.themeColor);
@@ -210,7 +157,7 @@ function ModalScreen({navigation, route}: any) {
   );
 }
 
-export default ModalScreen;
+export default SharedModalScreen;
 
 const styles = StyleSheet.create({
   modalContainer: {

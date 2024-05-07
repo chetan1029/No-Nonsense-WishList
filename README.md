@@ -103,6 +103,9 @@ xcode -> build -> select device and run
 9. If you do pulldown to refresh on one cateogory it will reload and open the first category by default.
 10. after install react-native-firebase and build application give me pod install problem for flipper.
 11. anonymously login
+12. Modal screen to load up and cover the screen plus it should close if you click on the screen
+13. Tab with an extra page to navigate.
+14. Implementation of Internationalazation and Theme control with dark and light theme.
 
 # TODO
 

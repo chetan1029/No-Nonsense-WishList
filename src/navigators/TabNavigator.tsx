@@ -17,6 +17,8 @@ import {
   SafeAreaProvider,
   useSafeAreaInsets,
 } from 'react-native-safe-area-context';
+import SharedWishListScreen from '../screens/SharedWishListScreen';
+import SharedWishListStackScreen from './SharedWishListStackScreen';
 
 const Tab = createBottomTabNavigator();
 
@@ -157,7 +159,7 @@ const TabNavigator = ({route, navigation}: any) => {
           }}></Tab.Screen>
         <Tab.Screen
           name="Friends"
-          component={SettingScreen}
+          component={SharedWishListStackScreen}
           options={{
             tabBarLabel: ({focused, color}) => {
               return (

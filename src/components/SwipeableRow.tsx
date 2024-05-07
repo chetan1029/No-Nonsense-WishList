@@ -24,6 +24,7 @@ interface SwipeableRowProps {
   url: string;
   leftSwipeIcon: string;
   onSwipeableOpen: (direction: string, id: string, title: string) => void;
+  screenType: string;
 }
 
 const SwipeableRow: React.FC<SwipeableRowProps> = ({
@@ -34,6 +35,7 @@ const SwipeableRow: React.FC<SwipeableRowProps> = ({
   url,
   leftSwipeIcon,
   onSwipeableOpen,
+  screenType,
 }) => {
   const swipeableRowRef = useRef<Swipeable>(null);
 
@@ -141,6 +143,30 @@ const SwipeableRow: React.FC<SwipeableRowProps> = ({
     );
   };
 
+  const renderSharedRightActions = (
+    progressAnimatedValue: Animated.AnimatedInterpolation<number>,
+    dragAnimatedValue: Animated.AnimatedInterpolation<number>,
+  ) => {
+    const rightActions = [
+      renderRightAction(
+        openLink,
+        'external-link',
+        COLORS.primaryOrangeHex,
+        192,
+        progressAnimatedValue,
+      ),
+      // Add more actions as needed
+    ];
+
+    return (
+      <View style={styles.rightActionRow}>
+        {rightActions.map((action, index) => (
+          <React.Fragment key={index}>{action}</React.Fragment>
+        ))}
+      </View>
+    );
+  };
+
   const close = () => {
     swipeableRowRef.current?.close();
   };
@@ -203,24 +229,37 @@ const SwipeableRow: React.FC<SwipeableRowProps> = ({
     close();
   };
 
-  return (
-    <Swipeable
-      ref={swipeableRowRef}
-      key={id}
-      friction={2}
-      leftThreshold={40}
-      rightThreshold={0}
-      renderLeftActions={renderLeftActions}
-      renderRightActions={renderRightActions}
-      onSwipeableOpen={direction => {
-        if (direction == 'left') {
-          onSwipeableOpen(direction, id, title);
-          close();
-        }
-      }}>
-      {children}
-    </Swipeable>
-  );
+  if (screenType == 'WishList') {
+    return (
+      <Swipeable
+        ref={swipeableRowRef}
+        key={id}
+        friction={2}
+        leftThreshold={40}
+        rightThreshold={0}
+        renderLeftActions={renderLeftActions}
+        renderRightActions={renderRightActions}
+        onSwipeableOpen={direction => {
+          if (direction == 'left') {
+            onSwipeableOpen(direction, id, title);
+            close();
+          }
+        }}>
+        {children}
+      </Swipeable>
+    );
+  } else {
+    return (
+      <Swipeable
+        ref={swipeableRowRef}
+        key={id}
+        friction={2}
+        rightThreshold={0}
+        renderRightActions={renderSharedRightActions}>
+        {children}
+      </Swipeable>
+    );
+  }
 };
 
 const styles = StyleSheet.create({

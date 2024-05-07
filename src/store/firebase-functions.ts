@@ -1,5 +1,5 @@
 import firestore from '@react-native-firebase/firestore';
-import { CategoryItem, WishListItem } from './types';
+import { CategoryItem, SharedWishListItem, WishListItem } from './types';
 
 const fetchWishListItemsFromFirebase = async(userId: string) => {
     let wishlistItems: WishListItem[] = [];
@@ -135,7 +135,63 @@ const updateCategoryInFirebase = async(oldCategory: string, newCategory: string,
     wishListCollection.forEach(documentSnapshot => {
         batch.update(documentSnapshot.ref, {"category": newCategory});
       });
-    return batch.commit();
+    batch.commit();
+
+    // Update in wishlist
+    const sharedWishListCollection =  await firestore().collection('SharedWishList').where("userId", "==", userId).where("categoryName", "==", oldCategory).get()
+    const shareBatch = firestore().batch();
+    sharedWishListCollection.forEach(documentSnapshot => {
+        shareBatch.update(documentSnapshot.ref, {"categoryName": newCategory});
+      });
+    return shareBatch.commit();
+}
+
+const fetchSharedWishListFromFirebase = async(userId: string) => {
+    let sharedWishList: SharedWishListItem[] = [];
+    await firestore()
+        .collection('SharedWishList')
+        .where('sharedWithUserId', '==', userId)
+        .get()
+        .then((wishListSnapshot) => {
+            if (!wishListSnapshot.empty) {
+                sharedWishList = wishListSnapshot.docs.map((doc) => ({
+                    id: doc.id,
+                    categoryId: doc.data().categoryId,
+                    categoryName: doc.data().categoryName,
+                    sharedWithUserId: doc.data().sharedWithUserId,
+                    userId: doc.data().userId,
+                    createdDate: doc.data().createdDate,
+                }));
+            }
+        });
+    return sharedWishList;
+}
+
+const fetchSharedWishListItemsFromFirebase = async(userId: string, category: string) => {
+    let sharedWishlistItems: WishListItem[] = [];
+    await firestore().collection('Wishlist').where("userId", "==" , userId).where("category", "==", category).orderBy('createDate', 'desc').get().then((wishlistSnapshot) => {
+        if (!wishlistSnapshot.empty) {
+            sharedWishlistItems = wishlistSnapshot.docs.map((doc) => ({
+                id: doc.id,
+                category: doc.data().category,
+                url: doc.data().url,
+                title: doc.data().title,
+                price: doc.data().price,
+                image: doc.data().image,
+                createdDate: doc.data().createdDate,
+                purchase: doc.data().purchase,
+            }));
+        }
+    });
+    return sharedWishlistItems;
+}
+
+const removeFromSharedWishListInFirebase = async(sharedWishListId: string, userId: string) => {
+    // delete in SharedWishList
+    await firestore()
+    .collection('SharedWishList')
+    .doc(sharedWishListId)
+    .delete();
 }
 
 export { 
@@ -145,5 +201,8 @@ export {
     addWishListInFirebase, 
     deleteCategoryInFirebase, 
     updateCategoryInFirebase,
-    fetchCategoryListFromFirebase
+    fetchCategoryListFromFirebase,
+    fetchSharedWishListFromFirebase,
+    fetchSharedWishListItemsFromFirebase,
+    removeFromSharedWishListInFirebase
 }

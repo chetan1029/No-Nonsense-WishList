@@ -165,9 +165,8 @@ const styles = StyleSheet.create({
   InputContainerComponent: {
     flexDirection: 'row',
     marginHorizontal: SPACING.space_20,
-    marginVertical: SPACING.space_8,
+    marginBottom: SPACING.space_8,
     borderRadius: BORDERRADIUS.radius_10,
-
     paddingHorizontal: SPACING.space_20,
     alignItems: 'center',
     justifyContent: 'space-between',

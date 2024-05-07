@@ -16,6 +16,8 @@ import ModalScreen from './src/screens/ModalScreen';
 import auth from '@react-native-firebase/auth';
 import {useStore} from './src/store/store';
 import {useOfflineStore} from './src/store/offline-store';
+import SharedWishListDetailScreen from './src/screens/SharedWishListDetailScreen';
+import SharedModalScreen from './src/screens/SharedModalScreen';
 
 const Stack = createStackNavigator();
 
@@ -78,15 +80,21 @@ const AppContent = () => {
       }}>
       <GestureHandlerRootView style={{flex: 1}}>
         <NavigationContainer>
-          <Stack.Navigator
-            screenOptions={{
-              headerMode: 'screen',
-              headerShown: false,
-              presentation: 'transparentModal',
-              ...TransitionPresets.ModalPresentationIOS,
-            }}>
-            <Stack.Screen name="Tab" component={TabNavigator}></Stack.Screen>
-            <Stack.Screen name="ModalScreen" component={ModalScreen} />
+          <Stack.Navigator>
+            <Stack.Group
+              screenOptions={{
+                headerMode: 'screen',
+                headerShown: false,
+                presentation: 'transparentModal',
+                ...TransitionPresets.ModalPresentationIOS,
+              }}>
+              <Stack.Screen name="Tab" component={TabNavigator}></Stack.Screen>
+              <Stack.Screen name="ModalScreen" component={ModalScreen} />
+              <Stack.Screen
+                name="SharedModalScreen"
+                component={SharedModalScreen}
+              />
+            </Stack.Group>
           </Stack.Navigator>
         </NavigationContainer>
         <Toast />

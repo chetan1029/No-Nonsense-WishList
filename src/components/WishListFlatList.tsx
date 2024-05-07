@@ -28,6 +28,7 @@ interface WishListFlatListProps {
   showMoreModal: boolean;
   navigation: any;
   themeColor: any;
+  screenType: string;
 }
 
 const WishListFlatList: React.FC<WishListFlatListProps> = ({
@@ -42,6 +43,7 @@ const WishListFlatList: React.FC<WishListFlatListProps> = ({
   showMoreModal,
   navigation,
   themeColor,
+  screenType,
 }) => {
   const [modalVisible, setModalVisible] = useState(false);
   const closeModal = () => {
@@ -49,10 +51,20 @@ const WishListFlatList: React.FC<WishListFlatListProps> = ({
   };
   return (
     <View style={styles.dropdownButtonContainer}>
-      {showMoreModal && categoryIndex.category && (
+      {showMoreModal && categoryIndex?.category && (
         <TouchableOpacity
           onPress={() => {
-            navigation.navigate('ModalScreen', {categoryIndex}, onRefresh);
+            screenType === 'WishList'
+              ? navigation.navigate(
+                  'ModalScreen',
+                  {categoryIndex: categoryIndex},
+                  onRefresh,
+                )
+              : navigation.navigate(
+                  'SharedModalScreen',
+                  {categoryIndex: categoryIndex},
+                  onRefresh,
+                );
           }}>
           <Feather
             name="more-horizontal"
@@ -81,7 +93,8 @@ const WishListFlatList: React.FC<WishListFlatListProps> = ({
               title={item.title}
               url={item.url}
               leftSwipeIcon={leftSwipeIcon}
-              onSwipeableOpen={handleSwipeableOpen}>
+              onSwipeableOpen={handleSwipeableOpen}
+              screenType={screenType}>
               <WishListCard
                 id={item.id}
                 index={item.index}
