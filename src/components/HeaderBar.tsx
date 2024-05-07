@@ -6,7 +6,7 @@ import GradientBGIcon from '../components/GradientBGIcon';
 interface HeaderBarProps {
   navigation?: any;
   title?: string;
-  backButton?: boolean;
+  backButton?: any;
   themeColor: any;
 }
 
@@ -19,11 +19,7 @@ const HeaderBar: React.FC<HeaderBarProps> = ({
   return (
     <View style={styles.HeaderContainer}>
       {backButton ? (
-        <TouchableOpacity
-          onPress={() => {
-            //navigation.pop();
-            navigation.goBack();
-          }}>
+        <TouchableOpacity onPress={backButton}>
           <GradientBGIcon
             name="left"
             color={COLORS.primaryLightGreyHex}

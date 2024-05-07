@@ -194,6 +194,7 @@ const WishListScreen = ({route, navigation}: any) => {
             showMoreModal={true}
             navigation={navigation}
             themeColor={themeColor}
+            screenType="WishList"
           />
         </>
       )}
