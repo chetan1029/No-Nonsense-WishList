@@ -34,3 +34,9 @@ export interface SharedWishListItem{
     userId: string,
     createdDate: any,
 }
+
+export interface AlertMessageDetailItem{
+    message: string,
+    alertType: string,
+    action: any,
+}

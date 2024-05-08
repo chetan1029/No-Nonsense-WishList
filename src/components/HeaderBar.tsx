@@ -2,6 +2,7 @@ import {StyleSheet, Text, View, TouchableOpacity} from 'react-native';
 import React from 'react';
 import {COLORS, FONTFAMILY, FONTSIZE, SPACING} from '../theme/theme';
 import GradientBGIcon from '../components/GradientBGIcon';
+import Feather from 'react-native-vector-icons/Feather';
 
 interface HeaderBarProps {
   navigation?: any;
@@ -22,7 +23,7 @@ const HeaderBar: React.FC<HeaderBarProps> = ({
         <TouchableOpacity onPress={backButton}>
           <GradientBGIcon
             name="left"
-            color={COLORS.primaryLightGreyHex}
+            themeColor={themeColor}
             size={FONTSIZE.size_16}
           />
         </TouchableOpacity>

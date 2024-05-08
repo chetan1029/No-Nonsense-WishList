@@ -62,11 +62,8 @@ const Item = ({
     );
     let link = '';
     if (categoryItem && categoryItem.id) {
-      link =
-        'https://sports-afaf5.web.app/' +
-        UserDetail?.uid +
-        '/' +
-        categoryItem.id;
+      //link = 'https://sports-afaf5.web.app/' + categoryItem.id;
+      link = 'wishlist://wishlist/' + categoryItem.id + '/' + categoryItem.name;
     }
     if (action == 'Share') {
       try {

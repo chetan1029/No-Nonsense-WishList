@@ -18,8 +18,27 @@ import {useStore} from './src/store/store';
 import {useOfflineStore} from './src/store/offline-store';
 import SharedWishListDetailScreen from './src/screens/SharedWishListDetailScreen';
 import SharedModalScreen from './src/screens/SharedModalScreen';
+import {Text} from 'react-native';
 
 const Stack = createStackNavigator();
+
+// Linking logic
+const linking = {
+  prefixes: ['wishlist://', 'https://sports-afaf5.web.app'],
+  config: {
+    screens: {
+      Tab: {
+        screens: {
+          Friends: {
+            screens: {
+              SharedWishListScreen: 'wishlist/:categoryId/:name',
+            },
+          },
+        },
+      },
+    },
+  },
+};
 
 const App = () => {
   // state
@@ -79,7 +98,9 @@ const AppContent = () => {
         // Paddings to handle safe area
       }}>
       <GestureHandlerRootView style={{flex: 1}}>
-        <NavigationContainer>
+        <NavigationContainer
+          linking={linking} // Error due to formating but it still works
+          fallback={<Text>Loading...</Text>}>
           <Stack.Navigator>
             <Stack.Group
               screenOptions={{

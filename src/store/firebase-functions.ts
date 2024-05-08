@@ -1,5 +1,5 @@
 import firestore from '@react-native-firebase/firestore';
-import { CategoryItem, SharedWishListItem, WishListItem } from './types';
+import { CategoryItem, SharedWishListItem, WishListItem, AlertMessageDetailItem } from './types';
 
 const fetchWishListItemsFromFirebase = async(userId: string) => {
     let wishlistItems: WishListItem[] = [];
@@ -194,6 +194,59 @@ const removeFromSharedWishListInFirebase = async(sharedWishListId: string, userI
     .delete();
 }
 
+const addToSharedWishListInFirebase = async(categoryId: string, userId: string) => {
+    let AlertMessageDetails = {title: '', message: '', action: ''};
+
+    const categorySnapshot = await firestore()
+      .collection('Category')
+      .doc(categoryId)
+      .get();
+    
+    if (categorySnapshot.exists) {
+        const categoryData = categorySnapshot.data();
+        if (categoryData) {
+            const categoryName = categoryData.name;
+            const sharedFromUserId = categoryData.userId;
+
+            if(userId !== sharedFromUserId) {
+                const sharedWishList = await firestore()
+                                        .collection('SharedWishList')
+                                        .where("userId", "==", sharedFromUserId)
+                                        .where("sharedWithUserId", "==", userId)
+                                        .where("categoryId", "==", categoryId)
+                                        .get();
+
+                if(sharedWishList.empty){
+                    await firestore().collection('SharedWishList').add(
+                        { 
+                            "categoryId": categoryId, 
+                            "userId": sharedFromUserId,
+                            "createdDate": firestore.FieldValue.serverTimestamp(),
+                            "sharedWithUserId": userId,
+                            "categoryName": categoryName,
+                        }
+                    )
+                    AlertMessageDetails = {title: 'Success', message: categoryName+' Added Successfully', action: ''};
+                }else{
+                    console.log('already exists')
+                    AlertMessageDetails = {title: 'Information', message: categoryName+' already exists in your Shared Wishlist', action: ''};
+                }
+            }else{
+                console.log('cannot share with yourself');
+                AlertMessageDetails = {title: 'Information', message: 'You can not share your own Wishlist with yourself', action: ''};
+            } 
+        }else{
+            console.log('WishList SnapShot not found.');
+            AlertMessageDetails = {title: 'Error', message: 'Wishlist not found', action: ''};
+        }
+      } else {
+        console.log('WishList not found.');
+        AlertMessageDetails = {title: 'Error', message: 'Wishlist not found', action: ''};
+      }
+
+      return AlertMessageDetails;
+}
+
 export { 
     fetchWishListItemsFromFirebase, 
     updatePurchaseStatusInFirebase, 
@@ -204,5 +257,6 @@ export {
     fetchCategoryListFromFirebase,
     fetchSharedWishListFromFirebase,
     fetchSharedWishListItemsFromFirebase,
-    removeFromSharedWishListInFirebase
+    removeFromSharedWishListInFirebase,
+    addToSharedWishListInFirebase
 }
