@@ -106,6 +106,8 @@ xcode -> build -> select device and run
 12. Modal screen to load up and cover the screen plus it should close if you click on the screen
 13. Tab with an extra page to navigate.
 14. Implementation of Internationalazation and Theme control with dark and light theme.
+15. DeepLinking so when you share a link it should open in the app.
+16. DeepLinking give a web app link so app exists it open other open in the website (TODO)
 
 # TODO
 

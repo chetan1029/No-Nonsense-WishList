@@ -1,5 +1,6 @@
 import {
   ActivityIndicator,
+  Alert,
   FlatList,
   Linking,
   StatusBar,
@@ -54,8 +55,9 @@ const SharedWishListDetailScreen = ({route, navigation}: any) => {
       await fetchSharedWishListItems(userId, categoryName);
       setLoading(false);
     };
-
-    fetchData();
+    if (userId && categoryName) {
+      fetchData();
+    }
   }, [fetchSharedWishListItems]);
 
   // other functions

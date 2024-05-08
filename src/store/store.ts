@@ -10,9 +10,10 @@ import {
   fetchCategoryListFromFirebase,
   fetchSharedWishListFromFirebase,
   fetchSharedWishListItemsFromFirebase,
-  removeFromSharedWishListInFirebase
+  removeFromSharedWishListInFirebase,
+  addToSharedWishListInFirebase
 } from "./firebase-functions";
-import { CategoryItem, SettingsType, SharedWishListItem, UserType, WishListItem } from './types';
+import { AlertMessageDetailItem, CategoryItem, SettingsType, SharedWishListItem, UserType, WishListItem } from './types';
 import axios from 'axios';
 import { parseHTMLContent } from '../utils/parsehtml';
 import { getTitleFromText, isConnectedToNetwork, showToast } from '../utils/common';
@@ -27,7 +28,8 @@ interface StoreState {
   WebPageContent: string;
   Settings: SettingsType;
   SharedWishList: SharedWishListItem[];
-  SharedWishListItems: WishListItem[],
+  SharedWishListItems: WishListItem[];
+  AlertMessageDetails: { title: string, message: string, action: any};
   setUserDetail: (user: any) => void;
   fetchWishListItems: (user: any) => Promise<void>;
   fetchCateogryList: (user: any) => Promise<void>;
@@ -40,6 +42,7 @@ interface StoreState {
   fetchSharedWishList: (user: any) => Promise<void>;
   fetchSharedWishListItems: (userId: string, category: string) => Promise<void>;
   removeFromSharedWishList: (user: any, sharedWishListId: string) => Promise<void>;
+  addToSharedWishList: (user: any, categoryId: string) => Promise<void>;
 }
 
 
@@ -52,6 +55,7 @@ export const useStore = create<StoreState>(
       SharedWishList: [],
       SharedWishListItems: [],
       WebPageContent: '',
+      AlertMessageDetails: {title: '', message: '', action: ''},
       Settings: {themeMode: "Automatic", language: "English"},
       setUserDetail: async(user: any) => {
         set({UserDetail: user})
@@ -191,10 +195,21 @@ export const useStore = create<StoreState>(
         try {
         await removeFromSharedWishListInFirebase(sharedWishListId, user.uid);
         
-        // Fetch updated wishlist items from Firebase
+        // Fetch updated SharedWishlist items from Firebase
         await get().fetchSharedWishList(user);
         } catch (error) {
         console.error("Error Deleteting Shared WishList", error);
+        }
+      },
+      addToSharedWishList: async(user: any, categoryId:any) => {
+        try {
+          const shareWishListMsg = await addToSharedWishListInFirebase(categoryId, user.uid);
+          
+          set({AlertMessageDetails: shareWishListMsg});
+          // Fetch updated SharedWishlist items from Firebase
+          await get().fetchSharedWishList(user);
+        } catch (error) {
+        console.error("Error Updating data", error);
         }
       },
     }),

@@ -1,4 +1,5 @@
 import {
+  Alert,
   FlatList,
   Linking,
   StatusBar,
@@ -27,13 +28,21 @@ import {useBottomTabBarHeight} from '@react-navigation/bottom-tabs';
 const SharedWishListScreen = ({route, navigation}: any) => {
   // state
   const [refreshing, setRefreshing] = useState(false);
+  const categoryId = route?.params?.categoryId;
+  const categoryName = route?.params?.name;
 
   // Store
   const UserDetail = useStore((state: any) => state.UserDetail);
   const themeColor = useOfflineStore((state: any) => state.themeColor);
   const sharedWishList = useStore((state: any) => state.SharedWishList);
+  const AlertMessageDetails = useStore(
+    (state: any) => state.AlertMessageDetails,
+  );
   const fetchSharedWishList = useStore(
     (state: any) => state.fetchSharedWishList,
+  );
+  const addToSharedWishList = useStore(
+    (state: any) => state.addToSharedWishList,
   );
 
   // Other variables
@@ -41,6 +50,40 @@ const SharedWishListScreen = ({route, navigation}: any) => {
   const tabBarHeight = useBottomTabBarHeight();
 
   // use Effect
+  React.useEffect(() => {
+    if (categoryId) {
+      Alert.alert(
+        'Confirmation',
+        `Do you wanna add '${categoryName}' to shared wishlist?`,
+        [
+          {
+            text: 'Cancel',
+            style: 'cancel',
+          },
+          {
+            text: 'Yes',
+            onPress: async () => {
+              console.log('Yes');
+              await addToSharedWishList(UserDetail, categoryId);
+            },
+          },
+        ],
+      );
+    }
+  }, [categoryId]);
+
+  // use Effect to manage alert
+  React.useEffect(() => {
+    console.log(AlertMessageDetails);
+    if (AlertMessageDetails.message) {
+      Alert.alert(AlertMessageDetails.title, AlertMessageDetails.message, [
+        {
+          text: 'Ok',
+        },
+      ]);
+    }
+  }, [AlertMessageDetails]);
+
   React.useEffect(() => {
     fetchSharedWishList(UserDetail);
   }, [fetchSharedWishList]);

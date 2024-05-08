@@ -1,5 +1,6 @@
 #import "AppDelegate.h"
 #import <Firebase.h> // For Firebase setup
+#import <React/RCTLinkingManager.h> // for Deep Linking
 
 #import <React/RCTBundleURLProvider.h>
 #import "RNSplashScreen.h" // for react native splash screen
@@ -31,6 +32,23 @@
 #else
   return [[NSBundle mainBundle] URLForResource:@"main" withExtension:@"jsbundle"];
 #endif
+}
+
+// for Deep Linking
+- (BOOL)application:(UIApplication *)application
+   openURL:(NSURL *)url
+   options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options
+{
+  return [RCTLinkingManager application:application openURL:url options:options];
+}
+
+// for the Deep Linking (universal app)
+- (BOOL)application:(UIApplication *)application continueUserActivity:(nonnull NSUserActivity *)userActivity
+ restorationHandler:(nonnull void (^)(NSArray<id<UIUserActivityRestoring>> * _Nullable))restorationHandler
+{
+ return [RCTLinkingManager application:application
+                  continueUserActivity:userActivity
+                    restorationHandler:restorationHandler];
 }
 
 @end

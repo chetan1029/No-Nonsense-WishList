@@ -6,19 +6,30 @@ import CustomIcon from './CustomIcon';
 
 interface GradientBGIconProps {
   name: string;
-  color: string;
+  themeColor: any;
   size: number;
 }
 
-const GradientBGIcon: React.FC<GradientBGIconProps> = ({name, color, size}) => {
+const GradientBGIcon: React.FC<GradientBGIconProps> = ({
+  name,
+  themeColor,
+  size,
+}) => {
   return (
-    <View style={styles.Container}>
+    <View
+      style={[
+        styles.Container,
+        {
+          borderColor: themeColor.primaryBgLight,
+          backgroundColor: themeColor.priamryDarkBg,
+        },
+      ]}>
       <LinearGradient
         start={{x: 0, y: 0}}
         end={{x: 1, y: 1}}
-        colors={[COLORS.primaryGreyHex, COLORS.primaryBlackHex]}
+        colors={[themeColor.primaryBgLight, themeColor.primaryBg]}
         style={styles.LinearGradientBG}>
-        <CustomIcon name={name} color={color} size={size} />
+        <CustomIcon name={name} color={themeColor.secondaryText} size={size} />
       </LinearGradient>
     </View>
   );
@@ -27,11 +38,9 @@ const GradientBGIcon: React.FC<GradientBGIconProps> = ({name, color, size}) => {
 const styles = StyleSheet.create({
   Container: {
     borderWidth: 2,
-    borderColor: COLORS.secondaryDarkGreyHex,
     borderRadius: SPACING.space_12,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: COLORS.secondaryDarkGreyHex,
     overflow: 'hidden',
   },
   LinearGradientBG: {
