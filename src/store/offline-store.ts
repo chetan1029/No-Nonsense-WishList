@@ -33,6 +33,13 @@ export const useOfflineStore = create<OfflineStoreState>(
         }));
         set(produce((state) =>{
           state.themeColor = settings.themeMode == "dark" ? COLORSCHEME.dark : COLORSCHEME.light; // Update theme color immutably
+          if(settings.themeMode == "dark"){
+            Appearance.setColorScheme("dark");
+          }else if(settings.themeMode == "light"){
+            Appearance.setColorScheme("light");
+          }else{
+            Appearance.setColorScheme("");
+          }
         }))
       },
     }),
