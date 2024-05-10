@@ -1,6 +1,5 @@
 import React from 'react';
 import {StyleSheet, Text, View, Image, Dimensions} from 'react-native';
-import LinearGradient from 'react-native-linear-gradient';
 import {
   BORDERRADIUS,
   COLORS,

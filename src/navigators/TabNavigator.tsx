@@ -1,8 +1,7 @@
 import React, {useEffect} from 'react';
 import {StyleSheet, Text, View} from 'react-native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import {COLORS, FONTSIZE, SPACING} from '../theme/theme';
-import {BlurView} from '@react-native-community/blur';
+import {FONTSIZE} from '../theme/theme';
 import PurchaseScreen from '../screens/PurchaseScreen';
 import AddWishListScreen from '../screens/AddWishScreen';
 import WishListScreen from '../screens/WishListScreen';
@@ -13,11 +12,7 @@ import {useTranslation} from 'react-i18next';
 import i18n from '../utils/i18n';
 import {useOfflineStore} from '../store/offline-store';
 import {getFocusedRouteNameFromRoute} from '@react-navigation/native';
-import {
-  SafeAreaProvider,
-  useSafeAreaInsets,
-} from 'react-native-safe-area-context';
-import SharedWishListScreen from '../screens/SharedWishListScreen';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import SharedWishListStackScreen from './SharedWishListStackScreen';
 
 const Tab = createBottomTabNavigator();

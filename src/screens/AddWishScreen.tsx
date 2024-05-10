@@ -24,6 +24,9 @@ import {useStore} from '../store/store';
 import {useOfflineStore} from '../store/offline-store';
 import {Formik} from 'formik';
 import * as yup from 'yup';
+import 'intl-pluralrules';
+import {useTranslation} from 'react-i18next';
+import i18n from '../utils/i18n';
 
 // Components
 import HeaderBar from '../components/HeaderBar';
@@ -58,6 +61,10 @@ const AddWishListScreen = ({navigation}: any) => {
   const fetchWishListItems = useStore((state: any) => state.fetchWishListItems);
   const UserDetail = useStore((state: any) => state.UserDetail);
   const themeColor = useOfflineStore((state: any) => state.themeColor);
+  const Settings = useOfflineStore((state: any) => state.Settings);
+
+  // Const
+  const {t} = useTranslation();
 
   // Use effect to fetch wish list
   useEffect(() => {
@@ -91,6 +98,13 @@ const AddWishListScreen = ({navigation}: any) => {
       setSelectCategory(newCategory);
     }
   };
+
+  // use effect to use language
+  useEffect(() => {
+    if (Settings.language) {
+      i18n.changeLanguage(Settings.language);
+    }
+  }, [Settings]);
 
   return (
     <KeyboardAvoidingView
@@ -156,10 +170,10 @@ const AddWishListScreen = ({navigation}: any) => {
                 navigation.navigate('WishList', {
                   category: selectCategory,
                 });
-                showToast(`Added to WishList`, 'success');
+                showToast(t('addedToWishlist'), 'success');
               } catch (error) {
                 console.error('Error adding to wishlist:', error);
-                showToast('Error adding to Wishlist', 'error');
+                showToast(t('errorAddingToWishlist'), 'error');
               } finally {
                 setLoading(false);
               }
@@ -183,7 +197,7 @@ const AddWishListScreen = ({navigation}: any) => {
                     styles.ScreenTitle,
                     {color: themeColor.secondaryText},
                   ]}>
-                  Find the Gift You Deserve
+                  {t('addToWishListTitle')}
                 </Text>
                 <AddLinkInput
                   value={values.url}
@@ -196,6 +210,7 @@ const AddWishListScreen = ({navigation}: any) => {
                   resetUrlField={() => {
                     handleChange('url')('');
                   }}
+                  placeholder={t('pasteYourLink')}
                   urlError={errors.url}
                   themeColor={themeColor}
                 />
@@ -237,7 +252,7 @@ const AddWishListScreen = ({navigation}: any) => {
                           {backgroundColor: themeColor.primaryBgLight},
                         ]}>
                         <TextInput
-                          placeholder="Add new ..."
+                          placeholder={t('addNew')}
                           placeholderTextColor={COLORS.primaryLightGreyHex}
                           style={[
                             styles.TextInputContainer,
@@ -255,7 +270,9 @@ const AddWishListScreen = ({navigation}: any) => {
                       <TouchableOpacity
                         style={styles.ButtonContainer}
                         onPress={() => handleSubmit()}>
-                        <Text style={styles.ButtonText}>Add to WishList</Text>
+                        <Text style={styles.ButtonText}>
+                          {t('addToWishList')}
+                        </Text>
                       </TouchableOpacity>
                     </View>
                   </>

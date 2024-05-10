@@ -25,6 +25,7 @@ interface SwipeableRowProps {
   leftSwipeIcon: string;
   onSwipeableOpen: (direction: string, id: string, title: string) => void;
   screenType: string;
+  t: any;
 }
 
 const SwipeableRow: React.FC<SwipeableRowProps> = ({
@@ -36,6 +37,7 @@ const SwipeableRow: React.FC<SwipeableRowProps> = ({
   leftSwipeIcon,
   onSwipeableOpen,
   screenType,
+  t,
 }) => {
   const swipeableRowRef = useRef<Swipeable>(null);
 
@@ -209,17 +211,18 @@ const SwipeableRow: React.FC<SwipeableRowProps> = ({
 
   const handleDelete = async () => {
     // Implement delete category logic here
-    Alert.alert('Confirmation', `Are you sure you want to delete this item?`, [
+    Alert.alert(t('confirmation'), t('wannaDeleteItem'), [
       {
-        text: 'Cancel',
+        text: t('cancel'),
         style: 'cancel',
       },
       {
-        text: 'Delete',
+        text: t('delete'),
+        style: 'destructive',
         onPress: () => {
           try {
             deleteFromWishList(id, UserDetail);
-            showToast(`${title} is Deleted`);
+            showToast(t('isDeleted', {title}));
           } catch (error: any) {
             console.error('Error Deleting:', error.message);
           }

@@ -1,20 +1,6 @@
 import React from 'react';
-import {
-  StyleSheet,
-  Text,
-  View,
-  Image,
-  Dimensions,
-  TouchableOpacity,
-} from 'react-native';
-import LinearGradient from 'react-native-linear-gradient';
-import {
-  BORDERRADIUS,
-  COLORS,
-  FONTFAMILY,
-  FONTSIZE,
-  SPACING,
-} from '../theme/theme';
+import {StyleSheet, Text, View, TouchableOpacity} from 'react-native';
+import {BORDERRADIUS, SPACING} from '../theme/theme';
 import Feather from 'react-native-vector-icons/Feather';
 
 interface SharedWishListCardProps {

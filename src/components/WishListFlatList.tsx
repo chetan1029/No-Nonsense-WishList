@@ -4,10 +4,7 @@ import {
   View,
   FlatList,
   Text,
-  ActivityIndicator,
   TouchableOpacity,
-  Button,
-  Modal,
   RefreshControl,
 } from 'react-native';
 import React, {useState} from 'react';
@@ -29,6 +26,7 @@ interface WishListFlatListProps {
   navigation: any;
   themeColor: any;
   screenType: string;
+  t: any;
 }
 
 const WishListFlatList: React.FC<WishListFlatListProps> = ({
@@ -44,6 +42,7 @@ const WishListFlatList: React.FC<WishListFlatListProps> = ({
   navigation,
   themeColor,
   screenType,
+  t,
 }) => {
   const [modalVisible, setModalVisible] = useState(false);
   const closeModal = () => {
@@ -78,7 +77,7 @@ const WishListFlatList: React.FC<WishListFlatListProps> = ({
         horizontal={false}
         ListEmptyComponent={
           <View style={styles.EmptyListContainer}>
-            <Text style={styles.CategoryText}>No WishList Item Available</Text>
+            <Text style={styles.CategoryText}>{t('noWishlistItems')}</Text>
           </View>
         }
         showsVerticalScrollIndicator={false}
@@ -94,7 +93,8 @@ const WishListFlatList: React.FC<WishListFlatListProps> = ({
               url={item.url}
               leftSwipeIcon={leftSwipeIcon}
               onSwipeableOpen={handleSwipeableOpen}
-              screenType={screenType}>
+              screenType={screenType}
+              t={t}>
               <WishListCard
                 id={item.id}
                 index={item.index}

@@ -1,22 +1,5 @@
-import {
-  Alert,
-  FlatList,
-  Linking,
-  StatusBar,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
-import React, {useRef, useState} from 'react';
-import {
-  BORDERRADIUS,
-  COLORS,
-  FONTFAMILY,
-  FONTSIZE,
-  SPACING,
-} from '../theme/theme';
-import Feather from 'react-native-vector-icons/Feather';
+import {Alert, FlatList, StatusBar, StyleSheet, View} from 'react-native';
+import React, {useEffect, useRef, useState} from 'react';
 
 // Components
 import HeaderBar from '../components/HeaderBar';
@@ -24,6 +7,9 @@ import {useOfflineStore} from '../store/offline-store';
 import {useStore} from '../store/store';
 import SharedWishListFlatList from '../components/SharedWishListFlatList';
 import {useBottomTabBarHeight} from '@react-navigation/bottom-tabs';
+import 'intl-pluralrules';
+import {useTranslation} from 'react-i18next';
+import i18n from '../utils/i18n';
 
 const SharedWishListScreen = ({route, navigation}: any) => {
   // state
@@ -44,47 +30,47 @@ const SharedWishListScreen = ({route, navigation}: any) => {
   const addToSharedWishList = useStore(
     (state: any) => state.addToSharedWishList,
   );
+  const Settings = useOfflineStore((state: any) => state.Settings);
 
   // Other variables
   const ListRef: any = useRef<FlatList>();
   const tabBarHeight = useBottomTabBarHeight();
 
+  // Const
+  const {t} = useTranslation();
+
   // use Effect
-  React.useEffect(() => {
+  useEffect(() => {
     if (categoryId) {
-      Alert.alert(
-        'Confirmation',
-        `Do you wanna add '${categoryName}' to shared wishlist?`,
-        [
-          {
-            text: 'Cancel',
-            style: 'cancel',
+      Alert.alert(t('confirmation'), t('wannaAddToWishlist', {categoryName}), [
+        {
+          text: t('cancel'),
+          style: 'cancel',
+        },
+        {
+          text: t('yes'),
+          onPress: async () => {
+            console.log('Yes');
+            await addToSharedWishList(UserDetail, categoryId, t);
           },
-          {
-            text: 'Yes',
-            onPress: async () => {
-              console.log('Yes');
-              await addToSharedWishList(UserDetail, categoryId);
-            },
-          },
-        ],
-      );
+        },
+      ]);
     }
   }, [categoryId]);
 
   // use Effect to manage alert
-  React.useEffect(() => {
+  useEffect(() => {
     console.log(AlertMessageDetails);
     if (AlertMessageDetails.message) {
       Alert.alert(AlertMessageDetails.title, AlertMessageDetails.message, [
         {
-          text: 'Ok',
+          text: t('ok'),
         },
       ]);
     }
   }, [AlertMessageDetails]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     fetchSharedWishList(UserDetail);
   }, [fetchSharedWishList]);
 
@@ -95,12 +81,19 @@ const SharedWishListScreen = ({route, navigation}: any) => {
     setRefreshing(false);
   };
 
+  // use effect to use language
+  useEffect(() => {
+    if (Settings.language) {
+      i18n.changeLanguage(Settings.language);
+    }
+  }, [Settings]);
+
   return (
     <View
       style={[styles.ScreenContainer, {backgroundColor: themeColor.primaryBg}]}>
       <StatusBar backgroundColor={themeColor.primaryBg}></StatusBar>
       {/* App Header */}
-      <HeaderBar title="Shared WishList" themeColor={themeColor} />
+      <HeaderBar title={t('sharedWishlist')} themeColor={themeColor} />
 
       {/* SharedWishList Flatlist */}
       <SharedWishListFlatList
@@ -111,6 +104,7 @@ const SharedWishListScreen = ({route, navigation}: any) => {
         refreshing={refreshing}
         navigation={navigation}
         themeColor={themeColor}
+        placeholder={t('noWishlistItems')}
       />
     </View>
   );
