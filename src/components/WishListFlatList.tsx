@@ -111,7 +111,7 @@ const WishListFlatList: React.FC<WishListFlatListProps> = ({
           <RefreshControl
             refreshing={refreshing}
             onRefresh={onRefresh}
-            title="Pull to refresh"
+            title={t('pullToRefresh')}
             tintColor={themeColor.secondaryText}
             titleColor={themeColor.secondaryText}
           />

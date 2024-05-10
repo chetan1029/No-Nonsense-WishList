@@ -17,6 +17,7 @@ const en = {
       moveToPurchase: '{{title}} move to purchase',
       wannaDeleteItem: 'Are you sure you want to delete this item?',
       isDeleted: '{{title}} is deleted',
+      pullToRefresh: 'Pull to refresh',
       // Purchase List
       myPurchases: 'My Purchases',
       searchWishlists: 'Find Your Wish...',

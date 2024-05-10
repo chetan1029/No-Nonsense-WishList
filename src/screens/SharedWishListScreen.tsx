@@ -105,6 +105,7 @@ const SharedWishListScreen = ({route, navigation}: any) => {
         navigation={navigation}
         themeColor={themeColor}
         placeholder={t('noWishlistItems')}
+        t={t}
       />
     </View>
   );

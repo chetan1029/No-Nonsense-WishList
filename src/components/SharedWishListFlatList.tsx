@@ -19,6 +19,7 @@ interface SharedWishListFlatListProps {
   navigation: any;
   themeColor: any;
   placeholder: string;
+  t: any;
 }
 
 const SharedWishListFlatList: React.FC<SharedWishListFlatListProps> = ({
@@ -30,6 +31,7 @@ const SharedWishListFlatList: React.FC<SharedWishListFlatListProps> = ({
   navigation,
   themeColor,
   placeholder,
+  t,
 }) => {
   const [modalVisible, setModalVisible] = useState(false);
   const closeModal = () => {
@@ -64,7 +66,7 @@ const SharedWishListFlatList: React.FC<SharedWishListFlatListProps> = ({
         <RefreshControl
           refreshing={refreshing}
           onRefresh={onRefresh}
-          title="Pull to refresh"
+          title={t('pullToRefresh')}
           tintColor={themeColor.secondaryText}
           titleColor={themeColor.secondaryText}
         />

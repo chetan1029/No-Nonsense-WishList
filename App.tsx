@@ -9,14 +9,12 @@ import {
   SafeAreaProvider,
   useSafeAreaInsets,
 } from 'react-native-safe-area-context';
-import {COLORS} from './src/theme/theme';
 import LinearGradient from 'react-native-linear-gradient';
 import {TransitionPresets, createStackNavigator} from '@react-navigation/stack';
 import ModalScreen from './src/screens/ModalScreen';
 import auth from '@react-native-firebase/auth';
 import {useStore} from './src/store/store';
 import {useOfflineStore} from './src/store/offline-store';
-import SharedWishListDetailScreen from './src/screens/SharedWishListDetailScreen';
 import SharedModalScreen from './src/screens/SharedModalScreen';
 import {Text} from 'react-native';
 
