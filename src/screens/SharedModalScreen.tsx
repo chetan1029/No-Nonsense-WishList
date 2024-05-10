@@ -5,7 +5,6 @@ import {
   Pressable,
   StyleSheet,
   FlatList,
-  Share,
   TouchableOpacity,
   Alert,
 } from 'react-native';
@@ -14,10 +13,10 @@ import {COLORS, SPACING} from '../theme/theme';
 import Feather from 'react-native-vector-icons/Feather';
 import {useStore} from '../store/store';
 import {useOfflineStore} from '../store/offline-store';
-import {useEffect} from 'react';
 import 'intl-pluralrules';
 import {useTranslation} from 'react-i18next';
 import i18n from '../utils/i18n';
+import {useEffect} from 'react';
 
 type ItemProps = {
   itemTitle: string;
@@ -39,75 +38,29 @@ const Item = ({
   t,
 }: ItemProps) => {
   // Store
-  const deleteCategory = useStore((state: any) => state.deleteCategory);
-  const updateCategory = useStore((state: any) => state.updateCategory);
+  const removeFromSharedWishList = useStore(
+    (state: any) => state.removeFromSharedWishList,
+  );
   const UserDetail = useStore((state: any) => state.UserDetail);
-  const CategoryList = useStore((state: any) => state.CategoryList);
 
-  const handleShare = async (title: string, action: string) => {
-    const categoryItem = CategoryList.find(
-      (c: {name: string}) => c.name === title,
-    );
-    let link = '';
-    if (categoryItem && categoryItem.id) {
-      //link = 'https://sports-afaf5.web.app/' + categoryItem.id;
-      link = 'wishlist://wishlist/' + categoryItem.id + '/' + categoryItem.name;
-    }
-    if (action == 'share') {
-      try {
-        const shareOptions = {
-          url: link,
-        };
-
-        const result = await Share.share(shareOptions);
-
-        if (result.action === Share.sharedAction) {
-          console.log('Shared successfully');
-        } else if (result.action === Share.dismissedAction) {
-          console.log('Share cancelled');
-        }
-      } catch (error: any) {
-        console.error('Error sharing:', error.message);
-      }
-      navigation.goBack();
-    } else if (action === 'edit') {
-      // Implement edit category logic here
-      Alert.prompt(
-        t('editCategory'),
-        t('newCategoryName'),
-        [
-          {
-            text: t('cancel'),
-            style: 'cancel',
-          },
-          {
-            text: t('save'),
-            onPress: async newCategory => {
-              await updateCategory(title, newCategory, UserDetail);
-              navigation.navigate('WishList', {
-                category: newCategory,
-              });
-            },
-          },
-        ],
-        'plain-text', // Specify the input type
-        title, // Default value for the input field
-      );
-    } else if (action === 'delete') {
+  const handleAction = async (
+    title: string,
+    action: string,
+    sharedWishListId: string,
+  ) => {
+    if (action === 'delete') {
       // Implement delete category logic here
-      Alert.alert(t('confirmation'), t('wannaDeleteCategory', {title}), [
+      Alert.alert(t('confirmation'), t('wannaRemoveWishlist', {title}), [
         {
           text: t('cancel'),
           style: 'cancel',
         },
         {
-          text: t('delete'),
+          text: t('remove'),
           style: 'destructive',
           onPress: async () => {
-            await deleteCategory(title, UserDetail);
-            navigation.navigate('WishList', {
-              index: 0,
-            });
+            await removeFromSharedWishList(UserDetail, sharedWishListId);
+            navigation.navigate('SharedWishListScreen');
           },
         },
       ]);
@@ -116,7 +69,13 @@ const Item = ({
 
   return (
     <TouchableOpacity
-      onPress={() => handleShare(categoryIndex.category, action)}>
+      onPress={() =>
+        handleAction(
+          categoryIndex.category,
+          action,
+          categoryIndex.sharedWishListId,
+        )
+      }>
       <View style={[styles.item, {backgroundColor: themeColor.priamryDarkBg}]}>
         <View style={styles.iconContainer}>
           <Feather
@@ -133,34 +92,17 @@ const Item = ({
   );
 };
 
-function ModalScreen({navigation, route}: any) {
-  // state
-  const {current} = useCardAnimation();
-  const categoryIndex = route?.params?.categoryIndex;
-
+function SharedModalScreen({navigation, route}: any) {
   // store
-  const themeColor = useOfflineStore((state: any) => state.themeColor);
   const Settings = useOfflineStore((state: any) => state.Settings);
 
-  // const
+  // Const
   const {t} = useTranslation();
 
   const DATA = [
     {
       id: '1',
-      title: t('editCategory'),
-      icon: 'edit',
-      action: 'edit',
-    },
-    {
-      id: '2',
-      title: t('share'),
-      icon: 'share',
-      action: 'share',
-    },
-    {
-      id: '3',
-      title: t('delete'),
+      title: t('removeWishList'),
       icon: 'trash',
       action: 'delete',
     },
@@ -172,6 +114,10 @@ function ModalScreen({navigation, route}: any) {
       i18n.changeLanguage(Settings.language);
     }
   }, [Settings]);
+
+  const {current} = useCardAnimation();
+  const categoryIndex = route?.params?.categoryIndex;
+  const themeColor = useOfflineStore((state: any) => state.themeColor);
 
   return (
     <View style={styles.modalContainer}>
@@ -229,7 +175,7 @@ function ModalScreen({navigation, route}: any) {
   );
 }
 
-export default ModalScreen;
+export default SharedModalScreen;
 
 const styles = StyleSheet.create({
   modalContainer: {

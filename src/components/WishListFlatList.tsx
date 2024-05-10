@@ -4,10 +4,8 @@ import {
   View,
   FlatList,
   Text,
-  ActivityIndicator,
   TouchableOpacity,
-  Button,
-  Modal,
+  RefreshControl,
 } from 'react-native';
 import React, {useState} from 'react';
 import {COLORS, FONTFAMILY, FONTSIZE, SPACING} from '../theme/theme';
@@ -26,6 +24,9 @@ interface WishListFlatListProps {
   refreshing: boolean; // indicator for refreshing
   showMoreModal: boolean;
   navigation: any;
+  themeColor: any;
+  screenType: string;
+  t: any;
 }
 
 const WishListFlatList: React.FC<WishListFlatListProps> = ({
@@ -39,6 +40,9 @@ const WishListFlatList: React.FC<WishListFlatListProps> = ({
   refreshing,
   showMoreModal,
   navigation,
+  themeColor,
+  screenType,
+  t,
 }) => {
   const [modalVisible, setModalVisible] = useState(false);
   const closeModal = () => {
@@ -46,15 +50,25 @@ const WishListFlatList: React.FC<WishListFlatListProps> = ({
   };
   return (
     <View style={styles.dropdownButtonContainer}>
-      {showMoreModal && (
+      {showMoreModal && categoryIndex?.category && (
         <TouchableOpacity
           onPress={() => {
-            navigation.navigate('ModalScreen', {categoryIndex}, onRefresh);
+            screenType === 'WishList'
+              ? navigation.navigate(
+                  'ModalScreen',
+                  {categoryIndex: categoryIndex},
+                  onRefresh,
+                )
+              : navigation.navigate(
+                  'SharedModalScreen',
+                  {categoryIndex: categoryIndex},
+                  onRefresh,
+                );
           }}>
           <Feather
             name="more-horizontal"
             size={24}
-            color={COLORS.primaryWhiteHex}
+            color={themeColor.secondaryText}
           />
         </TouchableOpacity>
       )}
@@ -63,7 +77,7 @@ const WishListFlatList: React.FC<WishListFlatListProps> = ({
         horizontal={false}
         ListEmptyComponent={
           <View style={styles.EmptyListContainer}>
-            <Text style={styles.CategoryText}>No WishList Item Available</Text>
+            <Text style={styles.CategoryText}>{t('noWishlistItems')}</Text>
           </View>
         }
         showsVerticalScrollIndicator={false}
@@ -78,24 +92,29 @@ const WishListFlatList: React.FC<WishListFlatListProps> = ({
               title={item.title}
               url={item.url}
               leftSwipeIcon={leftSwipeIcon}
-              onSwipeableOpen={handleSwipeableOpen}>
+              onSwipeableOpen={handleSwipeableOpen}
+              screenType={screenType}
+              t={t}>
               <WishListCard
                 id={item.id}
                 index={item.index}
                 image={item.image}
                 title={item.title ? item.title : item.url}
                 price={item.price}
+                themeColor={themeColor}
               />
             </SwipeableRow>
           );
         }}
         style={{marginBottom: tabBarHeight}}
-        onRefresh={onRefresh}
-        refreshing={refreshing}
-        ListHeaderComponent={
-          refreshing ? (
-            <ActivityIndicator size="large" color={COLORS.primaryWhiteHex} />
-          ) : null
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            title="Pull to refresh"
+            tintColor={themeColor.secondaryText}
+            titleColor={themeColor.secondaryText}
+          />
         }
       />
     </View>
@@ -112,7 +131,7 @@ const styles = StyleSheet.create({
     marginBottom: SPACING.space_4,
   },
   FlatListContainer: {
-    gap: SPACING.space_15,
+    gap: SPACING.space_10,
     paddingVertical: SPACING.space_15,
     paddingHorizontal: SPACING.space_20,
     flexGrow: 1,

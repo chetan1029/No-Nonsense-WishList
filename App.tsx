@@ -1,6 +1,5 @@
 import React, {useEffect, useState} from 'react';
 import {NavigationContainer} from '@react-navigation/native';
-import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import TabNavigator from './src/navigators/TabNavigator';
 import SplashScreen from 'react-native-splash-screen';
 import 'react-native-gesture-handler';
@@ -10,16 +9,36 @@ import {
   SafeAreaProvider,
   useSafeAreaInsets,
 } from 'react-native-safe-area-context';
-import {View} from 'react-native';
 import {COLORS} from './src/theme/theme';
 import LinearGradient from 'react-native-linear-gradient';
 import {TransitionPresets, createStackNavigator} from '@react-navigation/stack';
-import {Screen} from 'react-native-screens';
 import ModalScreen from './src/screens/ModalScreen';
 import auth from '@react-native-firebase/auth';
 import {useStore} from './src/store/store';
+import {useOfflineStore} from './src/store/offline-store';
+import SharedWishListDetailScreen from './src/screens/SharedWishListDetailScreen';
+import SharedModalScreen from './src/screens/SharedModalScreen';
+import {Text} from 'react-native';
 
 const Stack = createStackNavigator();
+
+// Linking logic
+const linking = {
+  prefixes: ['wishlist://', 'https://sports-afaf5.web.app'],
+  config: {
+    screens: {
+      Tab: {
+        screens: {
+          Friends: {
+            screens: {
+              SharedWishListScreen: 'wishlist/:categoryId/:name',
+            },
+          },
+        },
+      },
+    },
+  },
+};
 
 const App = () => {
   // state
@@ -66,30 +85,37 @@ const App = () => {
 };
 
 const AppContent = () => {
+  // store
+  const themeColor = useOfflineStore((state: any) => state.themeColor);
+
   const insets = useSafeAreaInsets();
   return (
     <LinearGradient
-      colors={[COLORS.bgBlackRGBA, COLORS.bgGreyRGBA]}
+      colors={[themeColor.primaryBg, themeColor.primaryBg]}
       style={{
         flex: 1,
         justifyContent: 'space-between',
         // Paddings to handle safe area
-        paddingTop: insets.top,
-        paddingBottom: insets.bottom,
-        paddingLeft: insets.left,
-        paddingRight: insets.right,
       }}>
       <GestureHandlerRootView style={{flex: 1}}>
-        <NavigationContainer>
-          <Stack.Navigator
-            screenOptions={{
-              headerMode: 'screen',
-              headerShown: false,
-              presentation: 'transparentModal',
-              ...TransitionPresets.ModalPresentationIOS,
-            }}>
-            <Stack.Screen name="Tab" component={TabNavigator}></Stack.Screen>
-            <Stack.Screen name="ModalScreen" component={ModalScreen} />
+        <NavigationContainer
+          linking={linking} // Error due to formating but it still works
+          fallback={<Text>Loading...</Text>}>
+          <Stack.Navigator>
+            <Stack.Group
+              screenOptions={{
+                headerMode: 'screen',
+                headerShown: false,
+                presentation: 'transparentModal',
+                ...TransitionPresets.ModalPresentationIOS,
+              }}>
+              <Stack.Screen name="Tab" component={TabNavigator}></Stack.Screen>
+              <Stack.Screen name="ModalScreen" component={ModalScreen} />
+              <Stack.Screen
+                name="SharedModalScreen"
+                component={SharedModalScreen}
+              />
+            </Stack.Group>
           </Stack.Navigator>
         </NavigationContainer>
         <Toast />

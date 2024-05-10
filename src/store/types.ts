@@ -1,7 +1,6 @@
 export interface CategoryItem{
     id: string,
     name: string,
-    index: number,
 }
 
 export interface WishListItem{
@@ -20,4 +19,24 @@ export interface UserType{
     displayName: string,
     email: string,
     isAnonymous: boolean,
+}
+
+export interface SettingsType{
+    themeMode: string,
+    language: string
+}
+
+export interface SharedWishListItem{
+    id: string,
+    categoryId: string,
+    categoryName: string,
+    sharedWithUserId: string,
+    userId: string,
+    createdDate: any,
+}
+
+export interface AlertMessageDetailItem{
+    message: string,
+    alertType: string,
+    action: any,
 }

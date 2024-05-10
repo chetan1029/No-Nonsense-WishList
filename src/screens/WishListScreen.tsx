@@ -7,9 +7,12 @@ import {
 } from 'react-native';
 import React, {useEffect, useRef, useState} from 'react';
 import {useStore} from '../store/store';
+import {useOfflineStore} from '../store/offline-store';
 import {useBottomTabBarHeight} from '@react-navigation/bottom-tabs';
-import {COLORS, FONTFAMILY, FONTSIZE, SPACING} from '../theme/theme';
 import _ from 'lodash';
+import 'intl-pluralrules';
+import {useTranslation} from 'react-i18next';
+import i18n from '../utils/i18n';
 
 // Components
 import HeaderBar from '../components/HeaderBar';
@@ -35,10 +38,17 @@ const WishListScreen = ({route, navigation}: any) => {
   const addToPurchaseList = useStore((state: any) => state.addToPurchaseList);
   const fetchWishListItems = useStore((state: any) => state.fetchWishListItems);
   const UserDetail = useStore((state: any) => state.UserDetail);
+  const CategoryList = useStore((state: any) => state.CategoryList);
+  const fetchCateogryList = useStore((state: any) => state.fetchCateogryList);
+  const themeColor = useOfflineStore((state: any) => state.themeColor);
+  const Settings = useOfflineStore((state: any) => state.Settings);
 
   // Other variables
   const ListRef: any = useRef<FlatList>();
   const tabBarHeight = useBottomTabBarHeight();
+
+  // Const
+  const {t} = useTranslation();
 
   // Use effect to set category list
   useEffect(() => {
@@ -51,11 +61,18 @@ const WishListScreen = ({route, navigation}: any) => {
   // Use effect to fetch set category index
   useEffect(() => {
     if (categories) {
-      if (route.params && route.params.category) {
-        setCategoryIndex({
-          index: categories.indexOf(route.params.category),
-          category: route.params.category,
-        });
+      if (route.params) {
+        if (route.params.category) {
+          setCategoryIndex({
+            index: categories.indexOf(route.params.category),
+            category: route.params.category,
+          });
+        } else if (route.params.index == 0) {
+          setCategoryIndex({
+            index: route.params.index,
+            category: categories[route.params.index],
+          });
+        }
       } else if (categoryIndex.index == 0) {
         setCategoryIndex({index: 0, category: categories[0]});
       }
@@ -68,12 +85,13 @@ const WishListScreen = ({route, navigation}: any) => {
       setLoading(true);
       if (UserDetail) {
         await fetchWishListItems(UserDetail);
+        await fetchCateogryList(UserDetail);
       }
       setLoading(false);
     };
 
     fetchData();
-  }, [fetchWishListItems, UserDetail]);
+  }, [fetchWishListItems, fetchCateogryList, UserDetail]);
 
   // Use effect to update sortedWishList after WishListItems change
   useEffect(() => {
@@ -85,7 +103,14 @@ const WishListScreen = ({route, navigation}: any) => {
       );
       setSortedWishList(updatedSortedWishList);
     }
-  }, [WishListItems, categoryIndex.category]);
+  }, [WishListItems, CategoryList, categoryIndex.category]);
+
+  // use effect to use language
+  useEffect(() => {
+    if (Settings.language) {
+      i18n.changeLanguage(Settings.language);
+    }
+  }, [Settings]);
 
   // functions
   const handleSwipeableOpen = (
@@ -95,16 +120,16 @@ const WishListScreen = ({route, navigation}: any) => {
   ) => {
     if (direction == 'left') {
       addToPurchaseList(id, UserDetail);
-      showToast(`${title} is Purchased`, 'success');
+      showToast(t('moveToPurchase', {title}), 'success');
     }
   };
 
   const onRefresh = async () => {
     setRefreshing(true);
     await fetchWishListItems(UserDetail);
-    setTimeout(() => {
-      setRefreshing(false);
-    }, 1000);
+    await fetchCateogryList(UserDetail);
+    setCategoryIndex(categoryIndex);
+    setRefreshing(false);
   };
 
   // Define debounced function outside of the component
@@ -136,18 +161,23 @@ const WishListScreen = ({route, navigation}: any) => {
   );
 
   return (
-    <View style={styles.ScreenContainer}>
-      <StatusBar backgroundColor={COLORS.primaryBlackHex}></StatusBar>
+    <View
+      style={[styles.ScreenContainer, {backgroundColor: themeColor.primaryBg}]}>
+      <StatusBar backgroundColor={themeColor.primaryBg}></StatusBar>
 
       {/* Overlay View with Opacity */}
-      <View style={styles.Overlay}></View>
+      <View
+        style={[
+          styles.Overlay,
+          {backgroundColor: themeColor.primaryBgOpacity5},
+        ]}></View>
 
       {/* App Header */}
-      <HeaderBar title="My WishList" />
+      <HeaderBar title={t('myWishlists')} themeColor={themeColor} />
 
       {loading ? (
         <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color={COLORS.primaryWhiteHex} />
+          <ActivityIndicator size="large" color={themeColor.secondaryText} />
         </View>
       ) : (
         <>
@@ -175,6 +205,9 @@ const WishListScreen = ({route, navigation}: any) => {
             refreshing={refreshing}
             showMoreModal={true}
             navigation={navigation}
+            themeColor={themeColor}
+            screenType="WishList"
+            t={t}
           />
         </>
       )}
@@ -187,14 +220,6 @@ export default WishListScreen;
 const styles = StyleSheet.create({
   ScreenContainer: {
     flex: 1,
-    backgroundColor: COLORS.primaryBlackHex,
-  },
-  ScreenTitle: {
-    fontSize: FONTSIZE.size_20,
-    fontFamily: FONTFAMILY.poppins_semibold,
-    color: COLORS.primaryWhiteHex,
-    paddingLeft: SPACING.space_20,
-    paddingBottom: SPACING.space_20,
   },
   loadingContainer: {
     flex: 1,
@@ -203,6 +228,5 @@ const styles = StyleSheet.create({
   },
   Overlay: {
     flex: 1,
-    backgroundColor: COLORS.primaryBlackRGBA,
   },
 });
