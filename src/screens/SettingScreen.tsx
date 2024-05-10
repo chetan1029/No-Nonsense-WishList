@@ -179,7 +179,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: SPACING.space_20,
     alignItems: 'center',
     justifyContent: 'space-between',
-    height: SPACING.space_20 * 2.5,
+    height: SPACING.space_20 * 3,
   },
   loadingContainer: {
     flex: 1,
@@ -187,7 +187,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   pickerIcon: {
-    marginVertical: SPACING.space_15,
+    marginVertical: SPACING.space_20,
   },
   titleContainer: {
     flexDirection: 'row',
@@ -204,13 +204,13 @@ const styles = StyleSheet.create({
 
 const pickerSelectStyles = StyleSheet.create({
   inputIOS: {
-    height: SPACING.space_20 * 2.5,
+    height: SPACING.space_20 * 3,
     fontFamily: FONTFAMILY.poppins_medium,
     fontSize: FONTSIZE.size_14,
     marginHorizontal: SPACING.space_20,
   },
   inputAndroid: {
-    height: SPACING.space_20 * 2.5,
+    height: SPACING.space_20 * 3,
     fontFamily: FONTFAMILY.poppins_medium,
     fontSize: FONTSIZE.size_14,
     marginHorizontal: SPACING.space_20,
