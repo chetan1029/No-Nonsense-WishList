@@ -3,52 +3,40 @@ import {
   View,
   Text,
   Pressable,
-  Button,
   StyleSheet,
   FlatList,
   Share,
   TouchableOpacity,
   Alert,
-  ActivityIndicator,
 } from 'react-native';
 import {useCardAnimation} from '@react-navigation/stack';
 import {COLORS, SPACING} from '../theme/theme';
 import Feather from 'react-native-vector-icons/Feather';
 import {useStore} from '../store/store';
 import {useOfflineStore} from '../store/offline-store';
-
-const DATA = [
-  {
-    id: '1',
-    title: 'Edit Category',
-    icon: 'edit',
-  },
-  {
-    id: '2',
-    title: 'Share',
-    icon: 'share',
-  },
-  {
-    id: '3',
-    title: 'Delete',
-    icon: 'trash',
-  },
-];
+import {useEffect} from 'react';
+import 'intl-pluralrules';
+import {useTranslation} from 'react-i18next';
+import i18n from '../utils/i18n';
 
 type ItemProps = {
   itemTitle: string;
   icon: string;
+  action: string;
   categoryIndex: any;
   navigation: any;
   themeColor: any;
+  t: any;
 };
 
 const Item = ({
   itemTitle,
   icon,
+  action,
   categoryIndex,
   navigation,
   themeColor,
+  t,
 }: ItemProps) => {
   // Store
   const deleteCategory = useStore((state: any) => state.deleteCategory);
@@ -65,7 +53,7 @@ const Item = ({
       //link = 'https://sports-afaf5.web.app/' + categoryItem.id;
       link = 'wishlist://wishlist/' + categoryItem.id + '/' + categoryItem.name;
     }
-    if (action == 'Share') {
+    if (action == 'share') {
       try {
         const shareOptions = {
           url: link,
@@ -82,18 +70,18 @@ const Item = ({
         console.error('Error sharing:', error.message);
       }
       navigation.goBack();
-    } else if (action === 'Edit Category') {
+    } else if (action === 'edit') {
       // Implement edit category logic here
       Alert.prompt(
-        'Edit Category',
-        'Enter the new category name:',
+        t('editCategory'),
+        t('newCategoryName'),
         [
           {
-            text: 'Cancel',
+            text: t('cancel'),
             style: 'cancel',
           },
           {
-            text: 'Save',
+            text: t('save'),
             onPress: async newCategory => {
               await updateCategory(title, newCategory, UserDetail);
               navigation.navigate('WishList', {
@@ -105,33 +93,30 @@ const Item = ({
         'plain-text', // Specify the input type
         title, // Default value for the input field
       );
-    } else if (action === 'Delete') {
+    } else if (action === 'delete') {
       // Implement delete category logic here
-      Alert.alert(
-        'Confirmation',
-        `Are you sure you want to delete the category '${title}'?`,
-        [
-          {
-            text: 'Cancel',
-            style: 'cancel',
+      Alert.alert(t('confirmation'), t('wannaDeleteCategory', {title}), [
+        {
+          text: t('cancel'),
+          style: 'cancel',
+        },
+        {
+          text: t('delete'),
+          style: 'destructive',
+          onPress: async () => {
+            await deleteCategory(title, UserDetail);
+            navigation.navigate('WishList', {
+              index: 0,
+            });
           },
-          {
-            text: 'Delete',
-            onPress: async () => {
-              await deleteCategory(title, UserDetail);
-              navigation.navigate('WishList', {
-                index: 0,
-              });
-            },
-          },
-        ],
-      );
+        },
+      ]);
     }
   };
 
   return (
     <TouchableOpacity
-      onPress={() => handleShare(categoryIndex.category, itemTitle)}>
+      onPress={() => handleShare(categoryIndex.category, action)}>
       <View style={[styles.item, {backgroundColor: themeColor.priamryDarkBg}]}>
         <View style={styles.iconContainer}>
           <Feather
@@ -149,9 +134,44 @@ const Item = ({
 };
 
 function ModalScreen({navigation, route}: any) {
+  // state
   const {current} = useCardAnimation();
   const categoryIndex = route?.params?.categoryIndex;
+
+  // store
   const themeColor = useOfflineStore((state: any) => state.themeColor);
+  const Settings = useOfflineStore((state: any) => state.Settings);
+
+  // const
+  const {t} = useTranslation();
+
+  const DATA = [
+    {
+      id: '1',
+      title: t('editCategory'),
+      icon: 'edit',
+      action: 'edit',
+    },
+    {
+      id: '2',
+      title: t('share'),
+      icon: 'share',
+      action: 'share',
+    },
+    {
+      id: '3',
+      title: t('delete'),
+      icon: 'trash',
+      action: 'delete',
+    },
+  ];
+
+  // use effect to use language
+  useEffect(() => {
+    if (Settings.language) {
+      i18n.changeLanguage(Settings.language);
+    }
+  }, [Settings]);
 
   return (
     <View style={styles.modalContainer}>
@@ -186,9 +206,11 @@ function ModalScreen({navigation, route}: any) {
             <Item
               itemTitle={item.title}
               icon={item.icon}
+              action={item.action}
               categoryIndex={categoryIndex}
               navigation={navigation}
               themeColor={themeColor}
+              t={t}
             />
           )}
           keyExtractor={item => item.id}

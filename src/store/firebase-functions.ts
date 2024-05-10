@@ -106,7 +106,15 @@ const deleteCategoryInFirebase = async(categoryName: string, userId: string) => 
     wishListCollection.forEach(documentSnapshot => {
         batch.delete(documentSnapshot.ref);
       });
-    return batch.commit();
+    batch.commit();
+
+    // Delete in SharedWishList
+    const sharedWishListCollection = await firestore().collection('SharedWishList').where("userId", "==", userId).where("categoryName", "==", categoryName).get()
+    const sharedBatch = firestore().batch();
+    sharedWishListCollection.forEach(documentSnapshot => {
+        sharedBatch.delete(documentSnapshot.ref);
+    });
+    await sharedBatch.commit();
 }
 
 const updateCategoryInFirebase = async(oldCategory: string, newCategory: string, userId: string) => {
@@ -194,7 +202,7 @@ const removeFromSharedWishListInFirebase = async(sharedWishListId: string, userI
     .delete();
 }
 
-const addToSharedWishListInFirebase = async(categoryId: string, userId: string) => {
+const addToSharedWishListInFirebase = async(categoryId: string, userId: string, t:any) => {
     let AlertMessageDetails = {title: '', message: '', action: ''};
 
     const categorySnapshot = await firestore()
@@ -226,22 +234,22 @@ const addToSharedWishListInFirebase = async(categoryId: string, userId: string) 
                             "categoryName": categoryName,
                         }
                     )
-                    AlertMessageDetails = {title: 'Success', message: categoryName+' Added Successfully', action: ''};
+                    AlertMessageDetails = {title: 'Success', message: t('sharedWishlistSuccessfully', {categoryName}), action: ''};
                 }else{
                     console.log('already exists')
-                    AlertMessageDetails = {title: 'Information', message: categoryName+' already exists in your Shared Wishlist', action: ''};
+                    AlertMessageDetails = {title: 'Information', message: t('sharedWishlistAlreadyExists', {categoryName}), action: ''};
                 }
             }else{
                 console.log('cannot share with yourself');
-                AlertMessageDetails = {title: 'Information', message: 'You can not share your own Wishlist with yourself', action: ''};
+                AlertMessageDetails = {title: 'Information', message: t('canNotAddYouselfToWishlist'), action: ''};
             } 
         }else{
             console.log('WishList SnapShot not found.');
-            AlertMessageDetails = {title: 'Error', message: 'Wishlist not found', action: ''};
+            AlertMessageDetails = {title: 'Error', message: t('wishListNotFound'), action: ''};
         }
       } else {
         console.log('WishList not found.');
-        AlertMessageDetails = {title: 'Error', message: 'Wishlist not found', action: ''};
+        AlertMessageDetails = {title: 'Error', message: t('wishListNotFound'), action: ''};
       }
 
       return AlertMessageDetails;

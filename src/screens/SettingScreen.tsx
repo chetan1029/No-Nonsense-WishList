@@ -6,16 +6,13 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React from 'react';
-import {
-  BORDERRADIUS,
-  COLORS,
-  FONTFAMILY,
-  FONTSIZE,
-  SPACING,
-} from '../theme/theme';
+import React, {useEffect} from 'react';
+import {BORDERRADIUS, FONTFAMILY, FONTSIZE, SPACING} from '../theme/theme';
 import RNPickerSelect from 'react-native-picker-select';
 import Feather from 'react-native-vector-icons/Feather';
+import 'intl-pluralrules';
+import {useTranslation} from 'react-i18next';
+import i18n from '../utils/i18n';
 
 // Components
 import HeaderBar from '../components/HeaderBar';
@@ -27,13 +24,16 @@ const WishListScreen = ({route, navigation}: any) => {
   const updateSettings = useOfflineStore((state: any) => state.updateSettings);
   const themeColor = useOfflineStore((state: any) => state.themeColor);
 
+  // Const
+  const {t} = useTranslation();
+
   // Data
   const themeMode = Settings.themeMode;
   const language = Settings.language;
   const themeModeData = [
-    {label: 'Automatic', value: ''},
-    {label: 'Light', value: 'light'},
-    {label: 'Dark', value: 'dark'},
+    {label: t('automaticLabel'), value: ''},
+    {label: t('lightLabel'), value: 'light'},
+    {label: t('darkLabel'), value: 'dark'},
   ];
 
   const languageData = [
@@ -42,12 +42,19 @@ const WishListScreen = ({route, navigation}: any) => {
     {label: 'Russian', value: 'ru'},
   ];
 
+  // use effect to use language
+  useEffect(() => {
+    if (Settings.language) {
+      i18n.changeLanguage(Settings.language);
+    }
+  }, [Settings]);
+
   return (
     <View
       style={[styles.ScreenContainer, {backgroundColor: themeColor.primaryBg}]}>
       <StatusBar backgroundColor={themeColor.primaryBg}></StatusBar>
       {/* App Header */}
-      <HeaderBar title="Settings" themeColor={themeColor} />
+      <HeaderBar title={t('settings')} themeColor={themeColor} />
 
       <View
         style={[
@@ -62,7 +69,9 @@ const WishListScreen = ({route, navigation}: any) => {
               color={themeColor.secondaryText}
             />
           </View>
-          <Text style={{color: themeColor.secondaryText}}>Theme Mode</Text>
+          <Text style={{color: themeColor.secondaryText}}>
+            {t('themeMode')}
+          </Text>
         </View>
         <RNPickerSelect
           items={themeModeData}
@@ -104,7 +113,7 @@ const WishListScreen = ({route, navigation}: any) => {
           <View style={styles.iconContainer}>
             <Feather name="globe" size={16} color={themeColor.secondaryText} />
           </View>
-          <Text style={{color: themeColor.secondaryText}}>Language</Text>
+          <Text style={{color: themeColor.secondaryText}}>{t('langauge')}</Text>
         </View>
         <RNPickerSelect
           items={languageData}
@@ -149,7 +158,7 @@ const WishListScreen = ({route, navigation}: any) => {
           <View style={styles.iconContainer}>
             <Feather name="info" size={16} color={themeColor.secondaryText} />
           </View>
-          <Text style={{color: themeColor.secondaryText}}>About</Text>
+          <Text style={{color: themeColor.secondaryText}}>{t('about')}</Text>
         </View>
       </TouchableOpacity>
     </View>

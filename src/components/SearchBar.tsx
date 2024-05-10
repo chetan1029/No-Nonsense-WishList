@@ -15,6 +15,7 @@ interface SearchBarProp {
   setSearchText: any;
   resetSearchWishList: any;
   themeColor: any;
+  placeholder: string;
 }
 
 const SearchBar: React.FC<SearchBarProp> = ({
@@ -23,6 +24,7 @@ const SearchBar: React.FC<SearchBarProp> = ({
   setSearchText,
   resetSearchWishList,
   themeColor,
+  placeholder,
 }) => {
   return (
     <View
@@ -46,7 +48,7 @@ const SearchBar: React.FC<SearchBarProp> = ({
         />
       </TouchableOpacity>
       <TextInput
-        placeholder="Find Your Wish..."
+        placeholder={placeholder}
         placeholderTextColor={COLORS.primaryLightGreyHex}
         style={[styles.TextInputContainer, {color: themeColor.secondaryText}]}
         onChangeText={text => {

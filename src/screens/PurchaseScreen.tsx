@@ -9,7 +9,9 @@ import React, {useEffect, useRef, useState} from 'react';
 import {useStore} from '../store/store';
 import {useOfflineStore} from '../store/offline-store';
 import {useBottomTabBarHeight} from '@react-navigation/bottom-tabs';
-import {COLORS, FONTFAMILY, FONTSIZE, SPACING} from '../theme/theme';
+import 'intl-pluralrules';
+import {useTranslation} from 'react-i18next';
+import i18n from '../utils/i18n';
 
 // Components
 import HeaderBar from '../components/HeaderBar';
@@ -34,10 +36,14 @@ const PurchaseScreen = ({navigation}: any) => {
   const fetchWishListItems = useStore((state: any) => state.fetchWishListItems);
   const UserDetail = useStore((state: any) => state.UserDetail);
   const themeColor = useOfflineStore((state: any) => state.themeColor);
+  const Settings = useOfflineStore((state: any) => state.Settings);
 
   // Other variables
   const ListRef: any = useRef<FlatList>();
   const tabBarHeight = useBottomTabBarHeight();
+
+  // Const
+  const {t} = useTranslation();
 
   // Use effect to fetch wish list
   useEffect(() => {
@@ -61,6 +67,13 @@ const PurchaseScreen = ({navigation}: any) => {
       setSortedWishList(updatedSortedWishList);
     }
   }, [WishListItems]);
+
+  // use effect to use language
+  useEffect(() => {
+    if (Settings.language) {
+      i18n.changeLanguage(Settings.language);
+    }
+  }, [Settings]);
 
   // Functions
   const searchWishList = (search: string) => {
@@ -102,7 +115,7 @@ const PurchaseScreen = ({navigation}: any) => {
   ) => {
     if (direction == 'left') {
       removeFromPurchaseList(id, UserDetail);
-      showToast(`${title} is move back to Wishlist`, 'success');
+      showToast(t('moveToWishlist', {title}), 'success');
     }
   };
 
@@ -120,7 +133,7 @@ const PurchaseScreen = ({navigation}: any) => {
       <StatusBar backgroundColor={themeColor.primaryBg}></StatusBar>
 
       {/* App Header */}
-      <HeaderBar title="My Purchase List" themeColor={themeColor} />
+      <HeaderBar title={t('myPurchases')} themeColor={themeColor} />
 
       {/* Search Input */}
       <SearchBar
@@ -129,6 +142,7 @@ const PurchaseScreen = ({navigation}: any) => {
         setSearchText={setSearchText}
         resetSearchWishList={resetSearchWishList}
         themeColor={themeColor}
+        placeholder={t('searchWishlists')}
       />
       {loading ? (
         <View style={styles.loadingContainer}>
@@ -148,6 +162,8 @@ const PurchaseScreen = ({navigation}: any) => {
             showMoreModal={false}
             navigation={navigation}
             themeColor={themeColor}
+            screenType={'WishList'}
+            t={t}
           />
         </>
       )}

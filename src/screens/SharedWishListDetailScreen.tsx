@@ -1,23 +1,12 @@
 import {
   ActivityIndicator,
-  Alert,
   FlatList,
-  Linking,
   StatusBar,
   StyleSheet,
-  Text,
-  TouchableOpacity,
   View,
 } from 'react-native';
 import React, {useEffect, useRef, useState} from 'react';
-import {
-  BORDERRADIUS,
-  COLORS,
-  FONTFAMILY,
-  FONTSIZE,
-  SPACING,
-} from '../theme/theme';
-import Feather from 'react-native-vector-icons/Feather';
+import {BORDERRADIUS, SPACING} from '../theme/theme';
 
 // Components
 import HeaderBar from '../components/HeaderBar';
@@ -25,6 +14,9 @@ import {useOfflineStore} from '../store/offline-store';
 import {useStore} from '../store/store';
 import WishListFlatList from '../components/WishListFlatList';
 import {useBottomTabBarHeight} from '@react-navigation/bottom-tabs';
+import 'intl-pluralrules';
+import {useTranslation} from 'react-i18next';
+import i18n from '../utils/i18n';
 
 const SharedWishListDetailScreen = ({route, navigation}: any) => {
   // state
@@ -40,6 +32,7 @@ const SharedWishListDetailScreen = ({route, navigation}: any) => {
   const fetchSharedWishListItems = useStore(
     (state: any) => state.fetchSharedWishListItems,
   );
+  const Settings = useOfflineStore((state: any) => state.Settings);
 
   // Other variables
   const ListRef: any = useRef<FlatList>();
@@ -47,6 +40,9 @@ const SharedWishListDetailScreen = ({route, navigation}: any) => {
   const categoryName = route?.params?.name;
   const userId = route?.params?.userId;
   const sharedWishListId = route?.params?.id;
+
+  // Const
+  const {t} = useTranslation();
 
   // use Effect
   useEffect(() => {
@@ -59,6 +55,13 @@ const SharedWishListDetailScreen = ({route, navigation}: any) => {
       fetchData();
     }
   }, [fetchSharedWishListItems]);
+
+  // use effect to use language
+  useEffect(() => {
+    if (Settings.language) {
+      i18n.changeLanguage(Settings.language);
+    }
+  }, [Settings]);
 
   // other functions
   const handleSwipeableOpen = (
@@ -112,6 +115,7 @@ const SharedWishListDetailScreen = ({route, navigation}: any) => {
             navigation={navigation}
             themeColor={themeColor}
             screenType="ShareWishList"
+            t={t}
           />
         </>
       )}

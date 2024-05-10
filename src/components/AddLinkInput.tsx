@@ -15,6 +15,7 @@ interface AddLinkInputProp {
   handleOnChageText: any;
   resetUrlField: any;
   urlError: any;
+  placeholder: string;
   themeColor: any;
 }
 
@@ -23,6 +24,7 @@ const AddLinkInput: React.FC<AddLinkInputProp> = ({
   handleOnChageText,
   value,
   urlError,
+  placeholder,
   themeColor,
 }) => {
   return (
@@ -44,7 +46,7 @@ const AddLinkInput: React.FC<AddLinkInputProp> = ({
         />
       </TouchableOpacity>
       <TextInput
-        placeholder="Paste your link here..."
+        placeholder={placeholder}
         placeholderTextColor={COLORS.primaryLightGreyHex}
         style={[styles.TextInputContainer, {color: themeColor.secondaryText}]}
         onChangeText={handleOnChageText}

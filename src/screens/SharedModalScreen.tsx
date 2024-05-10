@@ -3,42 +3,39 @@ import {
   View,
   Text,
   Pressable,
-  Button,
   StyleSheet,
   FlatList,
-  Share,
   TouchableOpacity,
   Alert,
-  ActivityIndicator,
 } from 'react-native';
 import {useCardAnimation} from '@react-navigation/stack';
 import {COLORS, SPACING} from '../theme/theme';
 import Feather from 'react-native-vector-icons/Feather';
 import {useStore} from '../store/store';
 import {useOfflineStore} from '../store/offline-store';
-
-const DATA = [
-  {
-    id: '1',
-    title: 'Remove WishList',
-    icon: 'trash',
-  },
-];
+import 'intl-pluralrules';
+import {useTranslation} from 'react-i18next';
+import i18n from '../utils/i18n';
+import {useEffect} from 'react';
 
 type ItemProps = {
   itemTitle: string;
   icon: string;
+  action: string;
   categoryIndex: any;
   navigation: any;
   themeColor: any;
+  t: any;
 };
 
 const Item = ({
   itemTitle,
   icon,
+  action,
   categoryIndex,
   navigation,
   themeColor,
+  t,
 }: ItemProps) => {
   // Store
   const removeFromSharedWishList = useStore(
@@ -51,25 +48,22 @@ const Item = ({
     action: string,
     sharedWishListId: string,
   ) => {
-    if (action === 'Remove WishList') {
+    if (action === 'delete') {
       // Implement delete category logic here
-      Alert.alert(
-        'Confirmation',
-        `Are you sure you want to remove '${title}' WishList?`,
-        [
-          {
-            text: 'Cancel',
-            style: 'cancel',
+      Alert.alert(t('confirmation'), t('wannaRemoveWishlist', {title}), [
+        {
+          text: t('cancel'),
+          style: 'cancel',
+        },
+        {
+          text: t('remove'),
+          style: 'destructive',
+          onPress: async () => {
+            await removeFromSharedWishList(UserDetail, sharedWishListId);
+            navigation.navigate('SharedWishListScreen');
           },
-          {
-            text: 'Remove',
-            onPress: async () => {
-              await removeFromSharedWishList(UserDetail, sharedWishListId);
-              navigation.navigate('SharedWishListScreen');
-            },
-          },
-        ],
-      );
+        },
+      ]);
     }
   };
 
@@ -78,7 +72,7 @@ const Item = ({
       onPress={() =>
         handleAction(
           categoryIndex.category,
-          itemTitle,
+          action,
           categoryIndex.sharedWishListId,
         )
       }>
@@ -99,6 +93,28 @@ const Item = ({
 };
 
 function SharedModalScreen({navigation, route}: any) {
+  // store
+  const Settings = useOfflineStore((state: any) => state.Settings);
+
+  // Const
+  const {t} = useTranslation();
+
+  const DATA = [
+    {
+      id: '1',
+      title: t('removeWishList'),
+      icon: 'trash',
+      action: 'delete',
+    },
+  ];
+
+  // use effect to use language
+  useEffect(() => {
+    if (Settings.language) {
+      i18n.changeLanguage(Settings.language);
+    }
+  }, [Settings]);
+
   const {current} = useCardAnimation();
   const categoryIndex = route?.params?.categoryIndex;
   const themeColor = useOfflineStore((state: any) => state.themeColor);
@@ -136,9 +152,11 @@ function SharedModalScreen({navigation, route}: any) {
             <Item
               itemTitle={item.title}
               icon={item.icon}
+              action={item.action}
               categoryIndex={categoryIndex}
               navigation={navigation}
               themeColor={themeColor}
+              t={t}
             />
           )}
           keyExtractor={item => item.id}

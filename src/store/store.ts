@@ -42,7 +42,7 @@ interface StoreState {
   fetchSharedWishList: (user: any) => Promise<void>;
   fetchSharedWishListItems: (userId: string, category: string) => Promise<void>;
   removeFromSharedWishList: (user: any, sharedWishListId: string) => Promise<void>;
-  addToSharedWishList: (user: any, categoryId: string) => Promise<void>;
+  addToSharedWishList: (user: any, categoryId: string, t:any) => Promise<void>;
 }
 
 
@@ -201,9 +201,9 @@ export const useStore = create<StoreState>(
         console.error("Error Deleteting Shared WishList", error);
         }
       },
-      addToSharedWishList: async(user: any, categoryId:any) => {
+      addToSharedWishList: async(user: any, categoryId:any, t:any) => {
         try {
-          const shareWishListMsg = await addToSharedWishListInFirebase(categoryId, user.uid);
+          const shareWishListMsg = await addToSharedWishListInFirebase(categoryId, user.uid, t);
           
           set({AlertMessageDetails: shareWishListMsg});
           // Fetch updated SharedWishlist items from Firebase

@@ -4,17 +4,10 @@ import {
   View,
   FlatList,
   Text,
-  ActivityIndicator,
-  TouchableOpacity,
-  Button,
-  Modal,
   RefreshControl,
 } from 'react-native';
 import React, {useState} from 'react';
 import {COLORS, FONTFAMILY, FONTSIZE, SPACING} from '../theme/theme';
-import WishListCard from '../components/WishListCard';
-import SwipeableRow from '../components/SwipeableRow';
-import Feather from 'react-native-vector-icons/Feather';
 import SharedWishListCard from './SharedWishListCard';
 
 interface SharedWishListFlatListProps {
@@ -25,6 +18,7 @@ interface SharedWishListFlatListProps {
   refreshing: boolean; // indicator for refreshing
   navigation: any;
   themeColor: any;
+  placeholder: string;
 }
 
 const SharedWishListFlatList: React.FC<SharedWishListFlatListProps> = ({
@@ -35,6 +29,7 @@ const SharedWishListFlatList: React.FC<SharedWishListFlatListProps> = ({
   refreshing,
   navigation,
   themeColor,
+  placeholder,
 }) => {
   const [modalVisible, setModalVisible] = useState(false);
   const closeModal = () => {
@@ -46,7 +41,7 @@ const SharedWishListFlatList: React.FC<SharedWishListFlatListProps> = ({
       horizontal={false}
       ListEmptyComponent={
         <View style={styles.EmptyListContainer}>
-          <Text style={styles.CategoryText}>No WishList Item Available</Text>
+          <Text style={styles.CategoryText}>{placeholder}</Text>
         </View>
       }
       showsVerticalScrollIndicator={false}

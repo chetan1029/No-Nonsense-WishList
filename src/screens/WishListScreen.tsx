@@ -9,8 +9,10 @@ import React, {useEffect, useRef, useState} from 'react';
 import {useStore} from '../store/store';
 import {useOfflineStore} from '../store/offline-store';
 import {useBottomTabBarHeight} from '@react-navigation/bottom-tabs';
-import {COLORS, FONTFAMILY, FONTSIZE, SPACING} from '../theme/theme';
 import _ from 'lodash';
+import 'intl-pluralrules';
+import {useTranslation} from 'react-i18next';
+import i18n from '../utils/i18n';
 
 // Components
 import HeaderBar from '../components/HeaderBar';
@@ -19,7 +21,6 @@ import WishListFlatList from '../components/WishListFlatList';
 
 // Memorized functions
 import {getCategories, getWishListByCategory, showToast} from '../utils/common';
-import {useFocusEffect} from '@react-navigation/native';
 
 const WishListScreen = ({route, navigation}: any) => {
   // State
@@ -40,10 +41,14 @@ const WishListScreen = ({route, navigation}: any) => {
   const CategoryList = useStore((state: any) => state.CategoryList);
   const fetchCateogryList = useStore((state: any) => state.fetchCateogryList);
   const themeColor = useOfflineStore((state: any) => state.themeColor);
+  const Settings = useOfflineStore((state: any) => state.Settings);
 
   // Other variables
   const ListRef: any = useRef<FlatList>();
   const tabBarHeight = useBottomTabBarHeight();
+
+  // Const
+  const {t} = useTranslation();
 
   // Use effect to set category list
   useEffect(() => {
@@ -100,6 +105,13 @@ const WishListScreen = ({route, navigation}: any) => {
     }
   }, [WishListItems, CategoryList, categoryIndex.category]);
 
+  // use effect to use language
+  useEffect(() => {
+    if (Settings.language) {
+      i18n.changeLanguage(Settings.language);
+    }
+  }, [Settings]);
+
   // functions
   const handleSwipeableOpen = (
     direction: string,
@@ -108,7 +120,7 @@ const WishListScreen = ({route, navigation}: any) => {
   ) => {
     if (direction == 'left') {
       addToPurchaseList(id, UserDetail);
-      showToast(`${title} is Purchased`, 'success');
+      showToast(t('moveToPurchase', {title}), 'success');
     }
   };
 
@@ -161,7 +173,7 @@ const WishListScreen = ({route, navigation}: any) => {
         ]}></View>
 
       {/* App Header */}
-      <HeaderBar title="My WishList" themeColor={themeColor} />
+      <HeaderBar title={t('myWishlists')} themeColor={themeColor} />
 
       {loading ? (
         <View style={styles.loadingContainer}>
@@ -195,6 +207,7 @@ const WishListScreen = ({route, navigation}: any) => {
             navigation={navigation}
             themeColor={themeColor}
             screenType="WishList"
+            t={t}
           />
         </>
       )}
