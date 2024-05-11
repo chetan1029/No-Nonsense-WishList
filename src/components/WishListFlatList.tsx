@@ -7,11 +7,12 @@ import {
   TouchableOpacity,
   RefreshControl,
 } from 'react-native';
-import React, {useState} from 'react';
+import React, {useRef, useState} from 'react';
 import {COLORS, FONTFAMILY, FONTSIZE, SPACING} from '../theme/theme';
 import WishListCard from '../components/WishListCard';
 import SwipeableRow from '../components/SwipeableRow';
 import Feather from 'react-native-vector-icons/Feather';
+import {Swipeable} from 'react-native-gesture-handler';
 
 interface WishListFlatListProps {
   ListRef: any;
@@ -44,6 +45,7 @@ const WishListFlatList: React.FC<WishListFlatListProps> = ({
   screenType,
   t,
 }) => {
+  const swipeRowRef = useRef<Swipeable>(null);
   const [modalVisible, setModalVisible] = useState(false);
   const closeModal = () => {
     setModalVisible(false);
@@ -88,6 +90,7 @@ const WishListFlatList: React.FC<WishListFlatListProps> = ({
         renderItem={({item}) => {
           return (
             <SwipeableRow
+              ref={swipeRowRef}
               id={item.id}
               index={item.index}
               title={item.title}
