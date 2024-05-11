@@ -7,11 +7,12 @@ import {
   TouchableOpacity,
   RefreshControl,
 } from 'react-native';
-import React, {useState} from 'react';
+import React, {useRef, useState} from 'react';
 import {COLORS, FONTFAMILY, FONTSIZE, SPACING} from '../theme/theme';
 import WishListCard from '../components/WishListCard';
 import SwipeableRow from '../components/SwipeableRow';
 import Feather from 'react-native-vector-icons/Feather';
+import {Swipeable} from 'react-native-gesture-handler';
 
 interface WishListFlatListProps {
   ListRef: any;
@@ -44,6 +45,7 @@ const WishListFlatList: React.FC<WishListFlatListProps> = ({
   screenType,
   t,
 }) => {
+  const swipeRowRef = useRef<Swipeable>(null);
   const [modalVisible, setModalVisible] = useState(false);
   const closeModal = () => {
     setModalVisible(false);
@@ -64,7 +66,8 @@ const WishListFlatList: React.FC<WishListFlatListProps> = ({
                   {categoryIndex: categoryIndex},
                   onRefresh,
                 );
-          }}>
+          }}
+          style={styles.showMoreIcon}>
           <Feather
             name="more-horizontal"
             size={24}
@@ -87,6 +90,7 @@ const WishListFlatList: React.FC<WishListFlatListProps> = ({
         renderItem={({item}) => {
           return (
             <SwipeableRow
+              ref={swipeRowRef}
               id={item.id}
               index={item.index}
               title={item.title}
@@ -106,7 +110,7 @@ const WishListFlatList: React.FC<WishListFlatListProps> = ({
             </SwipeableRow>
           );
         }}
-        style={{marginBottom: tabBarHeight}}
+        style={{marginBottom: tabBarHeight * 2}}
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
@@ -132,7 +136,7 @@ const styles = StyleSheet.create({
   },
   FlatListContainer: {
     gap: SPACING.space_10,
-    paddingVertical: SPACING.space_15,
+    paddingVertical: SPACING.space_10,
     paddingHorizontal: SPACING.space_20,
     flexGrow: 1,
   },
@@ -144,6 +148,8 @@ const styles = StyleSheet.create({
   },
   dropdownButtonContainer: {
     alignItems: 'flex-end',
-    paddingRight: SPACING.space_20,
+  },
+  showMoreIcon: {
+    paddingHorizontal: SPACING.space_20,
   },
 });

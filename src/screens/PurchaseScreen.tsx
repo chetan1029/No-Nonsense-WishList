@@ -108,13 +108,13 @@ const PurchaseScreen = ({navigation}: any) => {
     setSearchText('');
   };
 
-  const handleSwipeableOpen = (
+  const handleSwipeableOpen = async (
     direction: string,
     id: string,
     title: string,
   ) => {
     if (direction == 'left') {
-      removeFromPurchaseList(id, UserDetail);
+      await removeFromPurchaseList(id, UserDetail);
       showToast(t('moveToWishlist', {title}), 'success');
     }
   };
