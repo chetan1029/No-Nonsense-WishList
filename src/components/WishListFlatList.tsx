@@ -106,7 +106,7 @@ const WishListFlatList: React.FC<WishListFlatListProps> = ({
             </SwipeableRow>
           );
         }}
-        style={{marginBottom: tabBarHeight}}
+        style={{marginBottom: tabBarHeight * 2}}
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
@@ -132,7 +132,7 @@ const styles = StyleSheet.create({
   },
   FlatListContainer: {
     gap: SPACING.space_10,
-    paddingVertical: SPACING.space_15,
+    paddingVertical: SPACING.space_10,
     paddingHorizontal: SPACING.space_20,
     flexGrow: 1,
   },

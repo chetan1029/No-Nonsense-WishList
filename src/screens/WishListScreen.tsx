@@ -165,13 +165,6 @@ const WishListScreen = ({route, navigation}: any) => {
       style={[styles.ScreenContainer, {backgroundColor: themeColor.primaryBg}]}>
       <StatusBar backgroundColor={themeColor.primaryBg}></StatusBar>
 
-      {/* Overlay View with Opacity */}
-      <View
-        style={[
-          styles.Overlay,
-          {backgroundColor: themeColor.primaryBgOpacity5},
-        ]}></View>
-
       {/* App Header */}
       <HeaderBar title={t('myWishlists')} themeColor={themeColor} />
 
