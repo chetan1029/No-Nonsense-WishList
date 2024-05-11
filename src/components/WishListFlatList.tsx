@@ -64,7 +64,8 @@ const WishListFlatList: React.FC<WishListFlatListProps> = ({
                   {categoryIndex: categoryIndex},
                   onRefresh,
                 );
-          }}>
+          }}
+          style={styles.showMoreIcon}>
           <Feather
             name="more-horizontal"
             size={24}
@@ -144,6 +145,8 @@ const styles = StyleSheet.create({
   },
   dropdownButtonContainer: {
     alignItems: 'flex-end',
-    paddingRight: SPACING.space_20,
+  },
+  showMoreIcon: {
+    paddingHorizontal: SPACING.space_20,
   },
 });
