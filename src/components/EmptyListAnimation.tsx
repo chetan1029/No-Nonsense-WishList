@@ -1,7 +1,7 @@
-import {StyleSheet, Text, View} from 'react-native';
+import {Dimensions, StyleSheet, Text, View} from 'react-native';
 import React from 'react';
 import LottieView from 'lottie-react-native';
-import {COLORS, FONTFAMILY, FONTSIZE} from '../theme/theme';
+import {COLORS, FONTFAMILY, FONTSIZE, SPACING} from '../theme/theme';
 
 interface EmptyListAnimationProps {
   title: string;
@@ -10,13 +10,13 @@ interface EmptyListAnimationProps {
 const EmptyListAnimation: React.FC<EmptyListAnimationProps> = ({title}) => {
   return (
     <View style={styles.EmptyCartContainer}>
+      <Text style={styles.LottieText}>{title}</Text>
       <LottieView
         style={styles.LottieStyle}
-        source={require('../lottie/coffeecup.json')}
+        source={require('../lottie/directionicon.json')}
         autoPlay
         loop
       />
-      <Text style={styles.LottieText}>{title}</Text>
     </View>
   );
 };
@@ -24,10 +24,13 @@ const EmptyListAnimation: React.FC<EmptyListAnimationProps> = ({title}) => {
 const styles = StyleSheet.create({
   EmptyCartContainer: {
     flex: 1,
+    width: Dimensions.get('window').width - SPACING.space_30 * 2,
+    //alignItems: 'center',
     justifyContent: 'center',
+    paddingVertical: SPACING.space_36 * 3.1,
   },
   LottieStyle: {
-    height: 300,
+    height: 500,
   },
   LottieText: {
     fontFamily: FONTFAMILY.poppins_medium,

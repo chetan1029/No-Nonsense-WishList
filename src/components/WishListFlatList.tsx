@@ -13,6 +13,7 @@ import WishListCard from '../components/WishListCard';
 import SwipeableRow from '../components/SwipeableRow';
 import Feather from 'react-native-vector-icons/Feather';
 import {Swipeable} from 'react-native-gesture-handler';
+import EmptyListAnimation from './EmptyListAnimation';
 
 interface WishListFlatListProps {
   ListRef: any;
@@ -78,11 +79,7 @@ const WishListFlatList: React.FC<WishListFlatListProps> = ({
       <FlatList
         ref={ListRef}
         horizontal={false}
-        ListEmptyComponent={
-          <View style={styles.EmptyListContainer}>
-            <Text style={styles.CategoryText}>{t('noWishlistItems')}</Text>
-          </View>
-        }
+        ListEmptyComponent={<EmptyListAnimation title={t('noWishlistItems')} />}
         showsVerticalScrollIndicator={false}
         data={sortedWishList}
         contentContainerStyle={styles.FlatListContainer}
