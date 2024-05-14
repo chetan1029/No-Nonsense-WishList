@@ -34,6 +34,7 @@ import AddLinkInput from '../components/AddLinkInput';
 
 // Memorized functions
 import {getCategories, showToast, filterUrl} from '../utils/common';
+import LottieView from 'lottie-react-native';
 
 // Yup validation
 const wishListValidationSchema = yup.object().shape({
@@ -125,17 +126,13 @@ const AddWishListScreen = ({navigation}: any) => {
           <StatusBar backgroundColor={themeColor.primaryBg}></StatusBar>
 
           {/* Background Image */}
-          <Image
-            source={require('../assets/bg.png')}
-            style={styles.BackgroundImage}
-          />
 
-          {/* Overlay View with Opacity */}
-          <View
-            style={[
-              styles.Overlay,
-              {backgroundColor: themeColor.primaryBgOpacity5},
-            ]}></View>
+          <LottieView
+            style={styles.LottieStyle}
+            source={require('../lottie/gift.json')}
+            autoPlay
+            loop
+          />
 
           {/* ActivityIndicator overlay */}
           {loading && (
@@ -301,6 +298,9 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
     resizeMode: 'cover',
+  },
+  LottieStyle: {
+    height: 500,
   },
   Overlay: {
     position: 'absolute',

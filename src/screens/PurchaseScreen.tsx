@@ -17,6 +17,7 @@ import i18n from '../utils/i18n';
 import HeaderBar from '../components/HeaderBar';
 import SearchBar from '../components/SearchBar';
 import WishListFlatList from '../components/WishListFlatList';
+import LoadingCard from '../components/LoadingCard';
 
 // Memorized functions
 import {getWishListByCategory, showToast} from '../utils/common';
@@ -145,9 +146,7 @@ const PurchaseScreen = ({navigation}: any) => {
         placeholder={t('searchWishlists')}
       />
       {loading ? (
-        <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color={themeColor.secondaryText} />
-        </View>
+        <LoadingCard />
       ) : (
         <>
           {/* WishList Flatlist */}

@@ -84,6 +84,8 @@ https://github.com/crazycodeboy/react-native-splash-screen/issues/619
 1. some time we can get pod install problem via flipper so read this and try step 1 & 2 https://stackoverflow.com/questions/78244457/reactnative-app-build-failing-with-flipper-error
    instead cd ios && pod install use cd ios && NO_FLIPPER=1 pod install
 
+2. Sometime afer updaet you might get an error about provisioning profile so just connect your iphone and run on that it will solve this issue.
+
 # To run on your iphone
 
 xcode -> windows -> device and simulator -> add device

@@ -21,6 +21,7 @@ import WishListFlatList from '../components/WishListFlatList';
 
 // Memorized functions
 import {getCategories, getWishListByCategory, showToast} from '../utils/common';
+import LoadingCard from '../components/LoadingCard';
 
 const WishListScreen = ({route, navigation}: any) => {
   // State
@@ -169,9 +170,7 @@ const WishListScreen = ({route, navigation}: any) => {
       <HeaderBar title={t('myWishlists')} themeColor={themeColor} />
 
       {loading ? (
-        <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color={themeColor.secondaryText} />
-        </View>
+        <LoadingCard />
       ) : (
         <>
           {/* Category Scroller */}
