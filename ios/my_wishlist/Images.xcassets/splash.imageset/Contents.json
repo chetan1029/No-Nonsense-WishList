@@ -1,17 +1,17 @@
 {
   "images" : [
     {
-      "filename" : "launch_screen.png",
+      "filename" : "nobswishlist.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
-      "filename" : "launch_screen@2x.png",
+      "filename" : "nobswishlist@2x.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
-      "filename" : "launch_screen@3x.png",
+      "filename" : "nobswishlist@3x.png",
       "idiom" : "universal",
       "scale" : "3x"
     }

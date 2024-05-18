@@ -259,6 +259,7 @@ const AddWishListScreen = ({navigation}: any) => {
                             setNewCategory(text);
                           }}
                           onSubmitEditing={handleAddNewCategory}
+                          onBlur={handleAddNewCategory}
                           value={newCategory}
                         />
                       </View>
@@ -266,7 +267,10 @@ const AddWishListScreen = ({navigation}: any) => {
                     <View style={styles.ButtonContainerComponent}>
                       <TouchableOpacity
                         style={styles.ButtonContainer}
-                        onPress={() => handleSubmit()}>
+                        onPress={() => {
+                          handleAddNewCategory();
+                          handleSubmit();
+                        }}>
                         <Text style={styles.ButtonText}>
                           {t('addToWishList')}
                         </Text>
