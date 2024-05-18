@@ -19,6 +19,32 @@ import Feather from 'react-native-vector-icons/Feather';
 import 'intl-pluralrules';
 import {useTranslation} from 'react-i18next';
 import i18n from '../utils/i18n';
+import {AppleButton} from '@invertase/react-native-apple-authentication';
+import auth from '@react-native-firebase/auth';
+import {appleAuth} from '@invertase/react-native-apple-authentication';
+
+async function onAppleButtonPress() {
+  // Start the sign-in request
+  const appleAuthRequestResponse = await appleAuth.performRequest({
+    requestedOperation: appleAuth.Operation.LOGIN,
+    requestedScopes: [appleAuth.Scope.FULL_NAME, appleAuth.Scope.EMAIL],
+  });
+
+  // Ensure Apple returned a user identityToken
+  if (!appleAuthRequestResponse.identityToken) {
+    throw new Error('Apple Sign-In failed - no identify token returned');
+  }
+
+  // Create a Firebase credential from the response
+  const {identityToken, nonce, fullName} = appleAuthRequestResponse;
+  const appleCredential = auth.AppleAuthProvider.credential(
+    identityToken,
+    nonce,
+  );
+
+  // Sign the user in with the credential
+  return auth().signInWithCredential(appleCredential);
+}
 
 // Components
 import HeaderBar from '../components/HeaderBar';
@@ -185,6 +211,20 @@ const SettingScreen = ({route, navigation}: any) => {
           <Text style={{color: themeColor.secondaryText}}>{t('about')}</Text>
         </View>
       </TouchableOpacity>
+
+      <AppleButton
+        buttonStyle={AppleButton.Style.WHITE}
+        buttonType={AppleButton.Type.SIGN_IN}
+        style={{
+          width: 160,
+          height: 45,
+        }}
+        onPress={() =>
+          onAppleButtonPress().then(() =>
+            console.log('Apple sign-in complete!'),
+          )
+        }
+      />
     </View>
   );
 };
