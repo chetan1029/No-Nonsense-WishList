@@ -7,7 +7,13 @@ import {
   View,
 } from 'react-native';
 import React, {useEffect} from 'react';
-import {BORDERRADIUS, FONTFAMILY, FONTSIZE, SPACING} from '../theme/theme';
+import {
+  BORDERRADIUS,
+  COLORS,
+  FONTFAMILY,
+  FONTSIZE,
+  SPACING,
+} from '../theme/theme';
 import RNPickerSelect from 'react-native-picker-select';
 import Feather from 'react-native-vector-icons/Feather';
 import 'intl-pluralrules';
@@ -18,7 +24,7 @@ import i18n from '../utils/i18n';
 import HeaderBar from '../components/HeaderBar';
 import {useOfflineStore} from '../store/offline-store';
 
-const WishListScreen = ({route, navigation}: any) => {
+const SettingScreen = ({route, navigation}: any) => {
   // Store
   const Settings = useOfflineStore((state: any) => state.Settings);
   const updateSettings = useOfflineStore((state: any) => state.updateSettings);
@@ -55,6 +61,24 @@ const WishListScreen = ({route, navigation}: any) => {
       <StatusBar backgroundColor={themeColor.primaryBg}></StatusBar>
       {/* App Header */}
       <HeaderBar title={t('settings')} themeColor={themeColor} />
+
+      <TouchableOpacity
+        style={[
+          styles.InputContainerComponent,
+          {backgroundColor: themeColor.priamryDarkBg},
+        ]}
+        onPress={() => {
+          navigation.navigate('UserProfile');
+        }}>
+        <View style={styles.titleContainer}>
+          <View style={styles.iconContainer}>
+            <Feather name="user" size={16} color={themeColor.secondaryText} />
+          </View>
+          <Text style={{color: themeColor.secondaryText}}>
+            {t('userProfile')}
+          </Text>
+        </View>
+      </TouchableOpacity>
 
       <View
         style={[
@@ -165,7 +189,7 @@ const WishListScreen = ({route, navigation}: any) => {
   );
 };
 
-export default WishListScreen;
+export default SettingScreen;
 
 const styles = StyleSheet.create({
   ScreenContainer: {

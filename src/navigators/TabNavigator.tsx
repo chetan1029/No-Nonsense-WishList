@@ -6,7 +6,6 @@ import PurchaseScreen from '../screens/PurchaseScreen';
 import AddWishListScreen from '../screens/AddWishScreen';
 import WishListScreen from '../screens/WishListScreen';
 import Feather from 'react-native-vector-icons/Feather';
-import SettingScreen from '../screens/SettingScreen';
 import 'intl-pluralrules';
 import {useTranslation} from 'react-i18next';
 import i18n from '../utils/i18n';
@@ -14,6 +13,7 @@ import {useOfflineStore} from '../store/offline-store';
 import {getFocusedRouteNameFromRoute} from '@react-navigation/native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import SharedWishListStackScreen from './SharedWishListStackScreen';
+import SettingStackScreen from './SettingStackScreen';
 
 const Tab = createBottomTabNavigator();
 
@@ -186,8 +186,8 @@ const TabNavigator = ({route, navigation}: any) => {
             },
           }}></Tab.Screen>
         <Tab.Screen
-          name="Settings"
-          component={SettingScreen}
+          name="SettingStack"
+          component={SettingStackScreen}
           options={{
             tabBarLabel: ({focused, color}) => {
               return (

@@ -52,29 +52,31 @@ const WishListFlatList: React.FC<WishListFlatListProps> = ({
     setModalVisible(false);
   };
   return (
-    <View style={styles.dropdownButtonContainer}>
+    <View>
       {showMoreModal && categoryIndex?.category && (
-        <TouchableOpacity
-          onPress={() => {
-            screenType === 'WishList'
-              ? navigation.navigate(
-                  'ModalScreen',
-                  {categoryIndex: categoryIndex},
-                  onRefresh,
-                )
-              : navigation.navigate(
-                  'SharedModalScreen',
-                  {categoryIndex: categoryIndex},
-                  onRefresh,
-                );
-          }}
-          style={styles.showMoreIcon}>
-          <Feather
-            name="more-horizontal"
-            size={24}
-            color={themeColor.secondaryText}
-          />
-        </TouchableOpacity>
+        <View style={styles.dropdownButtonContainer}>
+          <TouchableOpacity
+            onPress={() => {
+              screenType === 'WishList'
+                ? navigation.navigate(
+                    'ModalScreen',
+                    {categoryIndex: categoryIndex},
+                    onRefresh,
+                  )
+                : navigation.navigate(
+                    'SharedModalScreen',
+                    {categoryIndex: categoryIndex},
+                    onRefresh,
+                  );
+            }}
+            style={styles.showMoreIcon}>
+            <Feather
+              name="more-horizontal"
+              size={24}
+              color={themeColor.secondaryText}
+            />
+          </TouchableOpacity>
+        </View>
       )}
       <FlatList
         ref={ListRef}

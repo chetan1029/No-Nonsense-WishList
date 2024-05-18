@@ -12,6 +12,7 @@ const en = {
       automaticLabel: 'Automatic',
       lightLabel: 'Light',
       darkLabel: 'Dark',
+      userProfile: 'User Profile',
       // wishlist 
       myWishlists: 'My Wishlists',
       moveToPurchase: '{{title}} move to purchase',
@@ -46,6 +47,10 @@ const en = {
       wannaDeleteCategory: `Are you sure you want to delete the category {{title}}?`,
       // WishList Flat Lists
       noWishlistItems: 'No WishList Item Available',
+      // User Profile
+      saveUserProfile: "Save User Profile",
+      enterYourName: "Enter your name",
+      enterYourEmail: 'Enter your email',
       // Alert text 
       confirmation: 'Confirmation',
       cancel: 'Cancel',
