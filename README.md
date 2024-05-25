@@ -86,6 +86,8 @@ https://github.com/crazycodeboy/react-native-splash-screen/issues/619
 
 2. Sometime afer updaet you might get an error about provisioning profile so just connect your iphone and run on that it will solve this issue.
 
+3. Logout / revoke apple account need different permissions please follow this https://www.youtube.com/watch?v=U1PIrZBgv0U
+
 # To run on your iphone
 
 xcode -> windows -> device and simulator -> add device

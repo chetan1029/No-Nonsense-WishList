@@ -1,4 +1,11 @@
-import {Alert, FlatList, StatusBar, StyleSheet, View} from 'react-native';
+import {
+  Alert,
+  FlatList,
+  Share,
+  StatusBar,
+  StyleSheet,
+  View,
+} from 'react-native';
 import React, {useEffect, useRef, useState} from 'react';
 
 // Components
@@ -88,12 +95,35 @@ const SharedWishListScreen = ({route, navigation}: any) => {
     }
   }, [Settings]);
 
+  const onShareApp = async () => {
+    try {
+      const shareOptions = {
+        url: 'http://localhost',
+      };
+
+      const result = await Share.share(shareOptions);
+
+      if (result.action === Share.sharedAction) {
+        console.log('Shared successfully');
+      } else if (result.action === Share.dismissedAction) {
+        console.log('Share cancelled');
+      }
+    } catch (error: any) {
+      console.error('Error sharing:', error.message);
+    }
+  };
+
   return (
     <View
       style={[styles.ScreenContainer, {backgroundColor: themeColor.primaryBg}]}>
       <StatusBar backgroundColor={themeColor.primaryBg}></StatusBar>
       {/* App Header */}
-      <HeaderBar title={t('sharedWishlist')} themeColor={themeColor} />
+      <HeaderBar
+        title={t('sharedWishlist')}
+        themeColor={themeColor}
+        shareApp={true}
+        onShareApp={onShareApp}
+      />
 
       {/* SharedWishList Flatlist */}
       <SharedWishListFlatList

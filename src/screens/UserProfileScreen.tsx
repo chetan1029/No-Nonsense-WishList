@@ -1,5 +1,6 @@
 import {
   ActivityIndicator,
+  Alert,
   FlatList,
   StatusBar,
   StyleSheet,
@@ -22,6 +23,11 @@ import {useStore} from '../store/store';
 import 'intl-pluralrules';
 import {useTranslation} from 'react-i18next';
 import i18n from '../utils/i18n';
+import auth from '@react-native-firebase/auth';
+import {
+  revokeSignInWithAppleToken,
+  reauthenticateWithApple,
+} from '../utils/credential';
 
 // Components
 import HeaderBar from '../components/HeaderBar';
@@ -31,10 +37,6 @@ import TextInputField from '../components/TextInputField';
 // Yup validation
 const userProfileValidationSchema = yup.object().shape({
   name: yup.string().required('* Name is Required'),
-  email: yup
-    .string()
-    .required('* Email is Required')
-    .email('* Enter valid email address'),
 });
 
 const UserProfileScreen = ({route, navigation}: any) => {
@@ -46,6 +48,10 @@ const UserProfileScreen = ({route, navigation}: any) => {
   const UserDetail = useStore((state: any) => state.UserDetail);
   const themeColor = useOfflineStore((state: any) => state.themeColor);
   const Settings = useOfflineStore((state: any) => state.Settings);
+  const setUserDetail = useStore((state: any) => state.setUserDetail);
+  const deleteWishListByUser = useStore(
+    (state: any) => state.deleteWishListByUser,
+  );
 
   // Const
   const {t} = useTranslation();
@@ -53,8 +59,7 @@ const UserProfileScreen = ({route, navigation}: any) => {
   // Form
   const formRef = useRef<any>(null);
   const initialFormValues = {
-    name: '',
-    email: '',
+    name: UserDetail?.displayName,
   };
 
   // use effect to use language
@@ -63,6 +68,35 @@ const UserProfileScreen = ({route, navigation}: any) => {
       i18n.changeLanguage(Settings.language);
     }
   }, [Settings]);
+
+  // functions
+
+  const onDeleteAccount = () => {
+    Alert.alert(t('confirmation'), t('wannaDeleteAccount'), [
+      {
+        text: t('cancel'),
+        style: 'cancel',
+      },
+      {
+        text: t('delete'),
+        style: 'destructive',
+        onPress: async () => {
+          try {
+            setLoading(true);
+            await reauthenticateWithApple();
+            await auth().currentUser?.getIdToken?.(true);
+            await revokeSignInWithAppleToken();
+            await auth().currentUser?.delete();
+            await deleteWishListByUser(UserDetail);
+            setUserDetail(null);
+            showToast(t('accountDeleted'), 'success');
+          } catch (error) {
+            console.error('Error signing out: ', error);
+          }
+        },
+      },
+    ]);
+  };
 
   return (
     <View
@@ -76,6 +110,7 @@ const UserProfileScreen = ({route, navigation}: any) => {
           navigation.navigate('Settings');
         }}
       />
+
       {loading ? (
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color={themeColor.secondaryText} />
@@ -89,15 +124,20 @@ const UserProfileScreen = ({route, navigation}: any) => {
             validationSchema={userProfileValidationSchema}
             validateOnChange={false}
             validateOnBlur={false}
-            onSubmit={(values, actions) => {
+            onSubmit={async (values, actions) => {
               try {
                 setLoading(true);
+                const user = auth().currentUser;
+                await reauthenticateWithApple();
+                await user?.updateProfile({
+                  displayName: values.name,
+                });
+                setUserDetail({...UserDetail, displayName: values.name});
                 console.log('Form Values on Submit:', values);
-                navigation.navigate('Settings');
-                showToast(t('addedToWishlist'), 'success');
+                showToast(t('userProfileUpdated'), 'success');
               } catch (error) {
                 console.error('Error adding to wishlist:', error);
-                showToast(t('errorAddingToWishlist'), 'error');
+                showToast(t('errorUpdatingUserProfile'), 'error');
               } finally {
                 setLoading(false);
               }
@@ -121,15 +161,6 @@ const UserProfileScreen = ({route, navigation}: any) => {
                   icon="user"
                 />
 
-                <TextInputField
-                  value={values.email}
-                  handleOnChageText={handleChange('email')}
-                  placeholder={t('enterYourEmail')}
-                  error={errors.email}
-                  themeColor={themeColor}
-                  icon="mail"
-                />
-
                 <View style={styles.ButtonContainerComponent}>
                   <TouchableOpacity
                     style={styles.ButtonContainer}
@@ -146,7 +177,8 @@ const UserProfileScreen = ({route, navigation}: any) => {
           </Formik>
         </>
       )}
-      <TouchableOpacity style={styles.deleteButton}>
+
+      <TouchableOpacity style={styles.deleteButton} onPress={onDeleteAccount}>
         <Text style={{color: COLORS.primaryRedHex}}>Delete Account</Text>
       </TouchableOpacity>
     </View>

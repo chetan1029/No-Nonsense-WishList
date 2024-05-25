@@ -255,6 +255,33 @@ const addToSharedWishListInFirebase = async(categoryId: string, userId: string, 
       return AlertMessageDetails;
 }
 
+const deleteWishListByUserInFirebase = async(userId: string) => {
+    // Delete in Category
+    const userCategoryCollection = await firestore().collection('Category').where("userId", "==" , userId).get();
+    const categoryBatch = firestore().batch();
+    userCategoryCollection.forEach(documentSnapshot => {
+        categoryBatch.delete(documentSnapshot.ref);
+      });
+    categoryBatch.commit();
+
+    // Delete in WishList
+    const userWishListCollection = await firestore().collection('Wishlist').where("userId", "==" , userId).get();
+    const batch = firestore().batch();
+    userWishListCollection.forEach(documentSnapshot => {
+        batch.delete(documentSnapshot.ref);
+      });
+    batch.commit();
+
+    // Delete in SharedWishList
+    const sharedWishListCollection = await firestore().collection('SharedWishList').where("userId", "==", userId).get()
+    const sharedBatch = firestore().batch();
+    sharedWishListCollection.forEach(documentSnapshot => {
+        sharedBatch.delete(documentSnapshot.ref);
+    });
+    await sharedBatch.commit();
+}
+
+
 export { 
     fetchWishListItemsFromFirebase, 
     updatePurchaseStatusInFirebase, 
@@ -266,5 +293,6 @@ export {
     fetchSharedWishListFromFirebase,
     fetchSharedWishListItemsFromFirebase,
     removeFromSharedWishListInFirebase,
-    addToSharedWishListInFirebase
+    addToSharedWishListInFirebase,
+    deleteWishListByUserInFirebase,
 }
