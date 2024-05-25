@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useReducer, useState} from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import TabNavigator from './src/navigators/TabNavigator';
 import SplashScreen from 'react-native-splash-screen';
@@ -17,6 +17,7 @@ import {useStore} from './src/store/store';
 import {useOfflineStore} from './src/store/offline-store';
 import SharedModalScreen from './src/screens/SharedModalScreen';
 import {Text} from 'react-native';
+import LoginScreen from './src/screens/LoginScreen';
 
 const Stack = createStackNavigator();
 
@@ -41,8 +42,10 @@ const linking = {
 const App = () => {
   // state
   const [userLogin, setUserLogin] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   // store
+  const UserDetail = useStore((state: any) => state.UserDetail);
   const setUserDetail = useStore((state: any) => state.setUserDetail);
 
   // use Effect to show Splash screen
@@ -52,40 +55,33 @@ const App = () => {
 
   // Signing in Anonymously user
   useEffect(() => {
-    const subscriber = auth().onAuthStateChanged(user => {
+    const subscriber = auth().onAuthStateChanged(async user => {
       if (user) {
-        setUserDetail(user);
+        await setUserDetail(user);
         setUserLogin(true);
       } else {
-        auth()
-          .signInAnonymously()
-          .then(userCredential => {
-            setUserDetail(userCredential.user);
-            setUserLogin(true);
-          })
-          .catch(error => {
-            console.log(error);
-          });
+        await setUserDetail(null);
+        setUserLogin(false);
       }
+      setLoading(false);
     });
     return subscriber;
   }, []);
 
-  if (!userLogin) {
+  if (loading) {
     return null;
   }
 
   return (
     <SafeAreaProvider>
-      <AppContent></AppContent>
+      <AppContent isUserLogin={userLogin}></AppContent>
     </SafeAreaProvider>
   );
 };
 
-const AppContent = () => {
+const AppContent = ({isUserLogin}: any) => {
   // store
   const themeColor = useOfflineStore((state: any) => state.themeColor);
-
   const insets = useSafeAreaInsets();
   return (
     <LinearGradient
@@ -100,20 +96,32 @@ const AppContent = () => {
           linking={linking} // Error due to formating but it still works
           fallback={<Text>Loading...</Text>}>
           <Stack.Navigator>
-            <Stack.Group
-              screenOptions={{
-                headerMode: 'screen',
-                headerShown: false,
-                presentation: 'transparentModal',
-                ...TransitionPresets.ModalPresentationIOS,
-              }}>
-              <Stack.Screen name="Tab" component={TabNavigator}></Stack.Screen>
-              <Stack.Screen name="ModalScreen" component={ModalScreen} />
-              <Stack.Screen
-                name="SharedModalScreen"
-                component={SharedModalScreen}
-              />
-            </Stack.Group>
+            {!isUserLogin ? (
+              <Stack.Group
+                screenOptions={{
+                  headerMode: 'screen',
+                  headerShown: false,
+                }}>
+                <Stack.Screen name="LoginScreen" component={LoginScreen} />
+              </Stack.Group>
+            ) : (
+              <Stack.Group
+                screenOptions={{
+                  headerMode: 'screen',
+                  headerShown: false,
+                  presentation: 'transparentModal',
+                  ...TransitionPresets.ModalPresentationIOS,
+                }}>
+                <Stack.Screen
+                  name="Tab"
+                  component={TabNavigator}></Stack.Screen>
+                <Stack.Screen name="ModalScreen" component={ModalScreen} />
+                <Stack.Screen
+                  name="SharedModalScreen"
+                  component={SharedModalScreen}
+                />
+              </Stack.Group>
+            )}
           </Stack.Navigator>
         </NavigationContainer>
         <Toast />

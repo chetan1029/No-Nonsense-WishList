@@ -9,6 +9,7 @@ import {
 import React, {useState} from 'react';
 import {COLORS, FONTFAMILY, FONTSIZE, SPACING} from '../theme/theme';
 import SharedWishListCard from './SharedWishListCard';
+import EmptySharedWishList from './EmptySharedWishList';
 
 interface SharedWishListFlatListProps {
   ListRef: any;
@@ -42,9 +43,7 @@ const SharedWishListFlatList: React.FC<SharedWishListFlatListProps> = ({
       ref={ListRef}
       horizontal={false}
       ListEmptyComponent={
-        <View style={styles.EmptyListContainer}>
-          <Text style={styles.CategoryText}>{placeholder}</Text>
-        </View>
+        <EmptySharedWishList title={t('inviteYourFriends')} />
       }
       showsVerticalScrollIndicator={false}
       data={sharedWishList}

@@ -11,7 +11,8 @@ import {
   fetchSharedWishListFromFirebase,
   fetchSharedWishListItemsFromFirebase,
   removeFromSharedWishListInFirebase,
-  addToSharedWishListInFirebase
+  addToSharedWishListInFirebase,
+  deleteWishListByUserInFirebase,
 } from "./firebase-functions";
 import { AlertMessageDetailItem, CategoryItem, SettingsType, SharedWishListItem, UserType, WishListItem } from './types';
 import axios from 'axios';
@@ -43,12 +44,13 @@ interface StoreState {
   fetchSharedWishListItems: (userId: string, category: string) => Promise<void>;
   removeFromSharedWishList: (user: any, sharedWishListId: string) => Promise<void>;
   addToSharedWishList: (user: any, categoryId: string, t:any) => Promise<void>;
+  deleteWishListByUser: (user: any) => Promise<void>;
 }
 
 
 export const useStore = create<StoreState>(
   (set, get) => ({
-      UserDetail: {},
+      UserDetail: null,
       CategoryList: [],
       WishListItems: [],
       PurchaseListitems: [],
@@ -210,6 +212,13 @@ export const useStore = create<StoreState>(
           await get().fetchSharedWishList(user);
         } catch (error) {
         console.error("Error Updating data", error);
+        }
+      },
+      deleteWishListByUser: async(user:any) => {
+        try {
+        await deleteWishListByUserInFirebase(user.uid);
+        } catch (error) {
+        console.error("Error deleting wishlist data by user", error);
         }
       },
     }),
