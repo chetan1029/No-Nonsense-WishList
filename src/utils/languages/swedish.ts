@@ -39,6 +39,7 @@ const sv = {
     pasteYourLink: 'Klistra in din länk här...',
     addedToWishlist: 'Tillagd i önskelistan',
     errorAddingToWishlist: 'Fel vid tillägg till önskelistan',
+    searchingForproduct: 'Söker efter produktdetaljer...',
     // Shared Wishlists
     sharedWishlist: 'Delade önskelistor',
     wannaAddToWishlist: 'Vill du lägga till {{categoryName}} till delad önskelista?',

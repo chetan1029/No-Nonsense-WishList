@@ -39,6 +39,7 @@ const zh = {
       pasteYourLink: '在这里粘贴您的链接...',
       addedToWishlist: '已添加到愿望清单',
       errorAddingToWishlist: '添加到愿望清单时出错',
+      searchingForproduct: '正在搜索产品详细信息...',
       // Shared Wishlists
       sharedWishlist: '共享愿望清单',
       wannaAddToWishlist: '您要将{{categoryName}}添加到您的共享愿望清单吗？',

@@ -39,6 +39,7 @@ const fr = {
       pasteYourLink: 'Collez votre lien ici...',
       addedToWishlist: 'Ajouté à la liste de souhaits',
       errorAddingToWishlist: 'Erreur lors de l\'ajout à la liste de souhaits',
+      searchingForproduct: 'Recherche des détails du produit...',
       // Shared Wishlists
       sharedWishlist: 'Listes de souhaits partagées',
       wannaAddToWishlist: 'Voulez-vous ajouter {{categoryName}} à votre liste de souhaits partagée ?',

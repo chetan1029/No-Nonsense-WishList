@@ -39,6 +39,7 @@ const ru = {
     pasteYourLink: 'Вставьте вашу ссылку здесь...',
     addedToWishlist: 'Добавлено в список желаемого',
     errorAddingToWishlist: 'Ошибка при добавлении в список желаемого',
+    searchingForproduct: 'Поиск информации о продукте...',
     // Shared Wishlists
     sharedWishlist: 'Общие списки желаемого',
     wannaAddToWishlist: 'Вы хотите добавить {{categoryName}} в общий список желаемого?',

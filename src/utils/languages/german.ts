@@ -39,6 +39,7 @@ const de = {
       pasteYourLink: 'Fügen Sie Ihren Link hier ein...',
       addedToWishlist: 'Zur Wunschliste hinzugefügt',
       errorAddingToWishlist: 'Fehler beim Hinzufügen zur Wunschliste',
+      searchingForproduct: 'Suche nach Produktdetails...',
       // Shared Wishlists
       sharedWishlist: 'Geteilte Wunschlisten',
       wannaAddToWishlist: 'Möchten Sie {{categoryName}} zu Ihrer geteilten Wunschliste hinzufügen?',
