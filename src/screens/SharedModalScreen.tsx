@@ -16,7 +16,8 @@ import {useOfflineStore} from '../store/offline-store';
 import 'intl-pluralrules';
 import {useTranslation} from 'react-i18next';
 import i18n from '../utils/i18n';
-import {useEffect} from 'react';
+import {useEffect, useState} from 'react';
+import LoadingIndicator from '../components/LoadingIndicator';
 
 type ItemProps = {
   itemTitle: string;
@@ -26,6 +27,7 @@ type ItemProps = {
   navigation: any;
   themeColor: any;
   t: any;
+  setLoading: any;
 };
 
 const Item = ({
@@ -36,6 +38,7 @@ const Item = ({
   navigation,
   themeColor,
   t,
+  setLoading,
 }: ItemProps) => {
   // Store
   const removeFromSharedWishList = useStore(
@@ -59,7 +62,9 @@ const Item = ({
           text: t('remove'),
           style: 'destructive',
           onPress: async () => {
+            setLoading(true);
             await removeFromSharedWishList(UserDetail, sharedWishListId);
+            setLoading(false);
             navigation.navigate('SharedWishListScreen');
           },
         },
@@ -93,6 +98,9 @@ const Item = ({
 };
 
 function SharedModalScreen({navigation, route}: any) {
+  // state
+  const [loading, setLoading] = useState(false);
+
   // store
   const Settings = useOfflineStore((state: any) => state.Settings);
 
@@ -121,6 +129,8 @@ function SharedModalScreen({navigation, route}: any) {
 
   return (
     <View style={styles.modalContainer}>
+      {/* ActivityIndicator overlay */}
+      {loading && <LoadingIndicator />}
       <Pressable
         style={[
           StyleSheet.absoluteFill,
@@ -157,6 +167,7 @@ function SharedModalScreen({navigation, route}: any) {
               navigation={navigation}
               themeColor={themeColor}
               t={t}
+              setLoading={setLoading}
             />
           )}
           keyExtractor={item => item.id}
