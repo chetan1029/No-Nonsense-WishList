@@ -2,7 +2,7 @@ import auth from '@react-native-firebase/auth';
 import {appleAuth} from '@invertase/react-native-apple-authentication';
 
 // Login with Apple 
-const onAppleButtonPress = async (setUserDetail) => {
+const onAppleButtonPress = async (setUserDetail: any) => {
         // Start the sign-in request
         const appleAuthRequestResponse = await appleAuth.performRequest({
         requestedOperation: appleAuth.Operation.LOGIN,
@@ -52,7 +52,7 @@ const onAppleButtonPress = async (setUserDetail) => {
 };
 
 // Login us a Guest User
-const onContinueAsGuest = async (setUserDetail) => {
+const onContinueAsGuest = async (setUserDetail: any) => {
     const subscriber = auth().onAuthStateChanged(async user => {
             if (user) {
             await setUserDetail(user);
@@ -85,7 +85,7 @@ const revokeSignInWithAppleToken = async () => {
     
         // Revoke the token
         return auth().revokeToken(authorizationCode);
-    }catch (error) {
+    }catch (error: any) {
         console.log(`Error login as Guest: ${error.message}`);
     }
 };
@@ -115,7 +115,7 @@ const reauthenticateWithApple = async () => {
 };
 
 // Linking with apple account
-const linkWithApple = async (setUserDetail) => {
+const linkWithApple = async (setUserDetail: any) => {
         // Perform the Apple sign-in request
         const appleAuthRequestResponse = await appleAuth.performRequest({
             requestedOperation: appleAuth.Operation.LOGIN,
@@ -131,7 +131,11 @@ const linkWithApple = async (setUserDetail) => {
         const appleCredential = auth.AppleAuthProvider.credential(identityToken, nonce);
 
         // Link the credential to the current user
-        userCredential = await auth().currentUser?.linkWithCredential(appleCredential);
+        const userCredential = await auth().currentUser?.linkWithCredential(appleCredential);
+
+        if (!userCredential) {
+            throw new Error('Linking with Apple credential failed.');
+        }
         const {user} = userCredential;
 
         // Check if full name or email is missing

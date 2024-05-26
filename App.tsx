@@ -30,7 +30,7 @@ const linking = {
         screens: {
           Friends: {
             screens: {
-              SharedWishListScreen: 'wishlist/:categoryId/:name',
+              SharedWishListScreen: 'wishlist/:userName/:categoryId/:name',
             },
           },
         },

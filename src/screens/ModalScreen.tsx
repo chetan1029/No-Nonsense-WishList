@@ -48,10 +48,22 @@ const Item = ({
     const categoryItem = CategoryList.find(
       (c: {name: string}) => c.name === title,
     );
+
+    let userName = 'Anonymous';
+    if (UserDetail?.displayName) {
+      userName = UserDetail.displayName;
+    }
+
     let link = '';
     if (categoryItem && categoryItem.id) {
       //link = 'https://sports-afaf5.web.app/' + categoryItem.id;
-      link = 'wishlist://wishlist/' + categoryItem.id + '/' + categoryItem.name;
+      link =
+        'wishlist://wishlist/' +
+        userName +
+        '/' +
+        categoryItem.id +
+        '/' +
+        categoryItem.name;
     }
     if (action == 'share') {
       try {

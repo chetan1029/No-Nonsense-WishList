@@ -68,7 +68,7 @@ const addWishListInFirebase = async(category: string, url: string, title: string
       console.log('Category already exists.');
     }
 
-    await firestore().collection('Wishlist').add(
+    const wishListDocRef = await firestore().collection('Wishlist').add(
         { 
             "category": category, 
             "url": url,
@@ -80,6 +80,7 @@ const addWishListInFirebase = async(category: string, url: string, title: string
             "userId": userId,
         }
     )
+    return wishListDocRef.id;
 }
 
 const deleteCategoryInFirebase = async(categoryName: string, userId: string) => {
@@ -169,6 +170,7 @@ const fetchSharedWishListFromFirebase = async(userId: string) => {
                     sharedWithUserId: doc.data().sharedWithUserId,
                     userId: doc.data().userId,
                     createdDate: doc.data().createdDate,
+                    userName: doc.data().userName,
                 }));
             }
         });
@@ -202,7 +204,7 @@ const removeFromSharedWishListInFirebase = async(sharedWishListId: string, userI
     .delete();
 }
 
-const addToSharedWishListInFirebase = async(categoryId: string, userId: string, t:any) => {
+const addToSharedWishListInFirebase = async(categoryId: string, userName: string, userId: string, t:any) => {
     let AlertMessageDetails = {title: '', message: '', action: ''};
 
     const categorySnapshot = await firestore()
@@ -232,6 +234,7 @@ const addToSharedWishListInFirebase = async(categoryId: string, userId: string, 
                             "createdDate": firestore.FieldValue.serverTimestamp(),
                             "sharedWithUserId": userId,
                             "categoryName": categoryName,
+                            "userName": userName,
                         }
                     )
                     AlertMessageDetails = {title: 'Success', message: t('sharedWishlistSuccessfully', {categoryName}), action: ''};
@@ -281,12 +284,21 @@ const deleteWishListByUserInFirebase = async(userId: string) => {
     await sharedBatch.commit();
 }
 
+const updateUserNameOnSharedWishListInFirebase = async(userId: string, userName: string) => {
+    const sharedWishListCollection = await firestore().collection('SharedWishList').where("userId", "==", userId).get()
+    const batch = firestore().batch();
+    sharedWishListCollection.forEach(documentSnapshot => {
+        batch.update(documentSnapshot.ref, {"userName": userName});
+      });
+    await batch.commit();
+}
+
 
 export { 
     fetchWishListItemsFromFirebase, 
     updatePurchaseStatusInFirebase, 
     deleteWishListInFirebase, 
-    addWishListInFirebase, 
+    addWishListInFirebase,
     deleteCategoryInFirebase, 
     updateCategoryInFirebase,
     fetchCategoryListFromFirebase,
@@ -295,4 +307,5 @@ export {
     removeFromSharedWishListInFirebase,
     addToSharedWishListInFirebase,
     deleteWishListByUserInFirebase,
+    updateUserNameOnSharedWishListInFirebase
 }

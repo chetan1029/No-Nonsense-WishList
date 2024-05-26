@@ -40,6 +40,9 @@ const SettingScreen = ({route, navigation}: any) => {
   const themeColor = useOfflineStore((state: any) => state.themeColor);
   const setUserDetail = useStore((state: any) => state.setUserDetail);
   const UserDetail = useStore((state: any) => state.UserDetail);
+  const updateUserNameOnSharedWishList = useStore(
+    (state: any) => state.updateUserNameOnSharedWishList,
+  );
   // Const
   const {t} = useTranslation();
 
@@ -101,6 +104,8 @@ const SettingScreen = ({route, navigation}: any) => {
     setLoading(true);
     try {
       await linkWithApple(setUserDetail);
+      console.log(UserDetail.displayName);
+      await updateUserNameOnSharedWishList(UserDetail);
     } catch (error: any) {
       if (error.code === 'auth/credential-already-in-use') {
         Alert.alert(t('accountLinkFailed'), t('accountAlreadyInUse'));
