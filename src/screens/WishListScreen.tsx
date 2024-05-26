@@ -62,7 +62,7 @@ const WishListScreen = ({route, navigation}: any) => {
 
   // Use effect to fetch set category index
   useEffect(() => {
-    if (categories) {
+    if (categories.length > 0) {
       if (route.params) {
         if (route.params.category) {
           setCategoryIndex({

@@ -9,7 +9,7 @@ import { COLORSCHEME } from '../theme/theme';
 
 // Get device language
 const myLanguage = getLocales()[0].languageCode;
-const languangeOptions = ["en", "ru", "sv"]
+const languangeOptions = ["en", "ru", "sv", "de", "zh", "fr", "es"]
 
 const defaultLanguage = languangeOptions.includes(myLanguage) ? myLanguage : "en";
 
@@ -37,8 +37,6 @@ export const useOfflineStore = create<OfflineStoreState>(
             Appearance.setColorScheme("dark");
           }else if(settings.themeMode == "light"){
             Appearance.setColorScheme("light");
-          }else{
-            Appearance.setColorScheme("");
           }
         }))
       },

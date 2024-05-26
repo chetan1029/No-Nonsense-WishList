@@ -67,7 +67,7 @@ const PurchaseScreen = ({navigation}: any) => {
       );
       setSortedWishList(updatedSortedWishList);
     }
-  }, [WishListItems]);
+  }, [WishListItems, getWishListByCategory]);
 
   // use effect to use language
   useEffect(() => {
@@ -120,12 +120,10 @@ const PurchaseScreen = ({navigation}: any) => {
     }
   };
 
-  const onRefresh = () => {
+  const onRefresh = async () => {
     setRefreshing(true);
-    fetchWishListItems(UserDetail);
-    setTimeout(() => {
-      setRefreshing(false);
-    }, 1000);
+    await fetchWishListItems(UserDetail);
+    setRefreshing(false);
   };
 
   return (
