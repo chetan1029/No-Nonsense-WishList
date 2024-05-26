@@ -154,12 +154,11 @@ const WishListScreen = ({route, navigation}: any) => {
         });
 
         await Promise.all(promises);
-        setCategoryIndex(categoryIndex);
       });
 
     // Clean up the listener when component unmounts
     return () => unsubscribe();
-  }, [UserDetail]);
+  }, [fetchWishListItems, fetchCateogryList, UserDetail]);
 
   // Define debounced function outside of the component
   const handleCategorySelectionDebounced = _.debounce(

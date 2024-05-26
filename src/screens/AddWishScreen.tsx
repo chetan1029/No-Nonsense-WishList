@@ -49,7 +49,7 @@ const AddWishListScreen = ({navigation}: any) => {
   const [newCategory, setNewCategory] = useState<string>('');
   const [showNextPart, setShowNextPart] = useState<boolean>(false);
   const [rawUrl, setRawUrl] = useState<string>('');
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   // Form
   const formRef = useRef<any>(null);
