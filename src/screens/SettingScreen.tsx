@@ -50,7 +50,6 @@ const SettingScreen = ({route, navigation}: any) => {
   const themeMode = Settings.themeMode;
   const language = Settings.language;
   const themeModeData = [
-    {label: t('automaticLabel'), value: ''},
     {label: t('lightLabel'), value: 'light'},
     {label: t('darkLabel'), value: 'dark'},
   ];

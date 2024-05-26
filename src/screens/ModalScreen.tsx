@@ -14,10 +14,11 @@ import {COLORS, SPACING} from '../theme/theme';
 import Feather from 'react-native-vector-icons/Feather';
 import {useStore} from '../store/store';
 import {useOfflineStore} from '../store/offline-store';
-import {useEffect} from 'react';
+import {useEffect, useState} from 'react';
 import 'intl-pluralrules';
 import {useTranslation} from 'react-i18next';
 import i18n from '../utils/i18n';
+import LoadingIndicator from '../components/LoadingIndicator';
 
 type ItemProps = {
   itemTitle: string;
@@ -27,6 +28,7 @@ type ItemProps = {
   navigation: any;
   themeColor: any;
   t: any;
+  setLoading: any;
 };
 
 const Item = ({
@@ -37,6 +39,7 @@ const Item = ({
   navigation,
   themeColor,
   t,
+  setLoading,
 }: ItemProps) => {
   // Store
   const deleteCategory = useStore((state: any) => state.deleteCategory);
@@ -95,7 +98,9 @@ const Item = ({
           {
             text: t('save'),
             onPress: async newCategory => {
+              setLoading(true);
               await updateCategory(title, newCategory, UserDetail);
+              setLoading(false);
               navigation.navigate('WishList', {
                 category: newCategory,
               });
@@ -116,7 +121,9 @@ const Item = ({
           text: t('delete'),
           style: 'destructive',
           onPress: async () => {
+            setLoading(true);
             await deleteCategory(title, UserDetail);
+            setLoading(false);
             navigation.navigate('WishList', {
               index: 0,
             });
@@ -149,6 +156,7 @@ function ModalScreen({navigation, route}: any) {
   // state
   const {current} = useCardAnimation();
   const categoryIndex = route?.params?.categoryIndex;
+  const [loading, setLoading] = useState(false);
 
   // store
   const themeColor = useOfflineStore((state: any) => state.themeColor);
@@ -187,6 +195,8 @@ function ModalScreen({navigation, route}: any) {
 
   return (
     <View style={styles.modalContainer}>
+      {/* ActivityIndicator overlay */}
+      {loading && <LoadingIndicator />}
       <Pressable
         style={[
           StyleSheet.absoluteFill,
@@ -222,6 +232,7 @@ function ModalScreen({navigation, route}: any) {
               categoryIndex={categoryIndex}
               navigation={navigation}
               themeColor={themeColor}
+              setLoading={setLoading}
               t={t}
             />
           )}

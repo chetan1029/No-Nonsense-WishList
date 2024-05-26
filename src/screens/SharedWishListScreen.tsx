@@ -65,7 +65,7 @@ const SharedWishListScreen = ({route, navigation}: any) => {
         },
       ]);
     }
-  }, [categoryId]);
+  }, [UserDetail, categoryId, userName]);
 
   // use Effect to manage alert
   useEffect(() => {
@@ -117,7 +117,7 @@ const SharedWishListScreen = ({route, navigation}: any) => {
 
     // Clean up the listener when component unmounts
     return () => unsubscribe();
-  }, [UserDetail]);
+  }, [fetchSharedWishList, UserDetail]);
 
   const onShareApp = async () => {
     try {
@@ -137,7 +137,6 @@ const SharedWishListScreen = ({route, navigation}: any) => {
     }
   };
 
-  console.log(sharedWishList);
   return (
     <View
       style={[styles.ScreenContainer, {backgroundColor: themeColor.primaryBg}]}>

@@ -54,7 +54,7 @@ const SharedWishListDetailScreen = ({route, navigation}: any) => {
     if (userId && categoryName) {
       fetchData();
     }
-  }, [fetchSharedWishListItems]);
+  }, [fetchSharedWishListItems, categoryName, userId]);
 
   // use effect to use language
   useEffect(() => {

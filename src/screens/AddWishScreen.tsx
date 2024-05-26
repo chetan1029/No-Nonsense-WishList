@@ -71,7 +71,7 @@ const AddWishListScreen = ({navigation}: any) => {
   // Use effect to fetch wish list
   useEffect(() => {
     fetchWishListItems(UserDetail);
-  }, [fetchWishListItems]);
+  }, [fetchWishListItems, UserDetail]);
 
   // Use effect to set category list
   useEffect(() => {
