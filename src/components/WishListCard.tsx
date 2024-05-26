@@ -7,6 +7,7 @@ import {
   FONTSIZE,
   SPACING,
 } from '../theme/theme';
+import PlaceholderImage from './PlaceholderImage';
 
 interface WishListCardProps {
   id: string;
@@ -33,7 +34,11 @@ const WishListCard: React.FC<WishListCardProps> = ({
       ]}>
       <View style={styles.CardInfoContainer}>
         <View style={styles.CardImageInfoContainer}>
-          <Image source={{uri: image}} style={styles.Image} />
+          {image ? (
+            <Image source={{uri: image}} style={styles.Image} />
+          ) : (
+            <PlaceholderImage />
+          )}
           <View style={styles.CardDetailInfoContainer}>
             <Text
               numberOfLines={1}

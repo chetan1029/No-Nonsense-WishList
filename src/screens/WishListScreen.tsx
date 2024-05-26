@@ -13,6 +13,7 @@ import _ from 'lodash';
 import 'intl-pluralrules';
 import {useTranslation} from 'react-i18next';
 import i18n from '../utils/i18n';
+import firestore from '@react-native-firebase/firestore';
 
 // Components
 import HeaderBar from '../components/HeaderBar';
@@ -132,6 +133,33 @@ const WishListScreen = ({route, navigation}: any) => {
     setCategoryIndex(categoryIndex);
     setRefreshing(false);
   };
+
+  // Use effect to subscribe to changes in Firestore
+  useEffect(() => {
+    const unsubscribe = firestore()
+      .collection('Wishlist')
+      .where('userId', '==', UserDetail.uid)
+      .onSnapshot(async querySnapshot => {
+        let promises: any = [];
+        querySnapshot.docChanges().forEach(change => {
+          if (
+            change.type === 'added' ||
+            change.type === 'removed' ||
+            change.type === 'modified'
+          ) {
+            // Add asynchronous operations to promises array
+            promises.push(fetchWishListItems(UserDetail));
+            promises.push(fetchCateogryList(UserDetail));
+          }
+        });
+
+        await Promise.all(promises);
+        setCategoryIndex(categoryIndex);
+      });
+
+    // Clean up the listener when component unmounts
+    return () => unsubscribe();
+  }, [UserDetail]);
 
   // Define debounced function outside of the component
   const handleCategorySelectionDebounced = _.debounce(

@@ -55,6 +55,7 @@ const SharedWishListFlatList: React.FC<SharedWishListFlatListProps> = ({
             id={item.id}
             categoryName={item.categoryName}
             userId={item.userId}
+            userName={item.userName}
             themeColor={themeColor}
             navigation={navigation}
           />

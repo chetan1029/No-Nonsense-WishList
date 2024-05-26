@@ -35,6 +35,7 @@ import AddLinkInput from '../components/AddLinkInput';
 // Memorized functions
 import {getCategories, showToast, filterUrl} from '../utils/common';
 import LottieView from 'lottie-react-native';
+import LoadingIndicator from '../components/LoadingIndicator';
 
 // Yup validation
 const wishListValidationSchema = yup.object().shape({
@@ -136,12 +137,7 @@ const AddWishListScreen = ({navigation}: any) => {
 
           {/* ActivityIndicator overlay */}
           {loading && (
-            <View style={styles.loadingOverlay}>
-              <ActivityIndicator
-                size="large"
-                color={themeColor.secondaryText}
-              />
-            </View>
+            <LoadingIndicator title="Searching for product details..." />
           )}
 
           {/* App Header */}
@@ -382,12 +378,5 @@ const styles = StyleSheet.create({
     paddingStart: SPACING.space_10,
     fontSize: FONTSIZE.size_12,
     color: COLORS.primaryRedHex,
-  },
-  loadingOverlay: {
-    ...StyleSheet.absoluteFillObject,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: COLORS.secondaryBlackRGBA,
-    zIndex: 9999,
   },
 });

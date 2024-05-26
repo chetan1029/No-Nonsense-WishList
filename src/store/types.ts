@@ -33,6 +33,7 @@ export interface SharedWishListItem{
     sharedWithUserId: string,
     userId: string,
     createdDate: any,
+    userName: string,
 }
 
 export interface AlertMessageDetailItem{

@@ -13,6 +13,7 @@ import {
   removeFromSharedWishListInFirebase,
   addToSharedWishListInFirebase,
   deleteWishListByUserInFirebase,
+  updateUserNameOnSharedWishListInFirebase
 } from "./firebase-functions";
 import { AlertMessageDetailItem, CategoryItem, SettingsType, SharedWishListItem, UserType, WishListItem } from './types';
 import axios from 'axios';
@@ -43,7 +44,7 @@ interface StoreState {
   fetchSharedWishList: (user: any) => Promise<void>;
   fetchSharedWishListItems: (userId: string, category: string) => Promise<void>;
   removeFromSharedWishList: (user: any, sharedWishListId: string) => Promise<void>;
-  addToSharedWishList: (user: any, categoryId: string, t:any) => Promise<void>;
+  addToSharedWishList: (user: any, categoryId: string, userName: any, t:any) => Promise<void>;
   deleteWishListByUser: (user: any) => Promise<void>;
 }
 
@@ -64,18 +65,18 @@ export const useStore = create<StoreState>(
       },
       fetchWishListItems: async (user: any) => {
         try {
-         const wishList = await fetchWishListItemsFromFirebase(user.uid);
-         set({WishListItems: wishList});
+          const wishList = await fetchWishListItemsFromFirebase(user?.uid);
+          set({WishListItems: wishList});
         } catch (error) {
-         console.error("Error fetching data", error);
+          console.error("Error fetching data", error);
         }
        }, 
       fetchCateogryList: async (user: any) => {
         try {
-        const category = await fetchCategoryListFromFirebase(user.uid);
-        set({CategoryList: category});
+          const category = await fetchCategoryListFromFirebase(user?.uid);
+          set({CategoryList: category});
         } catch (error) {
-        console.error("Error fetching data", error);
+          console.error("Error fetching data", error);
         }
       }, 
       addToPurchaseList: async(id: string, user:any) => {
@@ -102,25 +103,21 @@ export const useStore = create<StoreState>(
       },
       deleteFromWishList: async(id: string, user:any) => {
         try {
-        await deleteWishListInFirebase(id, user.uid);
-        
-        // Fetch updated wishlist items from Firebase
-        await get().fetchWishListItems(user);
-        await get().fetchCateogryList(user);
+          await deleteWishListInFirebase(id, user.uid);
+          
+          // Fetch updated wishlist items from Firebase
+          await get().fetchWishListItems(user);
+          await get().fetchCateogryList(user);
         } catch (error) {
-        console.error("Error Updating data", error);
+          console.error("Error Updating data", error);
         }
       },
       addWishList: async(category: string, url: string, rawUrl: string, user:any) => {
+        const title = getTitleFromText(rawUrl);
         try {
-          console.log(isConnectedToNetwork());
-          // TODO: test this one live device
-          if (!isConnectedToNetwork()) {
-            throw new Error("No internet connection");
-          }
           const response = await axios.get(url);
-          const {title, thumbnailImage, price} = parseHTMLContent(response.data);
-          await addWishListInFirebase(category, url, title, price, thumbnailImage, user.uid);
+          const { title, thumbnailImage, price } = parseHTMLContent(response.data);
+          const wishListId = await addWishListInFirebase(category, url, title, price, thumbnailImage, user.uid);
           
           // Fetch updated wishlist items from Firebase
           await get().fetchWishListItems(user);
@@ -129,10 +126,8 @@ export const useStore = create<StoreState>(
           if (error.message === "No internet connection") {
             // TODO: we can show a toast message that
             showToast(`No Internet Connection: we will update data once you are back online`, 'info');
-            const title = getTitleFromText(rawUrl);
             await addWishListInFirebase(category, url, title, "", "", user.uid);
           }else if (axios.isAxiosError(error)) {
-            const title = getTitleFromText(rawUrl);
             await addWishListInFirebase(category, url, title, "", "", user.uid);
           }else {
             console.error("Error Updating data:", error);
@@ -149,24 +144,24 @@ export const useStore = create<StoreState>(
       },
       deleteCategory: async(categoryName: string, user:any) => {
         try {
-        await deleteCategoryInFirebase(categoryName, user.uid);
-        
-        // Fetch updated wishlist items from Firebase
-        await get().fetchWishListItems(user);
-        await get().fetchCateogryList(user);
+          await deleteCategoryInFirebase(categoryName, user.uid);
+          
+          // Fetch updated wishlist items from Firebase
+          await get().fetchWishListItems(user);
+          await get().fetchCateogryList(user);
         } catch (error) {
-        console.error("Error Deleteting category", error);
+          console.error("Error Deleteting category", error);
         }
       },
       updateCategory: async(oldCategory:string, newCategory: string, user:any) => {
         try {
-        await updateCategoryInFirebase(oldCategory, newCategory, user.uid);
-        
-        // Fetch updated wishlist items from Firebase
-        await get().fetchWishListItems(user);
-        await get().fetchCateogryList(user);
+          await updateCategoryInFirebase(oldCategory, newCategory, user.uid);
+          
+          // Fetch updated wishlist items from Firebase
+          await get().fetchWishListItems(user);
+          await get().fetchCateogryList(user);
         } catch (error) {
-        console.error("Error Deleteting category", error);
+          console.error("Error Deleteting category", error);
         }
       },
       updateSettings: async(settings: SettingsType) => {
@@ -195,31 +190,38 @@ export const useStore = create<StoreState>(
       }, 
       removeFromSharedWishList: async(user: any, sharedWishListId: string) => {
         try {
-        await removeFromSharedWishListInFirebase(sharedWishListId, user.uid);
-        
-        // Fetch updated SharedWishlist items from Firebase
-        await get().fetchSharedWishList(user);
+          await removeFromSharedWishListInFirebase(sharedWishListId, user.uid);
+          
+          // Fetch updated SharedWishlist items from Firebase
+          await get().fetchSharedWishList(user);
         } catch (error) {
-        console.error("Error Deleteting Shared WishList", error);
+          console.error("Error Deleteting Shared WishList", error);
         }
       },
-      addToSharedWishList: async(user: any, categoryId:any, t:any) => {
+      addToSharedWishList: async(user: any, categoryId:any, userName: string, t:any) => {
         try {
-          const shareWishListMsg = await addToSharedWishListInFirebase(categoryId, user.uid, t);
+          const shareWishListMsg = await addToSharedWishListInFirebase(categoryId, userName, user.uid, t);
           
           set({AlertMessageDetails: shareWishListMsg});
           // Fetch updated SharedWishlist items from Firebase
           await get().fetchSharedWishList(user);
         } catch (error) {
-        console.error("Error Updating data", error);
+          console.error("Error Updating data", error);
         }
       },
       deleteWishListByUser: async(user:any) => {
         try {
-        await deleteWishListByUserInFirebase(user.uid);
+          await deleteWishListByUserInFirebase(user.uid);
         } catch (error) {
-        console.error("Error deleting wishlist data by user", error);
+          console.error("Error deleting wishlist data by user", error);
         }
       },
+      updateUserNameOnSharedWishList: async (user: any) => {
+        try {
+         const sharewishList = await updateUserNameOnSharedWishListInFirebase(user.uid, user.displayName);
+        } catch (error) {
+         console.error("Error fetching data", error);
+        }
+       }, 
     }),
   );

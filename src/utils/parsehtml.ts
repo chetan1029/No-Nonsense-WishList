@@ -1,59 +1,31 @@
 import * as cheerio from 'cheerio';
 
 const parseHTMLContent = (htmlContent: string) => {
-    const $ = cheerio.load(htmlContent);
-  
-    // Extract title
-    const title = $('meta[property="og:title"]').attr('content')  ?? $('title').text();
-  
-    // Extract thumbnail image
-    let thumbnailImage = $('meta[property="og:image"]').attr('content')  ?? '';
+  const $ = cheerio.load(htmlContent);
 
-    if(!thumbnailImage){
-      thumbnailImage = $('#landingImage').attr('src') ?? '';
-    }
-  
-    // Extract price amount
-    let priceAmount = '';
-    $('meta[property="og:price:amount"]').each((index, element) => {
-      priceAmount = $(element).attr('content')?.toString() ?? '';
-      return false;
-    });
+  // Function to get meta content
+  const getMetaContent = (property: string) => $(`meta[property="${property}"]`).attr('content') || '';
 
-    if(!priceAmount){
-        $('meta[property="product:price:amount"]').each((index, element) => {
-            priceAmount = $(element).attr('content')?.toString() ?? '';
-            return false;
-        });
-    }
-  
-    // Extract price currency
-    let priceCurrency = '';
-    $('meta[property="og:price:currency"]').each((index, element) => {
-      priceCurrency = $(element).attr('content')?.toString() ?? '';
-      return false;
-    });
+  // Extract title
+  const title = getMetaContent('og:title') || $('title').text();
 
-    if(!priceCurrency){
-        $('meta[property="product:price:currency"]').each((index, element) => {
-        priceCurrency = $(element).attr('content')?.toString() ?? '';
-        return false;
-        });
-    }
-  
-    let price = ''
-    if(priceAmount && priceCurrency){
-      // Combine price amount and currency
-      price = `${priceCurrency} ${priceAmount}`;
-    }else{
-      // Scrape price
-      price = $('#priceblock_ourprice').text().trim();
-      if (!price) {
-        price = $('#priceblock_dealprice').text().trim();
-      }
-    }
-  
-    return { title, thumbnailImage, price };
-  };
+  // Extract thumbnail image
+  const thumbnailImage = getMetaContent('og:image') || $('#landingImage').attr('src') || '';
 
-  export {parseHTMLContent};
+  // Extract price amount and currency
+  const priceAmount = getMetaContent('og:price:amount') || getMetaContent('product:price:amount');
+  const priceCurrency = getMetaContent('og:price:currency') || getMetaContent('product:price:currency');
+
+  // Combine price amount and currency
+  let price = '';
+  if (priceAmount && priceCurrency) {
+    price = `${priceCurrency} ${priceAmount}`;
+  } else {
+    // Scrape price
+    price = $('#priceblock_ourprice').text().trim() || $('#priceblock_dealprice').text().trim();
+  }
+
+  return { title, thumbnailImage, price };
+};
+
+export { parseHTMLContent };

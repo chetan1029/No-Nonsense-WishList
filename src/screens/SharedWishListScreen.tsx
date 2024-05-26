@@ -17,12 +17,14 @@ import {useBottomTabBarHeight} from '@react-navigation/bottom-tabs';
 import 'intl-pluralrules';
 import {useTranslation} from 'react-i18next';
 import i18n from '../utils/i18n';
+import firestore from '@react-native-firebase/firestore';
 
 const SharedWishListScreen = ({route, navigation}: any) => {
   // state
   const [refreshing, setRefreshing] = useState(false);
   const categoryId = route?.params?.categoryId;
-  const categoryName = route?.params?.name;
+  const categoryName = decodeURIComponent(route?.params?.name);
+  const userName = decodeURIComponent(route?.params?.userName);
 
   // Store
   const UserDetail = useStore((state: any) => state.UserDetail);
@@ -58,7 +60,7 @@ const SharedWishListScreen = ({route, navigation}: any) => {
           text: t('yes'),
           onPress: async () => {
             console.log('Yes');
-            await addToSharedWishList(UserDetail, categoryId, t);
+            await addToSharedWishList(UserDetail, categoryId, userName, t);
           },
         },
       ]);
@@ -95,6 +97,28 @@ const SharedWishListScreen = ({route, navigation}: any) => {
     }
   }, [Settings]);
 
+  // Use effect to subscribe to changes in Firestore
+  useEffect(() => {
+    const unsubscribe = firestore()
+      .collection('SharedWishList')
+      .where('sharedWithUserId', '==', UserDetail.uid)
+      .onSnapshot(querySnapshot => {
+        querySnapshot.docChanges().forEach(change => {
+          if (
+            change.type === 'added' ||
+            change.type === 'removed' ||
+            change.type === 'modified'
+          ) {
+            // Trigger a refresh of wish list items
+            fetchSharedWishList(UserDetail);
+          }
+        });
+      });
+
+    // Clean up the listener when component unmounts
+    return () => unsubscribe();
+  }, [UserDetail]);
+
   const onShareApp = async () => {
     try {
       const shareOptions = {
@@ -113,6 +137,7 @@ const SharedWishListScreen = ({route, navigation}: any) => {
     }
   };
 
+  console.log(sharedWishList);
   return (
     <View
       style={[styles.ScreenContainer, {backgroundColor: themeColor.primaryBg}]}>

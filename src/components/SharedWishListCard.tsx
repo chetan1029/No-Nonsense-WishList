@@ -13,6 +13,7 @@ interface SharedWishListCardProps {
   id: string;
   categoryName: string;
   userId: any;
+  userName: string;
   themeColor: any;
   navigation: any;
 }
@@ -21,6 +22,7 @@ const SharedWishListCard: React.FC<SharedWishListCardProps> = ({
   id,
   categoryName,
   userId,
+  userName,
   themeColor,
   navigation,
 }) => {
@@ -49,7 +51,9 @@ const SharedWishListCard: React.FC<SharedWishListCardProps> = ({
               {categoryName}
             </Text>
             <Text style={styles.ByUser}>
-              <Text style={{color: themeColor.secondaryText}}>By User</Text>
+              <Text style={{color: themeColor.secondaryText}}>
+                By {userName}
+              </Text>
             </Text>
           </View>
         </View>
