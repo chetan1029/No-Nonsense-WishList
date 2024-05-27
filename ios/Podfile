@@ -31,6 +31,8 @@ target 'my_wishlist' do
   # added below two line for react-native-firebase
   use_frameworks! :linkage => :static
   $RNFirebaseAsStaticFramework = true
+  # Add for the analytics firebase
+  $RNFirebaseAnalyticsEnableAdSupport = true
 
   use_react_native!(
     :path => config[:reactNativePath],

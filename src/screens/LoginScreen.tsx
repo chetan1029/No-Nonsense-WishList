@@ -23,6 +23,7 @@ import {onAppleButtonPress, onContinueAsGuest} from '../utils/credential';
 // Components
 import {useOfflineStore} from '../store/offline-store';
 import {useStore} from '../store/store';
+import crashlytics from '@react-native-firebase/crashlytics';
 
 const LoginScreen = ({route, navigation}: any) => {
   // state
@@ -74,6 +75,12 @@ const LoginScreen = ({route, navigation}: any) => {
     }
   };
 
+  // const handlePress = () => {
+  //   // Intentionally causing a crash
+  //   crashlytics().log('Test crash initiated');
+  //   crashlytics().crash();
+  // };
+
   return (
     <View
       style={[
@@ -92,6 +99,9 @@ const LoginScreen = ({route, navigation}: any) => {
       ) : (
         <>
           <View style={styles.detailContainer}>
+            {/* <TouchableOpacity onPress={handlePress}>
+              <Text>Click to crash</Text>
+            </TouchableOpacity> */}
             <Text
               style={[styles.headingText, {color: themeColor.secondaryText}]}>
               {t('welcomeToWishLists')}
