@@ -9,6 +9,7 @@ import {
 import React, {useState} from 'react';
 import {COLORS, FONTFAMILY, FONTSIZE, SPACING} from '../theme/theme';
 import SharedWishListCard from './SharedWishListCard';
+import EmptySharedWishList from './EmptySharedWishList';
 
 interface SharedWishListFlatListProps {
   ListRef: any;
@@ -19,6 +20,7 @@ interface SharedWishListFlatListProps {
   navigation: any;
   themeColor: any;
   placeholder: string;
+  t: any;
 }
 
 const SharedWishListFlatList: React.FC<SharedWishListFlatListProps> = ({
@@ -30,6 +32,7 @@ const SharedWishListFlatList: React.FC<SharedWishListFlatListProps> = ({
   navigation,
   themeColor,
   placeholder,
+  t,
 }) => {
   const [modalVisible, setModalVisible] = useState(false);
   const closeModal = () => {
@@ -40,9 +43,7 @@ const SharedWishListFlatList: React.FC<SharedWishListFlatListProps> = ({
       ref={ListRef}
       horizontal={false}
       ListEmptyComponent={
-        <View style={styles.EmptyListContainer}>
-          <Text style={styles.CategoryText}>{placeholder}</Text>
-        </View>
+        <EmptySharedWishList title={t('inviteYourFriends')} />
       }
       showsVerticalScrollIndicator={false}
       data={sharedWishList}
@@ -54,6 +55,7 @@ const SharedWishListFlatList: React.FC<SharedWishListFlatListProps> = ({
             id={item.id}
             categoryName={item.categoryName}
             userId={item.userId}
+            userName={item.userName}
             themeColor={themeColor}
             navigation={navigation}
           />
@@ -64,7 +66,7 @@ const SharedWishListFlatList: React.FC<SharedWishListFlatListProps> = ({
         <RefreshControl
           refreshing={refreshing}
           onRefresh={onRefresh}
-          title="Pull to refresh"
+          title={t('pullToRefresh')}
           tintColor={themeColor.secondaryText}
           titleColor={themeColor.secondaryText}
         />

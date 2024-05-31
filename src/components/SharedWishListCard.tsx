@@ -1,12 +1,19 @@
 import React from 'react';
-import {StyleSheet, Text, View, TouchableOpacity} from 'react-native';
-import {BORDERRADIUS, SPACING} from '../theme/theme';
+import {
+  StyleSheet,
+  Text,
+  View,
+  TouchableOpacity,
+  Dimensions,
+} from 'react-native';
+import {BORDERRADIUS, FONTFAMILY, FONTSIZE, SPACING} from '../theme/theme';
 import Feather from 'react-native-vector-icons/Feather';
 
 interface SharedWishListCardProps {
   id: string;
   categoryName: string;
   userId: any;
+  userName: string;
   themeColor: any;
   navigation: any;
 }
@@ -15,6 +22,7 @@ const SharedWishListCard: React.FC<SharedWishListCardProps> = ({
   id,
   categoryName,
   userId,
+  userName,
   themeColor,
   navigation,
 }) => {
@@ -29,20 +37,32 @@ const SharedWishListCard: React.FC<SharedWishListCardProps> = ({
         });
       }}
       style={[
-        styles.InputContainerComponent,
+        styles.CardLinearGradient,
         {backgroundColor: themeColor.priamryDarkBg},
       ]}>
-      <View style={styles.titleContainer}>
-        <View style={styles.iconContainer}>
-          <Feather name="folder" size={16} color={themeColor.secondaryText} />
+      <View style={styles.CardInfoContainer}>
+        <View style={styles.CardImageInfoContainer}>
+          <Feather name="folder" size={35} color={themeColor.secondaryText} />
+          <View style={styles.CardDetailInfoContainer}>
+            <Text
+              numberOfLines={1}
+              ellipsizeMode="tail"
+              style={[styles.CardTitle, {color: themeColor.secondaryText}]}>
+              {categoryName}
+            </Text>
+            <Text style={styles.ByUser}>
+              <Text style={{color: themeColor.secondaryText}}>
+                By {userName}
+              </Text>
+            </Text>
+          </View>
         </View>
-        <Text style={{color: themeColor.secondaryText}}>{categoryName}</Text>
+        <Feather
+          name="chevron-right"
+          size={30}
+          color={themeColor.secondaryText}
+        />
       </View>
-      <Feather
-        name="chevron-right"
-        size={20}
-        color={themeColor.secondaryText}
-      />
     </TouchableOpacity>
   );
 };
@@ -53,32 +73,32 @@ const styles = StyleSheet.create({
   ScreenContainer: {
     flex: 1,
   },
-  InputContainerComponent: {
-    flexDirection: 'row',
+  CardLinearGradient: {
+    paddingVertical: SPACING.space_10,
+    paddingHorizontal: SPACING.space_10,
     borderRadius: BORDERRADIUS.radius_10,
-    paddingHorizontal: SPACING.space_20,
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    height: SPACING.space_20 * 2.5,
   },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  pickerIcon: {
-    marginVertical: SPACING.space_15,
-  },
-  titleContainer: {
+  CardInfoContainer: {
     flexDirection: 'row',
-    alignItems: 'center',
     justifyContent: 'space-between',
+    alignItems: 'center',
   },
-  iconContainer: {
-    marginRight: 10,
+  CardImageInfoContainer: {
+    flexDirection: 'row',
+    gap: SPACING.space_20,
+    alignItems: 'center',
   },
-  icon: {
-    marginRight: SPACING.space_15,
-    paddingVertical: SPACING.space_15,
+  CardDetailInfoContainer: {
+    flexDirection: 'column',
+    gap: SPACING.space_4,
+  },
+  CardTitle: {
+    fontFamily: FONTFAMILY.poppins_medium,
+    fontSize: FONTSIZE.size_16,
+    maxWidth: '100%',
+  },
+  ByUser: {
+    fontFamily: FONTFAMILY.poppins_light,
+    fontSize: FONTSIZE.size_12,
   },
 });

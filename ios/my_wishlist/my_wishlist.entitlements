@@ -6,5 +6,10 @@
 	<array>
 		<string>Default</string>
 	</array>
+	<key>com.apple.developer.associated-domains</key>
+	<array>
+		<string>applinks:wishlist-338a1.web.app</string>
+		<string>webcredentials:wishlist-338a1.web.app</string>
+	</array>
 </dict>
 </plist>

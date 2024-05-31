@@ -9,7 +9,7 @@ import { COLORSCHEME } from '../theme/theme';
 
 // Get device language
 const myLanguage = getLocales()[0].languageCode;
-const languangeOptions = ["en", "ru", "sv"]
+const languangeOptions = ["en", "ru", "sv", "de", "zh", "fr", "es"]
 
 const defaultLanguage = languangeOptions.includes(myLanguage) ? myLanguage : "en";
 
@@ -33,6 +33,11 @@ export const useOfflineStore = create<OfflineStoreState>(
         }));
         set(produce((state) =>{
           state.themeColor = settings.themeMode == "dark" ? COLORSCHEME.dark : COLORSCHEME.light; // Update theme color immutably
+          if(settings.themeMode == "dark"){
+            Appearance.setColorScheme("dark");
+          }else if(settings.themeMode == "light"){
+            Appearance.setColorScheme("light");
+          }
         }))
       },
     }),

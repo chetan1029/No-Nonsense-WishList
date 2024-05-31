@@ -1,4 +1,11 @@
-import {Alert, FlatList, StatusBar, StyleSheet, View} from 'react-native';
+import {
+  Alert,
+  FlatList,
+  Share,
+  StatusBar,
+  StyleSheet,
+  View,
+} from 'react-native';
 import React, {useEffect, useRef, useState} from 'react';
 
 // Components
@@ -10,12 +17,14 @@ import {useBottomTabBarHeight} from '@react-navigation/bottom-tabs';
 import 'intl-pluralrules';
 import {useTranslation} from 'react-i18next';
 import i18n from '../utils/i18n';
+import firestore from '@react-native-firebase/firestore';
 
 const SharedWishListScreen = ({route, navigation}: any) => {
   // state
   const [refreshing, setRefreshing] = useState(false);
   const categoryId = route?.params?.categoryId;
-  const categoryName = route?.params?.name;
+  const categoryName = decodeURIComponent(route?.params?.name);
+  const userName = decodeURIComponent(route?.params?.userName);
 
   // Store
   const UserDetail = useStore((state: any) => state.UserDetail);
@@ -51,12 +60,12 @@ const SharedWishListScreen = ({route, navigation}: any) => {
           text: t('yes'),
           onPress: async () => {
             console.log('Yes');
-            await addToSharedWishList(UserDetail, categoryId, t);
+            await addToSharedWishList(UserDetail, categoryId, userName, t);
           },
         },
       ]);
     }
-  }, [categoryId]);
+  }, [UserDetail, categoryId, userName]);
 
   // use Effect to manage alert
   useEffect(() => {
@@ -71,8 +80,11 @@ const SharedWishListScreen = ({route, navigation}: any) => {
   }, [AlertMessageDetails]);
 
   useEffect(() => {
+    if (!UserDetail || !UserDetail.uid) {
+      return;
+    }
     fetchSharedWishList(UserDetail);
-  }, [fetchSharedWishList]);
+  }, [fetchSharedWishList, UserDetail]);
 
   // functions
   const onRefresh = async () => {
@@ -88,12 +100,60 @@ const SharedWishListScreen = ({route, navigation}: any) => {
     }
   }, [Settings]);
 
+  // Use effect to subscribe to changes in Firestore
+  useEffect(() => {
+    if (!UserDetail || !UserDetail.uid) {
+      return;
+    }
+    const unsubscribe = firestore()
+      .collection('SharedWishList')
+      .where('sharedWithUserId', '==', UserDetail?.uid)
+      .onSnapshot(querySnapshot => {
+        querySnapshot.docChanges().forEach(change => {
+          if (
+            change.type === 'added' ||
+            change.type === 'removed' ||
+            change.type === 'modified'
+          ) {
+            // Trigger a refresh of wish list items
+            fetchSharedWishList(UserDetail);
+          }
+        });
+      });
+
+    // Clean up the listener when component unmounts
+    return () => unsubscribe();
+  }, [fetchSharedWishList, UserDetail]);
+
+  const onShareApp = async () => {
+    try {
+      const shareOptions = {
+        url: 'http://localhost',
+      };
+
+      const result = await Share.share(shareOptions);
+
+      if (result.action === Share.sharedAction) {
+        console.log('Shared successfully');
+      } else if (result.action === Share.dismissedAction) {
+        console.log('Share cancelled');
+      }
+    } catch (error: any) {
+      console.error('Error sharing:', error.message);
+    }
+  };
+
   return (
     <View
       style={[styles.ScreenContainer, {backgroundColor: themeColor.primaryBg}]}>
       <StatusBar backgroundColor={themeColor.primaryBg}></StatusBar>
       {/* App Header */}
-      <HeaderBar title={t('sharedWishlist')} themeColor={themeColor} />
+      <HeaderBar
+        title={t('sharedWishlist')}
+        themeColor={themeColor}
+        shareApp={true}
+        onShareApp={onShareApp}
+      />
 
       {/* SharedWishList Flatlist */}
       <SharedWishListFlatList
@@ -105,6 +165,7 @@ const SharedWishListScreen = ({route, navigation}: any) => {
         navigation={navigation}
         themeColor={themeColor}
         placeholder={t('noWishlistItems')}
+        t={t}
       />
     </View>
   );

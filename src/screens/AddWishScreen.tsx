@@ -34,6 +34,8 @@ import AddLinkInput from '../components/AddLinkInput';
 
 // Memorized functions
 import {getCategories, showToast, filterUrl} from '../utils/common';
+import LottieView from 'lottie-react-native';
+import LoadingIndicator from '../components/LoadingIndicator';
 
 // Yup validation
 const wishListValidationSchema = yup.object().shape({
@@ -68,8 +70,11 @@ const AddWishListScreen = ({navigation}: any) => {
 
   // Use effect to fetch wish list
   useEffect(() => {
+    if (!UserDetail || !UserDetail.uid) {
+      return;
+    }
     fetchWishListItems(UserDetail);
-  }, [fetchWishListItems]);
+  }, [fetchWishListItems, UserDetail]);
 
   // Use effect to set category list
   useEffect(() => {
@@ -125,27 +130,16 @@ const AddWishListScreen = ({navigation}: any) => {
           <StatusBar backgroundColor={themeColor.primaryBg}></StatusBar>
 
           {/* Background Image */}
-          <Image
-            source={require('../assets/bg.png')}
-            style={styles.BackgroundImage}
+
+          <LottieView
+            style={styles.LottieStyle}
+            source={require('../lottie/gift.json')}
+            autoPlay
+            loop
           />
 
-          {/* Overlay View with Opacity */}
-          <View
-            style={[
-              styles.Overlay,
-              {backgroundColor: themeColor.primaryBgOpacity5},
-            ]}></View>
-
           {/* ActivityIndicator overlay */}
-          {loading && (
-            <View style={styles.loadingOverlay}>
-              <ActivityIndicator
-                size="large"
-                color={themeColor.secondaryText}
-              />
-            </View>
-          )}
+          {loading && <LoadingIndicator title={t('searchingForproduct')} />}
 
           {/* App Header */}
           <HeaderBar themeColor={themeColor} />
@@ -262,6 +256,7 @@ const AddWishListScreen = ({navigation}: any) => {
                             setNewCategory(text);
                           }}
                           onSubmitEditing={handleAddNewCategory}
+                          onBlur={handleAddNewCategory}
                           value={newCategory}
                         />
                       </View>
@@ -269,7 +264,10 @@ const AddWishListScreen = ({navigation}: any) => {
                     <View style={styles.ButtonContainerComponent}>
                       <TouchableOpacity
                         style={styles.ButtonContainer}
-                        onPress={() => handleSubmit()}>
+                        onPress={() => {
+                          handleAddNewCategory();
+                          handleSubmit();
+                        }}>
                         <Text style={styles.ButtonText}>
                           {t('addToWishList')}
                         </Text>
@@ -301,6 +299,9 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
     resizeMode: 'cover',
+  },
+  LottieStyle: {
+    height: 500,
   },
   Overlay: {
     position: 'absolute',
@@ -378,12 +379,5 @@ const styles = StyleSheet.create({
     paddingStart: SPACING.space_10,
     fontSize: FONTSIZE.size_12,
     color: COLORS.primaryRedHex,
-  },
-  loadingOverlay: {
-    ...StyleSheet.absoluteFillObject,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: COLORS.secondaryBlackRGBA,
-    zIndex: 9999,
   },
 });

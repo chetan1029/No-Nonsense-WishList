@@ -9,6 +9,10 @@ interface HeaderBarProps {
   title?: string;
   backButton?: any;
   themeColor: any;
+  logoutButton?: any;
+  onLogoutHandle?: any;
+  shareApp?: any;
+  onShareApp?: any;
 }
 
 const HeaderBar: React.FC<HeaderBarProps> = ({
@@ -16,6 +20,10 @@ const HeaderBar: React.FC<HeaderBarProps> = ({
   title,
   backButton,
   themeColor,
+  logoutButton,
+  onLogoutHandle,
+  shareApp,
+  onShareApp,
 }) => {
   return (
     <View style={styles.HeaderContainer}>
@@ -33,6 +41,29 @@ const HeaderBar: React.FC<HeaderBarProps> = ({
       <Text style={[styles.HeaderText, {color: themeColor.secondaryText}]}>
         {title}
       </Text>
+      {logoutButton ? (
+        <TouchableOpacity onPress={onLogoutHandle}>
+          <Feather
+            name="log-out"
+            size={FONTSIZE.size_24}
+            color={COLORS.primaryRedHex}
+          />
+        </TouchableOpacity>
+      ) : (
+        <></>
+      )}
+
+      {shareApp ? (
+        <TouchableOpacity onPress={onShareApp}>
+          <Feather
+            name="send"
+            size={FONTSIZE.size_24}
+            color={COLORS.primaryOrangeHex}
+          />
+        </TouchableOpacity>
+      ) : (
+        <></>
+      )}
     </View>
   );
 };

@@ -13,6 +13,7 @@ import _ from 'lodash';
 import 'intl-pluralrules';
 import {useTranslation} from 'react-i18next';
 import i18n from '../utils/i18n';
+import firestore from '@react-native-firebase/firestore';
 
 // Components
 import HeaderBar from '../components/HeaderBar';
@@ -21,6 +22,7 @@ import WishListFlatList from '../components/WishListFlatList';
 
 // Memorized functions
 import {getCategories, getWishListByCategory, showToast} from '../utils/common';
+import LoadingCard from '../components/LoadingCard';
 
 const WishListScreen = ({route, navigation}: any) => {
   // State
@@ -60,7 +62,7 @@ const WishListScreen = ({route, navigation}: any) => {
 
   // Use effect to fetch set category index
   useEffect(() => {
-    if (categories) {
+    if (categories.length > 0) {
       if (route.params) {
         if (route.params.category) {
           setCategoryIndex({
@@ -81,6 +83,9 @@ const WishListScreen = ({route, navigation}: any) => {
 
   // Use effect to fetch wish list
   useEffect(() => {
+    if (!UserDetail || !UserDetail.uid) {
+      return;
+    }
     const fetchData = async () => {
       setLoading(true);
       if (UserDetail) {
@@ -132,6 +137,36 @@ const WishListScreen = ({route, navigation}: any) => {
     setRefreshing(false);
   };
 
+  // Use effect to subscribe to changes in Firestore
+  useEffect(() => {
+    if (!UserDetail || !UserDetail.uid) {
+      return;
+    }
+
+    const unsubscribe = firestore()
+      .collection('Wishlist')
+      .where('userId', '==', UserDetail.uid)
+      .onSnapshot(async querySnapshot => {
+        let promises: any = [];
+        querySnapshot.docChanges().forEach(change => {
+          if (
+            change.type === 'added' ||
+            change.type === 'removed' ||
+            change.type === 'modified'
+          ) {
+            // Add asynchronous operations to promises array
+            promises.push(fetchWishListItems(UserDetail));
+            promises.push(fetchCateogryList(UserDetail));
+          }
+        });
+
+        await Promise.all(promises);
+      });
+
+    // Clean up the listener when component unmounts
+    return () => unsubscribe();
+  }, [fetchWishListItems, fetchCateogryList, UserDetail]);
+
   // Define debounced function outside of the component
   const handleCategorySelectionDebounced = _.debounce(
     (
@@ -165,20 +200,11 @@ const WishListScreen = ({route, navigation}: any) => {
       style={[styles.ScreenContainer, {backgroundColor: themeColor.primaryBg}]}>
       <StatusBar backgroundColor={themeColor.primaryBg}></StatusBar>
 
-      {/* Overlay View with Opacity */}
-      <View
-        style={[
-          styles.Overlay,
-          {backgroundColor: themeColor.primaryBgOpacity5},
-        ]}></View>
-
       {/* App Header */}
       <HeaderBar title={t('myWishlists')} themeColor={themeColor} />
 
       {loading ? (
-        <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color={themeColor.secondaryText} />
-        </View>
+        <LoadingCard />
       ) : (
         <>
           {/* Category Scroller */}

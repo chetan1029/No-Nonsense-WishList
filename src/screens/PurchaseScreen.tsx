@@ -17,6 +17,7 @@ import i18n from '../utils/i18n';
 import HeaderBar from '../components/HeaderBar';
 import SearchBar from '../components/SearchBar';
 import WishListFlatList from '../components/WishListFlatList';
+import LoadingCard from '../components/LoadingCard';
 
 // Memorized functions
 import {getWishListByCategory, showToast} from '../utils/common';
@@ -47,6 +48,10 @@ const PurchaseScreen = ({navigation}: any) => {
 
   // Use effect to fetch wish list
   useEffect(() => {
+    if (!UserDetail || !UserDetail.uid) {
+      return;
+    }
+
     const fetchData = async () => {
       setLoading(true);
       await fetchWishListItems(UserDetail);
@@ -54,7 +59,7 @@ const PurchaseScreen = ({navigation}: any) => {
     };
 
     fetchData();
-  }, [fetchWishListItems]);
+  }, [fetchWishListItems, UserDetail]);
 
   // Use effect to set category list
   useEffect(() => {
@@ -66,7 +71,7 @@ const PurchaseScreen = ({navigation}: any) => {
       );
       setSortedWishList(updatedSortedWishList);
     }
-  }, [WishListItems]);
+  }, [WishListItems, getWishListByCategory]);
 
   // use effect to use language
   useEffect(() => {
@@ -108,23 +113,21 @@ const PurchaseScreen = ({navigation}: any) => {
     setSearchText('');
   };
 
-  const handleSwipeableOpen = (
+  const handleSwipeableOpen = async (
     direction: string,
     id: string,
     title: string,
   ) => {
     if (direction == 'left') {
-      removeFromPurchaseList(id, UserDetail);
+      await removeFromPurchaseList(id, UserDetail);
       showToast(t('moveToWishlist', {title}), 'success');
     }
   };
 
-  const onRefresh = () => {
+  const onRefresh = async () => {
     setRefreshing(true);
-    fetchWishListItems(UserDetail);
-    setTimeout(() => {
-      setRefreshing(false);
-    }, 1000);
+    await fetchWishListItems(UserDetail);
+    setRefreshing(false);
   };
 
   return (
@@ -145,9 +148,7 @@ const PurchaseScreen = ({navigation}: any) => {
         placeholder={t('searchWishlists')}
       />
       {loading ? (
-        <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color={themeColor.secondaryText} />
-        </View>
+        <LoadingCard />
       ) : (
         <>
           {/* WishList Flatlist */}
