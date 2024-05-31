@@ -70,6 +70,9 @@ const AddWishListScreen = ({navigation}: any) => {
 
   // Use effect to fetch wish list
   useEffect(() => {
+    if (!UserDetail || !UserDetail.uid) {
+      return;
+    }
     fetchWishListItems(UserDetail);
   }, [fetchWishListItems, UserDetail]);
 

@@ -87,8 +87,8 @@ const SettingScreen = ({route, navigation}: any) => {
               .signOut()
               .then(() => {
                 console.log('User signed out!');
+                setUserDetail(null);
               });
-            setUserDetail(null);
           } catch (error) {
             console.error('Error signing out: ', error);
           } finally {

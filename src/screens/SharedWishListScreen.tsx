@@ -80,8 +80,11 @@ const SharedWishListScreen = ({route, navigation}: any) => {
   }, [AlertMessageDetails]);
 
   useEffect(() => {
+    if (!UserDetail || !UserDetail.uid) {
+      return;
+    }
     fetchSharedWishList(UserDetail);
-  }, [fetchSharedWishList]);
+  }, [fetchSharedWishList, UserDetail]);
 
   // functions
   const onRefresh = async () => {
@@ -99,9 +102,12 @@ const SharedWishListScreen = ({route, navigation}: any) => {
 
   // Use effect to subscribe to changes in Firestore
   useEffect(() => {
+    if (!UserDetail || !UserDetail.uid) {
+      return;
+    }
     const unsubscribe = firestore()
       .collection('SharedWishList')
-      .where('sharedWithUserId', '==', UserDetail.uid)
+      .where('sharedWithUserId', '==', UserDetail?.uid)
       .onSnapshot(querySnapshot => {
         querySnapshot.docChanges().forEach(change => {
           if (

@@ -83,6 +83,9 @@ const WishListScreen = ({route, navigation}: any) => {
 
   // Use effect to fetch wish list
   useEffect(() => {
+    if (!UserDetail || !UserDetail.uid) {
+      return;
+    }
     const fetchData = async () => {
       setLoading(true);
       if (UserDetail) {
@@ -136,6 +139,10 @@ const WishListScreen = ({route, navigation}: any) => {
 
   // Use effect to subscribe to changes in Firestore
   useEffect(() => {
+    if (!UserDetail || !UserDetail.uid) {
+      return;
+    }
+
     const unsubscribe = firestore()
       .collection('Wishlist')
       .where('userId', '==', UserDetail.uid)

@@ -48,6 +48,10 @@ const PurchaseScreen = ({navigation}: any) => {
 
   // Use effect to fetch wish list
   useEffect(() => {
+    if (!UserDetail || !UserDetail.uid) {
+      return;
+    }
+
     const fetchData = async () => {
       setLoading(true);
       await fetchWishListItems(UserDetail);
@@ -55,7 +59,7 @@ const PurchaseScreen = ({navigation}: any) => {
     };
 
     fetchData();
-  }, [fetchWishListItems]);
+  }, [fetchWishListItems, UserDetail]);
 
   // Use effect to set category list
   useEffect(() => {

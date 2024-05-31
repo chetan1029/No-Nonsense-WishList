@@ -59,9 +59,9 @@ const Item = ({
 
     let link = '';
     if (categoryItem && categoryItem.id) {
-      //link = 'https://sports-afaf5.web.app/' + categoryItem.id;
+      //link = 'wishlist://wishlist/' + userName + '/' + categoryItem.id + '/' + categoryItem.name;
       link =
-        'wishlist://wishlist/' +
+        'https://wishlist-338a1.web.app/wishlist/' +
         userName +
         '/' +
         categoryItem.id +

@@ -111,8 +111,50 @@ xcode -> build -> select device and run
 13. Tab with an extra page to navigate.
 14. Implementation of Internationalazation and Theme control with dark and light theme.
 15. DeepLinking so when you share a link it should open in the app.
-16. DeepLinking give a web app link so app exists it open other open in the website (TODO)
+16. DeepLinking give a web app link so app exists it open other open in the website
 
 # TODO
 
 1. Need to test network connectivity in the live device test.
+
+## Deeplinking
+
+https://developer.apple.com/documentation/Xcode/supporting-associated-domains
+we need two part to implement deeplinking
+
+1. Add in the app
+   1.1 Open you project in xcode -> inside target -> signing and capabilities -> add 'Associated Domain'
+   1.2 Enter value for domain like (applinks:wishlist-338a1.web.app for applinks) and (webcredentials:wishlist-338a1.web.app if you have any webcredentials)
+   1.3 change domain into your APP.tsx where you manage linking of your app.
+2. Add file to the web domain
+   2.1 As above link create file name called "apple-app-site-association" without any extension and put below content in it.
+
+```
+{
+  "applinks": {
+      "details": [
+           {
+             "appIDs": [ "427784E4AN.org.reactjs.native.example.my-wishlist"],
+             "components": [
+               {
+                  "#": "no_universal_links",
+                  "exclude": true,
+                  "comment": "Matches any URL with a fragment that equals no_universal_links and instructs the system not to open it as a universal link."
+               },
+               {
+                  "/": "/wishlist/*",
+                  "comment": "Matches any URL with a path that starts with /wishlist/."
+               }
+             ]
+           }
+       ]
+   },
+   "webcredentials": {
+      "apps": [ "427784E4AN.org.reactjs.native.example.my-wishlist" ]
+   }
+}
+```
+
+As you see we have appIds - "427784E4AN.org.reactjs.native.example.my-wishlist" so 427784E4AN is a appId and org.reactjs.native.example.my-wishlist is a bundle id from the apple developer account for the app.
+
+2.2 Upload file into a parent folder for next.js its public insdide a folder name .well-known.

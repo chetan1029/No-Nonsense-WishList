@@ -65,16 +65,24 @@ export const useStore = create<StoreState>(
       },
       fetchWishListItems: async (user: any) => {
         try {
-          const wishList = await fetchWishListItemsFromFirebase(user?.uid);
-          set({WishListItems: wishList});
+          if (user?.uid) {
+            const wishList = await fetchWishListItemsFromFirebase(user?.uid);
+            set({WishListItems: wishList});
+          }else {
+            set({ WishListItems: [] });
+          }
         } catch (error) {
           console.error("Error fetching data", error);
         }
        }, 
       fetchCateogryList: async (user: any) => {
         try {
-          const category = await fetchCategoryListFromFirebase(user?.uid);
-          set({CategoryList: category});
+          if (user?.uid) {
+            const category = await fetchCategoryListFromFirebase(user?.uid);
+            set({CategoryList: category});
+          }else {
+            set({ CategoryList: [] });
+          }
         } catch (error) {
           console.error("Error fetching data", error);
         }
@@ -174,8 +182,12 @@ export const useStore = create<StoreState>(
       },
       fetchSharedWishList: async (user: any) => {
         try {
-         const sharewishList = await fetchSharedWishListFromFirebase(user.uid);
-         set({SharedWishList: sharewishList});
+          if (user?.uid) {
+            const sharewishList = await fetchSharedWishListFromFirebase(user.uid);
+            set({SharedWishList: sharewishList});
+          }else {
+            set({ SharedWishList: [] });
+          }
         } catch (error) {
          console.error("Error fetching data", error);
         }
