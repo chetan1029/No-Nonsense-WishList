@@ -1,5 +1,12 @@
-import React from 'react';
-import {StyleSheet, Text, View, Image, Dimensions} from 'react-native';
+import React, {memo} from 'react';
+import {
+  StyleSheet,
+  Text,
+  View,
+  Image,
+  Dimensions,
+  TouchableOpacity,
+} from 'react-native';
 import {
   BORDERRADIUS,
   COLORS,
@@ -8,6 +15,7 @@ import {
   SPACING,
 } from '../theme/theme';
 import PlaceholderImage from './PlaceholderImage';
+import {openLink} from '../utils/common';
 
 interface WishListCardProps {
   id: string;
@@ -15,6 +23,7 @@ interface WishListCardProps {
   title: string;
   image: string;
   price: any;
+  url: string;
   themeColor: any;
 }
 
@@ -24,10 +33,13 @@ const WishListCard: React.FC<WishListCardProps> = ({
   title,
   image,
   price,
+  url,
   themeColor,
 }) => {
   return (
-    <View
+    <TouchableOpacity
+      activeOpacity={1}
+      onPress={() => openLink(url)}
       style={[
         styles.CardLinearGradient,
         {backgroundColor: themeColor.priamryDarkBg},
@@ -35,7 +47,11 @@ const WishListCard: React.FC<WishListCardProps> = ({
       <View style={styles.CardInfoContainer}>
         <View style={styles.CardImageInfoContainer}>
           {image ? (
-            <Image source={{uri: image}} style={styles.Image} />
+            <Image
+              source={{uri: image}}
+              style={styles.Image}
+              resizeMode="contain"
+            />
           ) : (
             <PlaceholderImage />
           )}
@@ -44,7 +60,7 @@ const WishListCard: React.FC<WishListCardProps> = ({
               numberOfLines={1}
               ellipsizeMode="tail"
               style={[styles.CardTitle, {color: themeColor.secondaryText}]}>
-              {title}
+              {title.trim() ? title : url}
             </Text>
             <Text style={styles.CardCurrency}>
               <Text style={{color: themeColor.secondaryText}}>{price}</Text>
@@ -52,7 +68,7 @@ const WishListCard: React.FC<WishListCardProps> = ({
           </View>
         </View>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 };
 
@@ -84,7 +100,6 @@ const styles = StyleSheet.create({
   CardTitle: {
     fontFamily: FONTFAMILY.poppins_medium,
     fontSize: FONTSIZE.size_16,
-
     maxWidth: '100%',
   },
   CardCurrency: {
@@ -94,4 +109,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default WishListCard;
+export default memo(WishListCard);

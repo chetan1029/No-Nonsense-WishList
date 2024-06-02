@@ -1,6 +1,7 @@
 import Toast from 'react-native-toast-message';
 import axios from 'axios';
 import NetInfo from "@react-native-community/netinfo";
+import { Linking } from 'react-native';
 
 const getCategories = (data: any[]) => {
     if (!Array.isArray(data) || data.length === 0) {
@@ -55,4 +56,19 @@ const isConnectedToNetwork = async () => {
   }
 };
 
-export {getCategories, getWishListByCategory, showToast, filterUrl, getTitleFromText, isConnectedToNetwork};
+const openLink = async (url: string) => {
+  if (url) {
+    Linking.canOpenURL(url)
+      .then(supported => {
+        if (supported) {
+          // Open the URL in the browser
+          Linking.openURL(url);
+        } else {
+          console.error("Don't know how to open URI: " + url);
+        }
+      })
+      .catch(err => console.error('An error occurred', err));
+  }
+};
+
+export {getCategories, getWishListByCategory, showToast, filterUrl, getTitleFromText, isConnectedToNetwork, openLink};

@@ -1,5 +1,5 @@
 import {StyleSheet, View} from 'react-native';
-import React from 'react';
+import React, {memo} from 'react';
 import {BORDERRADIUS} from '../theme/theme';
 
 // Function to generate a random hex color
@@ -34,4 +34,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default PlaceholderImage;
+export default memo(PlaceholderImage);
