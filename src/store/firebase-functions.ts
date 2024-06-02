@@ -46,9 +46,6 @@ const deleteWishListInFirebase = async(id: string, userId: string) => {
 }
 
 const addWishListInFirebase = async(category: string, url: string, title: string, price: string, thumbnailImage: string, userId: string) => {
-    if(!thumbnailImage){
-        thumbnailImage = "https://picsum.photos/seed/picsum/200";
-    }
     // Check if the category already exists
     const categoryQuerySnapshot = await firestore()
       .collection('Category')
@@ -179,7 +176,7 @@ const fetchSharedWishListFromFirebase = async(userId: string) => {
 
 const fetchSharedWishListItemsFromFirebase = async(userId: string, category: string) => {
     let sharedWishlistItems: WishListItem[] = [];
-    await firestore().collection('Wishlist').where("userId", "==" , userId).where("category", "==", category).orderBy('createDate', 'desc').get().then((wishlistSnapshot) => {
+    await firestore().collection('Wishlist').where("userId", "==" , userId).where("category", "==", category).where("purchase", "==", false).orderBy('createDate', 'desc').get().then((wishlistSnapshot) => {
         if (!wishlistSnapshot.empty) {
             sharedWishlistItems = wishlistSnapshot.docs.map((doc) => ({
                 id: doc.id,

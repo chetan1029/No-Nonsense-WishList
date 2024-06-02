@@ -104,6 +104,7 @@ const WishListFlatList: React.FC<WishListFlatListProps> = ({
                 image={item.image}
                 title={item.title ? item.title : item.url}
                 price={item.price}
+                url={item.url}
                 themeColor={themeColor}
               />
             </SwipeableRow>
