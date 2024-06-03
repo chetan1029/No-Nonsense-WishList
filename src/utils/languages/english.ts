@@ -40,6 +40,7 @@ const en = {
     addedToWishlist: 'Added to Wishlist',
     errorAddingToWishlist: 'Error adding to Wishlist',
     searchingForproduct: 'Searching for product details...',
+    wishComment: 'Add your Size, Color, Quantity or Type',
     // Shared Wishlists
     sharedWishlist: 'Shared Wishlists',
     wannaAddToWishlist: 'Do you want to add {{categoryName}} to your shared wishlist?',

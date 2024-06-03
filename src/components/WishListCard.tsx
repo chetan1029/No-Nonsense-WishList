@@ -23,6 +23,7 @@ interface WishListCardProps {
   title: string;
   image: string;
   price: any;
+  comment: string;
   url: string;
   themeColor: any;
 }
@@ -33,6 +34,7 @@ const WishListCard: React.FC<WishListCardProps> = ({
   title,
   image,
   price,
+  comment,
   url,
   themeColor,
 }) => {
@@ -60,10 +62,21 @@ const WishListCard: React.FC<WishListCardProps> = ({
               numberOfLines={1}
               ellipsizeMode="tail"
               style={[styles.CardTitle, {color: themeColor.secondaryText}]}>
-              {title.trim() ? title : url}
+              {title}
             </Text>
             <Text style={styles.CardCurrency}>
-              <Text style={{color: themeColor.secondaryText}}>{price}</Text>
+              {price ? (
+                <Text style={{color: themeColor.secondaryText}}>
+                  Price: {price}
+                  {comment ? ',' : ''}
+                </Text>
+              ) : (
+                <></>
+              )}
+              <Text style={{color: themeColor.secondaryText}}>
+                {price ? ' ' : ''}
+                {comment}
+              </Text>
             </Text>
           </View>
         </View>
