@@ -120,12 +120,12 @@ export const useStore = create<StoreState>(
           console.error("Error Updating data", error);
         }
       },
-      addWishList: async(category: string, url: string, rawUrl: string, user:any) => {
+      addWishList: async(category: string, url: string, comment: string, rawUrl: string, user:any) => {
         const title = getTitleFromText(rawUrl);
         try {
           const response = await axios.get(url);
           const { title, thumbnailImage, price } = parseHTMLContent(response.data);
-          const wishListId = await addWishListInFirebase(category, url, title, price, thumbnailImage, user.uid);
+          const wishListId = await addWishListInFirebase(category, url, comment, title, price, thumbnailImage, user.uid);
           
           // Fetch updated wishlist items from Firebase
           await get().fetchWishListItems(user);
@@ -134,9 +134,9 @@ export const useStore = create<StoreState>(
           if (error.message === "No internet connection") {
             // TODO: we can show a toast message that
             showToast(`No Internet Connection: we will update data once you are back online`, 'info');
-            await addWishListInFirebase(category, url, title, "", "", user.uid);
+            await addWishListInFirebase(category, url, comment, title, "", "", user.uid);
           }else if (axios.isAxiosError(error)) {
-            await addWishListInFirebase(category, url, title, "", "", user.uid);
+            await addWishListInFirebase(category, url, comment, title, "", "", user.uid);
           }else {
             console.error("Error Updating data:", error);
           }

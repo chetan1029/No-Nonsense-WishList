@@ -77,9 +77,8 @@ const styles = StyleSheet.create({
   InputContainerComponent: {
     flexDirection: 'row',
     marginHorizontal: SPACING.space_20,
-    marginBottom: SPACING.space_8,
+    marginBottom: SPACING.space_16,
     borderRadius: BORDERRADIUS.radius_20,
-
     alignItems: 'center',
   },
   InputIcon: {

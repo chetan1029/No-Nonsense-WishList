@@ -159,6 +159,7 @@ const UserProfileScreen = ({route, navigation}: any) => {
                   error={errors.name}
                   themeColor={themeColor}
                   icon="user"
+                  size="M"
                 />
 
                 <View style={styles.ButtonContainerComponent}>

@@ -11,6 +11,7 @@ const fetchWishListItemsFromFirebase = async(userId: string) => {
                 url: doc.data().url,
                 title: doc.data().title,
                 price: doc.data().price,
+                comment: doc.data().comment,
                 image: doc.data().image,
                 createdDate: doc.data().createdDate,
                 purchase: doc.data().purchase,
@@ -45,7 +46,7 @@ const deleteWishListInFirebase = async(id: string, userId: string) => {
     await firestore().collection('Wishlist').doc(id).delete();
 }
 
-const addWishListInFirebase = async(category: string, url: string, title: string, price: string, thumbnailImage: string, userId: string) => {
+const addWishListInFirebase = async(category: string, url: string, comment: string, title: string, price: string, thumbnailImage: string, userId: string) => {
     // Check if the category already exists
     const categoryQuerySnapshot = await firestore()
       .collection('Category')
@@ -71,6 +72,7 @@ const addWishListInFirebase = async(category: string, url: string, title: string
             "url": url,
             "title": title, 
             "price": price, 
+            "comment": comment,
             "purchase": false, 
             "image": thumbnailImage,
             "createDate": firestore.FieldValue.serverTimestamp(),
@@ -184,6 +186,7 @@ const fetchSharedWishListItemsFromFirebase = async(userId: string, category: str
                 url: doc.data().url,
                 title: doc.data().title,
                 price: doc.data().price,
+                comment: doc.data().comment,
                 image: doc.data().image,
                 createdDate: doc.data().createdDate,
                 purchase: doc.data().purchase,
