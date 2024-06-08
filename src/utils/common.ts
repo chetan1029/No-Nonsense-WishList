@@ -31,7 +31,8 @@ const filterUrl = (text: string) => {
   const urlRegex = /(https?:\/\/[^\s]+)/g;
   const urls = text.match(urlRegex);
   if(urls && urls.length > 0){
-    return urls[0];
+    const filterUrlRegex = /[^a-zA-Z0-9-_.~:/?#[\]@!$&'()*+,;=]/g;
+    return urls[0].replace(filterUrlRegex, '');
   }else{
     return "";
   }

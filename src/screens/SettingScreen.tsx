@@ -251,7 +251,7 @@ const SettingScreen = ({route, navigation}: any) => {
           {backgroundColor: themeColor.priamryDarkBg},
         ]}
         onPress={() => {
-          Linking.openURL('https://google.com');
+          Linking.openURL('https://wishlist-338a1.web.app/about');
         }}>
         <View style={styles.titleContainer}>
           <View style={styles.iconContainer}>
