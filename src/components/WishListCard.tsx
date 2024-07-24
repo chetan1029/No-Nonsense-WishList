@@ -1,5 +1,12 @@
-import React from 'react';
-import {StyleSheet, Text, View, Image, Dimensions} from 'react-native';
+import React, {memo} from 'react';
+import {
+  StyleSheet,
+  Text,
+  View,
+  Image,
+  Dimensions,
+  TouchableOpacity,
+} from 'react-native';
 import {
   BORDERRADIUS,
   COLORS,
@@ -8,6 +15,8 @@ import {
   SPACING,
 } from '../theme/theme';
 import PlaceholderImage from './PlaceholderImage';
+import {openLink} from '../utils/common';
+import LoadingIndicator from './LoadingIndicator';
 
 interface WishListCardProps {
   id: string;
@@ -15,7 +24,11 @@ interface WishListCardProps {
   title: string;
   image: string;
   price: any;
+  comment: string;
+  url: string;
   themeColor: any;
+  t: any;
+  scrapedStatus?: boolean;
 }
 
 const WishListCard: React.FC<WishListCardProps> = ({
@@ -24,35 +37,58 @@ const WishListCard: React.FC<WishListCardProps> = ({
   title,
   image,
   price,
+  comment,
+  url,
   themeColor,
+  t,
+  scrapedStatus = true,
 }) => {
   return (
-    <View
-      style={[
-        styles.CardLinearGradient,
-        {backgroundColor: themeColor.priamryDarkBg},
-      ]}>
-      <View style={styles.CardInfoContainer}>
-        <View style={styles.CardImageInfoContainer}>
-          {image ? (
-            <Image source={{uri: image}} style={styles.Image} />
-          ) : (
-            <PlaceholderImage />
-          )}
-          <View style={styles.CardDetailInfoContainer}>
-            <Text
-              numberOfLines={1}
-              ellipsizeMode="tail"
-              style={[styles.CardTitle, {color: themeColor.secondaryText}]}>
-              {title}
-            </Text>
-            <Text style={styles.CardCurrency}>
-              <Text style={{color: themeColor.secondaryText}}>{price}</Text>
-            </Text>
+    <>
+      <TouchableOpacity
+        activeOpacity={1}
+        onPress={() => openLink(url)}
+        style={[
+          styles.CardLinearGradient,
+          {backgroundColor: themeColor.priamryDarkBg},
+        ]}>
+        <View style={styles.CardInfoContainer}>
+          <View style={styles.CardImageInfoContainer}>
+            {image ? (
+              <Image
+                source={{uri: image}}
+                style={styles.Image}
+                resizeMode="contain"
+              />
+            ) : (
+              <PlaceholderImage />
+            )}
+            <View style={styles.CardDetailInfoContainer}>
+              <Text
+                numberOfLines={1}
+                ellipsizeMode="tail"
+                style={[styles.CardTitle, {color: themeColor.secondaryText}]}>
+                {title}
+              </Text>
+              <Text style={styles.CardCurrency}>
+                {price ? (
+                  <Text style={{color: themeColor.secondaryText}}>
+                    Price: {price}
+                    {comment ? ',' : ''}
+                  </Text>
+                ) : (
+                  <></>
+                )}
+                <Text style={{color: themeColor.secondaryText}}>
+                  {price ? ' ' : ''}
+                  {comment}
+                </Text>
+              </Text>
+            </View>
           </View>
         </View>
-      </View>
-    </View>
+      </TouchableOpacity>
+    </>
   );
 };
 
@@ -84,7 +120,6 @@ const styles = StyleSheet.create({
   CardTitle: {
     fontFamily: FONTFAMILY.poppins_medium,
     fontSize: FONTSIZE.size_16,
-
     maxWidth: '100%',
   },
   CardCurrency: {
@@ -94,4 +129,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default WishListCard;
+export default memo(WishListCard);

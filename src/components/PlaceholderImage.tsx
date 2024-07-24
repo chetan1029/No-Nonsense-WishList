@@ -1,7 +1,7 @@
 import {StyleSheet, View} from 'react-native';
-import React from 'react';
+import React, {memo} from 'react';
 import {BORDERRADIUS} from '../theme/theme';
-
+import Feather from 'react-native-vector-icons/Feather';
 // Function to generate a random hex color
 const getRandomColor = () => {
   return '#' + Math.floor(Math.random() * 16777215).toString(16);
@@ -21,7 +21,9 @@ const PlaceholderImage = () => {
           alignItems: 'center',
           justifyContent: 'center',
           backgroundImage: `linear-gradient(to bottom, ${color1}, ${color2})`,
-        }}></View>
+        }}>
+        <Feather name="shopping-cart" size={20} color={'white'} />
+      </View>
     </View>
   );
 };
@@ -34,4 +36,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default PlaceholderImage;
+export default memo(PlaceholderImage);

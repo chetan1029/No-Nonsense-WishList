@@ -1,5 +1,4 @@
 import {create} from 'zustand';
-import {produce} from 'immer';
 import {
   fetchWishListItemsFromFirebase, 
   updatePurchaseStatusInFirebase, 
@@ -17,10 +16,8 @@ import {
 } from "./firebase-functions";
 import { AlertMessageDetailItem, CategoryItem, SettingsType, SharedWishListItem, UserType, WishListItem } from './types';
 import axios from 'axios';
-import { parseHTMLContent } from '../utils/parsehtml';
 import { getTitleFromText, isConnectedToNetwork, showToast } from '../utils/common';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
 
 interface StoreState {
   UserDetail: any;
@@ -39,7 +36,6 @@ interface StoreState {
   removeFromPurchaseList: (id: string, user:any) => Promise<void>;
   deleteFromWishList: (id: string, user:any) => Promise<void>;
   addWishList: (category: string, url: string, title: string, price: string, user:any) => Promise<void>;
-  fetchWebPageContent: (url: string) => Promise<void>;
   updateSettings: (settings: SettingsType) => Promise<void>;
   fetchSharedWishList: (user: any) => Promise<void>;
   fetchSharedWishListItems: (userId: string, category: string) => Promise<void>;
@@ -120,34 +116,24 @@ export const useStore = create<StoreState>(
           console.error("Error Updating data", error);
         }
       },
-      addWishList: async(category: string, url: string, rawUrl: string, user:any) => {
+      addWishList: async(category: string, url: string, comment: string, rawUrl: string, user:any) => {
         const title = getTitleFromText(rawUrl);
         try {
-          const response = await axios.get(url);
-          const { title, thumbnailImage, price } = parseHTMLContent(response.data);
-          const wishListId = await addWishListInFirebase(category, url, title, price, thumbnailImage, user.uid);
-          
+          await addWishListInFirebase(category, url, comment, title, "", "", user.uid);
+
           // Fetch updated wishlist items from Firebase
-          await get().fetchWishListItems(user);
-          await get().fetchCateogryList(user);
+          //await get().fetchWishListItems(user);
+          //await get().fetchCateogryList(user);
         } catch (error: any) {
           if (error.message === "No internet connection") {
             // TODO: we can show a toast message that
             showToast(`No Internet Connection: we will update data once you are back online`, 'info');
-            await addWishListInFirebase(category, url, title, "", "", user.uid);
+            await addWishListInFirebase(category, url, comment, title, "", "", user.uid);
           }else if (axios.isAxiosError(error)) {
-            await addWishListInFirebase(category, url, title, "", "", user.uid);
+            await addWishListInFirebase(category, url, comment, title, "", "", user.uid);
           }else {
             console.error("Error Updating data:", error);
           }
-        }
-      },
-      fetchWebPageContent: async(url: string) => {
-        try {
-          const response = await axios.get(url);
-          set({WebPageContent: response.data});
-        } catch (error) {
-          console.error("Error fetching data", error);
         }
       },
       deleteCategory: async(categoryName: string, user:any) => {

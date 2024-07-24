@@ -11,9 +11,11 @@ const fetchWishListItemsFromFirebase = async(userId: string) => {
                 url: doc.data().url,
                 title: doc.data().title,
                 price: doc.data().price,
+                comment: doc.data().comment,
                 image: doc.data().image,
                 createdDate: doc.data().createdDate,
                 purchase: doc.data().purchase,
+                scrapedStatus: doc.data()?.scraped_status,
             }));
         }
     });
@@ -45,10 +47,7 @@ const deleteWishListInFirebase = async(id: string, userId: string) => {
     await firestore().collection('Wishlist').doc(id).delete();
 }
 
-const addWishListInFirebase = async(category: string, url: string, title: string, price: string, thumbnailImage: string, userId: string) => {
-    if(!thumbnailImage){
-        thumbnailImage = "https://picsum.photos/seed/picsum/200";
-    }
+const addWishListInFirebase = async(category: string, url: string, comment: string, title: string, price: string, thumbnailImage: string, userId: string) => {
     // Check if the category already exists
     const categoryQuerySnapshot = await firestore()
       .collection('Category')
@@ -74,10 +73,12 @@ const addWishListInFirebase = async(category: string, url: string, title: string
             "url": url,
             "title": title, 
             "price": price, 
+            "comment": comment,
             "purchase": false, 
             "image": thumbnailImage,
             "createDate": firestore.FieldValue.serverTimestamp(),
             "userId": userId,
+            "scraped_status": false,
         }
     )
     return wishListDocRef.id;
@@ -179,7 +180,7 @@ const fetchSharedWishListFromFirebase = async(userId: string) => {
 
 const fetchSharedWishListItemsFromFirebase = async(userId: string, category: string) => {
     let sharedWishlistItems: WishListItem[] = [];
-    await firestore().collection('Wishlist').where("userId", "==" , userId).where("category", "==", category).orderBy('createDate', 'desc').get().then((wishlistSnapshot) => {
+    await firestore().collection('Wishlist').where("userId", "==" , userId).where("category", "==", category).where("purchase", "==", false).orderBy('createDate', 'desc').get().then((wishlistSnapshot) => {
         if (!wishlistSnapshot.empty) {
             sharedWishlistItems = wishlistSnapshot.docs.map((doc) => ({
                 id: doc.id,
@@ -187,6 +188,7 @@ const fetchSharedWishListItemsFromFirebase = async(userId: string, category: str
                 url: doc.data().url,
                 title: doc.data().title,
                 price: doc.data().price,
+                comment: doc.data().comment,
                 image: doc.data().image,
                 createdDate: doc.data().createdDate,
                 purchase: doc.data().purchase,

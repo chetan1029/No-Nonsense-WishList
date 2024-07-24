@@ -28,7 +28,7 @@ const LoadingIndicator: React.FC<LoadingIndicatorProps> = ({title}) => {
     <>
       <View style={styles.loadingOverlay}>{/* Overlay */}</View>
       <View style={styles.activityIndicatorContainer}>
-        <ActivityIndicator size="large" color={COLORS.primaryWhiteHex} />
+        <ActivityIndicator size="small" color={COLORS.primaryWhiteHex} />
         {animatedTitle && (
           <Text style={styles.ActivityIndicatorText}>{animatedTitle}</Text>
         )}
@@ -42,6 +42,7 @@ const styles = StyleSheet.create({
     ...StyleSheet.absoluteFillObject,
     backgroundColor: COLORS.secondaryBlackRGBA,
     zIndex: 999, // Set zIndex to be behind the activity indicator
+    borderRadius: SPACING.space_10,
   },
   activityIndicatorContainer: {
     ...StyleSheet.absoluteFillObject,
@@ -51,8 +52,8 @@ const styles = StyleSheet.create({
   },
   ActivityIndicatorText: {
     color: COLORS.primaryWhiteHex,
-    paddingVertical: SPACING.space_15,
-    fontSize: FONTSIZE.size_16,
+    paddingVertical: SPACING.space_10,
+    fontSize: FONTSIZE.size_14,
     paddingHorizontal: SPACING.space_20,
   },
 });

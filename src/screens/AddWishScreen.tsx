@@ -36,6 +36,7 @@ import AddLinkInput from '../components/AddLinkInput';
 import {getCategories, showToast, filterUrl} from '../utils/common';
 import LottieView from 'lottie-react-native';
 import LoadingIndicator from '../components/LoadingIndicator';
+import CommentText from '../components/CommentText';
 
 // Yup validation
 const wishListValidationSchema = yup.object().shape({
@@ -55,6 +56,7 @@ const AddWishListScreen = ({navigation}: any) => {
   const formRef = useRef<any>(null);
   const initialFormValues = {
     url: '',
+    comment: '',
   };
 
   // Store
@@ -139,7 +141,7 @@ const AddWishListScreen = ({navigation}: any) => {
           />
 
           {/* ActivityIndicator overlay */}
-          {loading && <LoadingIndicator title={t('searchingForproduct')} />}
+          {loading && <LoadingIndicator />}
 
           {/* App Header */}
           <HeaderBar themeColor={themeColor} />
@@ -157,6 +159,7 @@ const AddWishListScreen = ({navigation}: any) => {
                 await addWishList(
                   selectCategory,
                   values.url,
+                  values.comment,
                   rawUrl,
                   UserDetail,
                 );
@@ -210,6 +213,16 @@ const AddWishListScreen = ({navigation}: any) => {
                 />
                 {showNextPart && showNextPart ? (
                   <>
+                    <CommentText
+                      value={values.comment}
+                      handleOnChageText={(value: string) => {
+                        handleChange('comment')(value);
+                      }}
+                      placeholder={t('wishComment')}
+                      urlError={errors.comment}
+                      themeColor={themeColor}
+                    />
+
                     <View style={styles.SizeOuterContainer}>
                       {categories.map((category: string, index: any) => (
                         <TouchableOpacity
@@ -327,7 +340,6 @@ const styles = StyleSheet.create({
   ScreenTitle: {
     fontSize: FONTSIZE.size_28,
     fontFamily: FONTFAMILY.poppins_semibold,
-
     paddingHorizontal: SPACING.space_20,
     paddingBottom: SPACING.space_30,
   },

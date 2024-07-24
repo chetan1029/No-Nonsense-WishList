@@ -262,7 +262,7 @@ const SwipeableRow: React.FC<SwipeableRowProps> = forwardRef(
             ref.current = swipeRef.current;
             if (direction == 'left') {
               onSwipeableOpen(direction, id, title);
-              close();
+              //close();
             }
           }}>
           {children}
