@@ -15,6 +15,7 @@ const fetchWishListItemsFromFirebase = async(userId: string) => {
                 image: doc.data().image,
                 createdDate: doc.data().createdDate,
                 purchase: doc.data().purchase,
+                scrapedStatus: doc.data()?.scraped_status,
             }));
         }
     });
@@ -77,6 +78,7 @@ const addWishListInFirebase = async(category: string, url: string, comment: stri
             "image": thumbnailImage,
             "createDate": firestore.FieldValue.serverTimestamp(),
             "userId": userId,
+            "scraped_status": false,
         }
     )
     return wishListDocRef.id;

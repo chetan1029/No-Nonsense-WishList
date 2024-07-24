@@ -42,7 +42,7 @@ const en = {
     searchingForproduct: 'Searching for product details...',
     wishComment: 'Add your Size, Color, Quantity or Type',
     // Shared Wishlists
-    sharedWishlist: 'Shared Wishlists',
+    sharedWishlist: 'Friend´s Wishlists',
     wannaAddToWishlist: 'Do you want to add {{categoryName}} to your shared wishlist?',
     canNotAddYouselfToWishlist: 'You cannot share your own wishlist with yourself',
     wishListNotFound: 'Wishlist not found',

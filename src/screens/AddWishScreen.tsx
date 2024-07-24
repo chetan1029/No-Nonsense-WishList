@@ -141,7 +141,7 @@ const AddWishListScreen = ({navigation}: any) => {
           />
 
           {/* ActivityIndicator overlay */}
-          {loading && <LoadingIndicator title={t('searchingForproduct')} />}
+          {loading && <LoadingIndicator />}
 
           {/* App Header */}
           <HeaderBar themeColor={themeColor} />

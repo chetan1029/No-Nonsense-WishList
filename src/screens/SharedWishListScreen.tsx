@@ -128,7 +128,7 @@ const SharedWishListScreen = ({route, navigation}: any) => {
   const onShareApp = async () => {
     try {
       const shareOptions = {
-        url: 'http://localhost',
+        url: 'https://wishlist-338a1.web.app/',
       };
 
       const result = await Share.share(shareOptions);
