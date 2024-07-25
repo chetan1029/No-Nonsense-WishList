@@ -1,5 +1,5 @@
 import firestore, { FirebaseFirestoreTypes } from '@react-native-firebase/firestore';
-import { CategoryItem, SharedWishListItem, WishListItem, AlertMessageDetailItem, GuideAiItem } from './types';
+import { CategoryItem, SharedWishListItem, WishListItem, AlertMessageDetailItem, WishAiItem } from './types';
 
 const fetchWishListItemsFromFirebase = async(userId: string) => {
     let wishlistItems: WishListItem[] = [];
@@ -296,8 +296,8 @@ const updateUserNameOnSharedWishListInFirebase = async(userId: string, userName:
 }
 
 // fetch Guide AI
-const fetchGuideAiFromFirebase = async(type: string, userId: any, language: string) => {
-    let guideAiItem: GuideAiItem[] = [];
+const fetchWishAiFromFirebase = async(type: string, userId: any, language: string) => {
+    let wishAiItem: WishAiItem[] = [];
     let query: FirebaseFirestoreTypes.Query<FirebaseFirestoreTypes.DocumentData> = firestore().collection('wishAi');
     if (type === 'user-history' && userId) {
         query = query.where("type", "==", "user-history").where("userId", "==", userId);
@@ -306,9 +306,9 @@ const fetchGuideAiFromFirebase = async(type: string, userId: any, language: stri
     }
     query = query.orderBy('status.startTime', 'desc')
     try {
-        await query.get().then((guideAiSnapshot) => {
-            if (!guideAiSnapshot.empty) {
-                guideAiItem = guideAiSnapshot.docs.map((doc) => ({
+        await query.get().then((wishAiSnapshot) => {
+            if (!wishAiSnapshot.empty) {
+                wishAiItem = wishAiSnapshot.docs.map((doc) => ({
                     id: doc.id,
                     prompt: doc.data().prompt,
                     response: doc.data().response,
@@ -321,31 +321,31 @@ const fetchGuideAiFromFirebase = async(type: string, userId: any, language: stri
     } catch (error) {
         console.error("Error fetching wishAi from Firebase:", error);
     }
-    return guideAiItem;
+    return wishAiItem;
 }
 
 // search via Guide AI
-const searchViaGuideAiFromFirebase = async(prompt: string, type: string, userId: any) => {
-    const guideAiDocRef = await firestore().collection('wishAi').add(
+const searchViaWishAiFromFirebase = async(prompt: string, type: string, userId: any) => {
+    const wishAiDocRef = await firestore().collection('wishAi').add(
         { 
             "type": type, 
             "prompt": prompt,
             "userId": userId,
         }
     )
-    return guideAiDocRef.id;
+    return wishAiDocRef.id;
 }
 
 // fetch Guide AI Search
-const fetchGuideAiItemFromFirebase = async(guideId: string) => {
+const fetchWishAiItemFromFirebase = async(guideId: string) => {
     try {
-        const guideAiSnapshot = await firestore().collection('wishAi').doc(guideId).get();
+        const wishAiSnapshot = await firestore().collection('wishAi').doc(guideId).get();
         
-        if (guideAiSnapshot.exists) {
-            const data = guideAiSnapshot.data();
+        if (wishAiSnapshot.exists) {
+            const data = wishAiSnapshot.data();
             if (data) {
                 return {
-                    id: guideAiSnapshot.id,
+                    id: wishAiSnapshot.id,
                     prompt: data.prompt,
                     response: data.response,
                     type: data.type
@@ -374,7 +374,7 @@ export {
     addToSharedWishListInFirebase,
     deleteWishListByUserInFirebase,
     updateUserNameOnSharedWishListInFirebase,
-    fetchGuideAiFromFirebase,
-    searchViaGuideAiFromFirebase,
-    fetchGuideAiItemFromFirebase,
+    fetchWishAiFromFirebase,
+    searchViaWishAiFromFirebase,
+    fetchWishAiItemFromFirebase,
 }

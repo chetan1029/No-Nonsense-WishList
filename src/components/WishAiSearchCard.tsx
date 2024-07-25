@@ -10,7 +10,7 @@ interface WishAiSearchCardProps {
   targetScreen: string;
   getNavigationParams: (item: any, guideId: string) => any;
   item: any;
-  searchViaGuideAi: any;
+  searchViaWishAi: any;
   userDetail: any;
   t: any;
 }
@@ -21,7 +21,7 @@ const WishAiSearchCard: React.FC<WishAiSearchCardProps> = ({
   targetScreen,
   getNavigationParams,
   item,
-  searchViaGuideAi,
+  searchViaWishAi,
   userDetail,
   t,
 }) => {
@@ -29,7 +29,7 @@ const WishAiSearchCard: React.FC<WishAiSearchCardProps> = ({
     <TouchableOpacity
       onPress={async () => {
         if (await filterAiPrompt(item.prompt)) {
-          const guideId = await searchViaGuideAi(
+          const guideId = await searchViaWishAi(
             item.prompt,
             item.type,
             userDetail,

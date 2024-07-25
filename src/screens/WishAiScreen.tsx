@@ -25,15 +25,15 @@ import {FONTFAMILY, FONTSIZE, SPACING} from '../theme/theme';
 
 const WishAiScreen = ({route, navigation}: any) => {
   // State
-  const [guideAiList, setGuideAiList] = useState<any>([]);
+  const [wishAiList, setWishAiList] = useState<any>([]);
   const [searchText, setSearchText] = useState('');
   const [loading, setLoading] = useState(false);
 
   // Store
-  const GuideAiItems = useStore((state: any) => state.GuideAiItems);
+  const WishAiItems = useStore((state: any) => state.WishAiItems);
   const GuideId = useStore((state: any) => state.GuideId);
-  const fetchGuideAiItems = useStore((state: any) => state.fetchGuideAiItems);
-  const searchViaGuideAi = useStore((state: any) => state.searchViaGuideAi);
+  const fetchWishAiItems = useStore((state: any) => state.fetchWishAiItems);
+  const searchViaWishAi = useStore((state: any) => state.searchViaWishAi);
   const UserDetail = useStore((state: any) => state.UserDetail);
   const themeColor = useOfflineStore((state: any) => state.themeColor);
   const Settings = useOfflineStore((state: any) => state.Settings);
@@ -49,17 +49,17 @@ const WishAiScreen = ({route, navigation}: any) => {
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
-      await fetchGuideAiItems(type, UserDetail, Settings?.language);
+      await fetchWishAiItems(type, UserDetail, Settings?.language);
       setLoading(false);
     };
 
     fetchData();
-  }, [fetchGuideAiItems, UserDetail, type, Settings?.language]);
+  }, [fetchWishAiItems, UserDetail, type, Settings?.language]);
 
-  // Use effect to update guideAi list when changes
+  // Use effect to update wishAi list when changes
   useEffect(() => {
-    setGuideAiList(GuideAiItems);
-  }, [GuideAiItems]);
+    setWishAiList(WishAiItems);
+  }, [WishAiItems]);
 
   // use effect to use language
   useEffect(() => {
@@ -69,19 +69,19 @@ const WishAiScreen = ({route, navigation}: any) => {
   }, [Settings]);
 
   // Functions
-  const resetGuideAiSearch = () => {
+  const resetWishAiSearch = () => {
     setSearchText('');
-    setGuideAiList(GuideAiItems);
+    setWishAiList(WishAiItems);
   };
 
-  const searchGuideAiList = (search: string) => {
+  const searchWishAiList = (search: string) => {
     if (search != '') {
       ListRef?.current?.scrollToOffset({
         animated: true,
         offset: 0,
       });
-      setGuideAiList([
-        ...GuideAiItems.filter((item: any) =>
+      setWishAiList([
+        ...WishAiItems.filter((item: any) =>
           item.prompt.toLowerCase().includes(search.toLowerCase()),
         ),
       ]);
@@ -99,9 +99,9 @@ const WishAiScreen = ({route, navigation}: any) => {
       {/* Search Input */}
       <SearchBar
         searchText={searchText}
-        searchWishList={searchGuideAiList}
+        searchWishList={searchWishAiList}
         setSearchText={setSearchText}
-        resetSearchWishList={resetGuideAiSearch}
+        resetSearchWishList={resetWishAiSearch}
         themeColor={themeColor}
         placeholder={t('searchWishAi')}
       />
@@ -131,7 +131,7 @@ const WishAiScreen = ({route, navigation}: any) => {
 
       {/* Search for Guide AI */}
       {searchText ? (
-        <View style={styles.guideAiContainer}>
+        <View style={styles.wishAiContainer}>
           <WishAiSearchCard
             themeColor={themeColor}
             navigation={navigation}
@@ -147,7 +147,7 @@ const WishAiScreen = ({route, navigation}: any) => {
               type: 'user-history',
               from: 'guide',
             }}
-            searchViaGuideAi={searchViaGuideAi}
+            searchViaWishAi={searchViaWishAi}
             userDetail={UserDetail}
             t={t}
           />
@@ -162,7 +162,7 @@ const WishAiScreen = ({route, navigation}: any) => {
         <WishAiFlatList
           ListRef={ListRef}
           tabBarHeight={tabBarHeight}
-          guideAiList={guideAiList}
+          wishAiList={wishAiList}
           navigation={navigation}
           themeColor={themeColor}
           targetScreen="AutoModelListScreen"
@@ -194,7 +194,7 @@ const styles = StyleSheet.create({
     fontFamily: FONTFAMILY.poppins_medium,
     fontSize: FONTSIZE.size_12,
   },
-  guideAiContainer: {
+  wishAiContainer: {
     marginHorizontal: SPACING.space_20,
   },
 });

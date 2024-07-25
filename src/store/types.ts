@@ -42,7 +42,7 @@ export interface AlertMessageDetailItem{
     action: any,
 }
 
-export interface GuideAiItem{
+export interface WishAiItem{
     id: string,
     prompt: string,
     response: any,

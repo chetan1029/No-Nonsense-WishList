@@ -22,7 +22,7 @@ import WishAiDetailCard from '../components/WishAiDetailCard';
 const WishAiDetailScreen = ({route, navigation}: any) => {
   // State
   const [loading, setLoading] = useState(false);
-  const [guideAiDetail, setGuideAiDetail] = useState<any>({});
+  const [wishAiDetail, setWishAiDetail] = useState<any>({});
 
   // Store
   const themeColor = useOfflineStore((state: any) => state.themeColor);
@@ -57,9 +57,9 @@ const WishAiDetailScreen = ({route, navigation}: any) => {
         .onSnapshot(snapshot => {
           if (snapshot.exists) {
             const modifiedData = snapshot.data();
-            setGuideAiDetail(modifiedData); // Update state with modified data
+            setWishAiDetail(modifiedData); // Update state with modified data
           } else {
-            setGuideAiDetail({}); // Handle case where document doesn't exist
+            setWishAiDetail({}); // Handle case where document doesn't exist
           }
         });
 
@@ -68,9 +68,9 @@ const WishAiDetailScreen = ({route, navigation}: any) => {
         unsubscribe();
       };
     } else if (item?.type && item?.type == 'no-keywordMatch') {
-      setGuideAiDetail(item);
+      setWishAiDetail(item);
     } else {
-      setGuideAiDetail(item.item);
+      setWishAiDetail(item.item);
     }
   }, [item, UserDetail]);
 
@@ -92,7 +92,7 @@ const WishAiDetailScreen = ({route, navigation}: any) => {
       ) : (
         <WishAiDetailCard
           themeColor={themeColor}
-          item={guideAiDetail}
+          item={wishAiDetail}
           tabBarHeight={tabBarHeight}
           t={t}
         />

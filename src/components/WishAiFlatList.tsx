@@ -6,7 +6,7 @@ import WishAiCard from './WishAiCard';
 
 interface WishAiFlatListProps {
   ListRef: any;
-  guideAiList: any;
+  wishAiList: any;
   tabBarHeight: any;
   navigation: any;
   themeColor: any;
@@ -18,7 +18,7 @@ interface WishAiFlatListProps {
 
 const WishAiFlatList: React.FC<WishAiFlatListProps> = ({
   ListRef,
-  guideAiList,
+  wishAiList,
   tabBarHeight,
   navigation,
   themeColor,
@@ -36,7 +36,7 @@ const WishAiFlatList: React.FC<WishAiFlatListProps> = ({
           <EmptyListAnimation title={t('noSearchInHistory')} />
         }
         showsVerticalScrollIndicator={false}
-        data={guideAiList}
+        data={wishAiList}
         contentContainerStyle={styles.FlatListContainer}
         keyExtractor={(item, index) =>
           item.id ? item.id.toString() : index.toString()
