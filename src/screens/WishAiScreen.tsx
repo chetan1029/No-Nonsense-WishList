@@ -165,7 +165,7 @@ const WishAiScreen = ({route, navigation}: any) => {
           wishAiList={wishAiList}
           navigation={navigation}
           themeColor={themeColor}
-          targetScreen="AutoModelListScreen"
+          targetScreen="WishAiDetailScreen"
           getNavigationParams={() => {}}
           t={t}
         />

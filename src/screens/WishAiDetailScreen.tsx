@@ -118,7 +118,7 @@ const WishAiDetailScreen = ({route, navigation}: any) => {
         title={t('wishAi')}
         themeColor={themeColor}
         backButton={() => {
-          navigation.navigate('WishAiScreen');
+          navigation.navigate('WishAiScreen', {type: item?.type});
         }}
       />
       <Text style={styles.cardTitle}>{item?.prompt}</Text>

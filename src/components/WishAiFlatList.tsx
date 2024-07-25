@@ -46,7 +46,7 @@ const WishAiFlatList: React.FC<WishAiFlatListProps> = ({
             <WishAiCard
               themeColor={themeColor}
               navigation={navigation}
-              targetScreen="WishAiDetailScreen"
+              targetScreen={targetScreen}
               getNavigationParams={() => ({item})}
               item={item}
             />
