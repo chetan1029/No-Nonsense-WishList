@@ -41,3 +41,11 @@ export interface AlertMessageDetailItem{
     alertType: string,
     action: any,
 }
+
+export interface GuideAiItem{
+    id: string,
+    prompt: string,
+    response: any,
+    type: string,
+    status?: any,
+}

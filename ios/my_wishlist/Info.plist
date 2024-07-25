@@ -64,6 +64,7 @@
 	<array>
 		<string>app_icons.ttf</string>
 		<string>Feather.ttf</string>
+		<string>Ionicons.ttf</string>
 	</array>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>

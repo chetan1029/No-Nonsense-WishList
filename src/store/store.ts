@@ -12,9 +12,12 @@ import {
   removeFromSharedWishListInFirebase,
   addToSharedWishListInFirebase,
   deleteWishListByUserInFirebase,
-  updateUserNameOnSharedWishListInFirebase
+  updateUserNameOnSharedWishListInFirebase,
+  fetchGuideAiFromFirebase,
+  searchViaGuideAiFromFirebase,
+  fetchGuideAiItemFromFirebase
 } from "./firebase-functions";
-import { AlertMessageDetailItem, CategoryItem, SettingsType, SharedWishListItem, UserType, WishListItem } from './types';
+import { AlertMessageDetailItem, CategoryItem, GuideAiItem, SettingsType, SharedWishListItem, UserType, WishListItem } from './types';
 import axios from 'axios';
 import { getTitleFromText, isConnectedToNetwork, showToast } from '../utils/common';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -29,6 +32,8 @@ interface StoreState {
   SharedWishList: SharedWishListItem[];
   SharedWishListItems: WishListItem[];
   AlertMessageDetails: { title: string, message: string, action: any};
+  GuideAiItems: GuideAiItem[];
+  GuideAiSearchItem: GuideAiItem | null;
   setUserDetail: (user: any) => void;
   fetchWishListItems: (user: any) => Promise<void>;
   fetchCateogryList: (user: any) => Promise<void>;
@@ -42,6 +47,9 @@ interface StoreState {
   removeFromSharedWishList: (user: any, sharedWishListId: string) => Promise<void>;
   addToSharedWishList: (user: any, categoryId: string, userName: any, t:any) => Promise<void>;
   deleteWishListByUser: (user: any) => Promise<void>;
+  fetchGuideAiItems: (type: string, user: any, language: string) => Promise<void>;
+  searchViaGuideAi: (prompt: string, type: string, user: any) => Promise<string>;
+  fetchGuideAiSearchItem: (id: string) => Promise<void>;
 }
 
 
@@ -55,6 +63,13 @@ export const useStore = create<StoreState>(
       SharedWishListItems: [],
       WebPageContent: '',
       AlertMessageDetails: {title: '', message: '', action: ''},
+      GuideAiItems: [],
+      GuideAiSearchItem: {
+        id: '',
+        prompt: '',
+        response: undefined,
+        type: ''
+      },
       Settings: {themeMode: "Automatic", language: "English"},
       setUserDetail: async(user: any) => {
         set({UserDetail: user})
@@ -221,5 +236,31 @@ export const useStore = create<StoreState>(
          console.error("Error fetching data", error);
         }
        }, 
+       fetchGuideAiItems: async (type: string, user:any, language: string) => {
+        try {
+          const lang = language && language.trim() ? language : 'en';
+          const guideAiItems = await fetchGuideAiFromFirebase(type, user?.uid, lang);
+          set({GuideAiItems: guideAiItems});
+        } catch (error) {
+          console.error("Error fetching guide AI data", error);
+        }
+      },
+      searchViaGuideAi: async (prompt: string, type: string, user: any) => {
+        try {
+          const guideAiId = await searchViaGuideAiFromFirebase(prompt, type, user?.uid);
+          return guideAiId
+        } catch (error) {
+          console.error("Error looking for guide AI", error);
+          return ''
+        }
+      },
+      fetchGuideAiSearchItem: async (guideId: string) => {
+        try {
+          const guideAiItem = await fetchGuideAiItemFromFirebase(guideId);
+          set({GuideAiSearchItem: guideAiItem});
+        } catch (error) {
+          console.error("Error fetching guide AI data", error);
+        }
+      },
     }),
   );

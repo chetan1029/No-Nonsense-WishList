@@ -1,5 +1,5 @@
-import firestore from '@react-native-firebase/firestore';
-import { CategoryItem, SharedWishListItem, WishListItem, AlertMessageDetailItem } from './types';
+import firestore, { FirebaseFirestoreTypes } from '@react-native-firebase/firestore';
+import { CategoryItem, SharedWishListItem, WishListItem, AlertMessageDetailItem, GuideAiItem } from './types';
 
 const fetchWishListItemsFromFirebase = async(userId: string) => {
     let wishlistItems: WishListItem[] = [];
@@ -295,6 +295,70 @@ const updateUserNameOnSharedWishListInFirebase = async(userId: string, userName:
     await batch.commit();
 }
 
+// fetch Guide AI
+const fetchGuideAiFromFirebase = async(type: string, userId: any, language: string) => {
+    let guideAiItem: GuideAiItem[] = [];
+    let query: FirebaseFirestoreTypes.Query<FirebaseFirestoreTypes.DocumentData> = firestore().collection('wishAi');
+    if (type === 'user-history' && userId) {
+        query = query.where("type", "==", "user-history").where("userId", "==", userId);
+    }else{
+        query = query.where("type", "==", "general").where("language", "==", language);
+    }
+    query = query.orderBy('status.startTime', 'desc')
+    try {
+        await query.get().then((guideAiSnapshot) => {
+            if (!guideAiSnapshot.empty) {
+                guideAiItem = guideAiSnapshot.docs.map((doc) => ({
+                    id: doc.id,
+                    prompt: doc.data().prompt,
+                    response: doc.data().response,
+                    type: doc.data().type,
+                    status: doc.data().status,
+                }))
+                .filter((item) => item.status.state !== "ERROR");
+            }
+        });
+    } catch (error) {
+        console.error("Error fetching wishAi from Firebase:", error);
+    }
+    return guideAiItem;
+}
+
+// search via Guide AI
+const searchViaGuideAiFromFirebase = async(prompt: string, type: string, userId: any) => {
+    const guideAiDocRef = await firestore().collection('wishAi').add(
+        { 
+            "type": type, 
+            "prompt": prompt,
+            "userId": userId,
+        }
+    )
+    return guideAiDocRef.id;
+}
+
+// fetch Guide AI Search
+const fetchGuideAiItemFromFirebase = async(guideId: string) => {
+    try {
+        const guideAiSnapshot = await firestore().collection('wishAi').doc(guideId).get();
+        
+        if (guideAiSnapshot.exists) {
+            const data = guideAiSnapshot.data();
+            if (data) {
+                return {
+                    id: guideAiSnapshot.id,
+                    prompt: data.prompt,
+                    response: data.response,
+                    type: data.type
+                };
+            }
+        }
+
+        return null;
+    } catch (error) {
+        console.error("Error fetching Wish AI item:", error);
+        return null;
+    }
+}
 
 export { 
     fetchWishListItemsFromFirebase, 
@@ -309,5 +373,8 @@ export {
     removeFromSharedWishListInFirebase,
     addToSharedWishListInFirebase,
     deleteWishListByUserInFirebase,
-    updateUserNameOnSharedWishListInFirebase
+    updateUserNameOnSharedWishListInFirebase,
+    fetchGuideAiFromFirebase,
+    searchViaGuideAiFromFirebase,
+    fetchGuideAiItemFromFirebase,
 }

@@ -49,6 +49,7 @@
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		F7434F6E2BDD9AA200C4FD89 /* my_wishlist.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = my_wishlist.entitlements; path = my_wishlist/my_wishlist.entitlements; sourceTree = "<group>"; };
 		F7434F712BDE4F3200C4FD89 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		F76D49B82C515F1C000C682B /* Ionicons.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = Ionicons.ttf; sourceTree = "<group>"; };
 		F7C4FD272C03C53C0011AE84 /* AdSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AdSupport.framework; path = System/Library/Frameworks/AdSupport.framework; sourceTree = SDKROOT; };
 		F7D7842B2B3B236300559610 /* app_icons.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = app_icons.ttf; sourceTree = "<group>"; };
 		F7E306822B4F496F00B7A503 /* Feather.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = Feather.ttf; sourceTree = "<group>"; };
@@ -164,6 +165,7 @@
 		F7D7842A2B3B22EC00559610 /* Fonts */ = {
 			isa = PBXGroup;
 			children = (
+				F76D49B82C515F1C000C682B /* Ionicons.ttf */,
 				F7E306822B4F496F00B7A503 /* Feather.ttf */,
 				F7D7842B2B3B236300559610 /* app_icons.ttf */,
 			);

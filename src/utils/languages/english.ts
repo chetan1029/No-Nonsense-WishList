@@ -2,6 +2,7 @@ const en = {
   translation: {
     // tab
     wishlists: 'Wishlists',
+    wishAi: 'WishAi',
     purchase: 'Fulfilled',
     friends: 'Friends',
     settings: 'Settings',
@@ -28,6 +29,11 @@ const en = {
     wannaDeleteItem: 'Are you sure you want to delete this item?',
     isDeleted: '{{title}} has been deleted',
     pullToRefresh: 'Pull to refresh',
+    // Wish Ai
+    searchWishAi: 'Search our top Wishlist',
+    lookingForResult: 'Looking for results...',
+    noSearchInHistory: 'No search in history',
+    noKeywordMatch: 'Our WishAi specializes in answering questions specifically related to Gift ideas, WishList and Must need items. If your query doesn\'t match these topics, please try refining your search.',
     // Purchase List
     myPurchases: 'My Purchases',
     searchWishlists: 'Search Wishlists...',
