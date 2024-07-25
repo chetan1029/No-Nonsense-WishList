@@ -48,4 +48,6 @@ export interface WishAiItem{
     response: any,
     type: string,
     status?: any,
+    userId?: string,
+    category?: string,
 }

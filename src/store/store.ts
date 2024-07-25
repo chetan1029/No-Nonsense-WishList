@@ -15,7 +15,8 @@ import {
   updateUserNameOnSharedWishListInFirebase,
   fetchWishAiFromFirebase,
   searchViaWishAiFromFirebase,
-  fetchWishAiItemFromFirebase
+  fetchWishAiItemFromFirebase,
+  fetchWishAiWishItemsFromFirebase
 } from "./firebase-functions";
 import { AlertMessageDetailItem, CategoryItem, WishAiItem, SettingsType, SharedWishListItem, UserType, WishListItem } from './types';
 import axios from 'axios';
@@ -34,6 +35,7 @@ interface StoreState {
   AlertMessageDetails: { title: string, message: string, action: any};
   WishAiItems: WishAiItem[];
   WishAiSearchItem: WishAiItem | null;
+  WishAiWishItems: WishListItem[];
   setUserDetail: (user: any) => void;
   fetchWishListItems: (user: any) => Promise<void>;
   fetchCateogryList: (user: any) => Promise<void>;
@@ -50,6 +52,7 @@ interface StoreState {
   fetchWishAiItems: (type: string, user: any, language: string) => Promise<void>;
   searchViaWishAi: (prompt: string, type: string, user: any) => Promise<string>;
   fetchWishAiSearchItem: (id: string) => Promise<void>;
+  fetchWishAiWishItems: (userId: string, category: string) => Promise<void>;
 }
 
 
@@ -70,6 +73,7 @@ export const useStore = create<StoreState>(
         response: undefined,
         type: ''
       },
+      WishAiWishItems: [],
       Settings: {themeMode: "Automatic", language: "English"},
       setUserDetail: async(user: any) => {
         set({UserDetail: user})
@@ -236,7 +240,7 @@ export const useStore = create<StoreState>(
          console.error("Error fetching data", error);
         }
        }, 
-       fetchWishAiItems: async (type: string, user:any, language: string) => {
+      fetchWishAiItems: async (type: string, user:any, language: string) => {
         try {
           const lang = language && language.trim() ? language : 'en';
           const wishAiItems = await fetchWishAiFromFirebase(type, user?.uid, lang);
@@ -262,5 +266,13 @@ export const useStore = create<StoreState>(
           console.error("Error fetching guide AI data", error);
         }
       },
+      fetchWishAiWishItems: async (userId: string, category: string) => {
+        try {
+          const wishAiWishItems = await fetchWishAiWishItemsFromFirebase(userId, category);
+          set({WishAiWishItems: wishAiWishItems});
+        } catch (error) {
+          console.error("Error fetching guide AI wish data", error);
+        }
+      }
     }),
   );

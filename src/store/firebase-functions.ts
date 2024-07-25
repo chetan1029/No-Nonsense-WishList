@@ -314,6 +314,8 @@ const fetchWishAiFromFirebase = async(type: string, userId: any, language: strin
                     response: doc.data().response,
                     type: doc.data().type,
                     status: doc.data().status,
+                    userId: doc.data().userId,
+                    category: doc.data().category,
                 }))
                 .filter((item) => item.status.state !== "ERROR");
             }
@@ -360,6 +362,28 @@ const fetchWishAiItemFromFirebase = async(guideId: string) => {
     }
 }
 
+// fetch Wish AI WishList
+const fetchWishAiWishItemsFromFirebase = async(userId: string, category: string) => {
+    let wishlistItems: WishListItem[] = [];
+    await firestore().collection('Wishlist').where("userId", "==" , userId).where("category", "==" , category).orderBy('createDate', 'desc').get().then((wishlistSnapshot) => {
+        if (!wishlistSnapshot.empty) {
+            wishlistItems = wishlistSnapshot.docs.map((doc) => ({
+                id: doc.id,
+                category: doc.data().category,
+                url: doc.data().url,
+                title: doc.data().title,
+                price: doc.data().price,
+                comment: doc.data().comment,
+                image: doc.data().image,
+                createdDate: doc.data().createdDate,
+                purchase: doc.data().purchase,
+                scrapedStatus: doc.data()?.scraped_status,
+            }));
+        }
+    });
+    return wishlistItems;
+}
+
 export { 
     fetchWishListItemsFromFirebase, 
     updatePurchaseStatusInFirebase, 
@@ -377,4 +401,5 @@ export {
     fetchWishAiFromFirebase,
     searchViaWishAiFromFirebase,
     fetchWishAiItemFromFirebase,
+    fetchWishAiWishItemsFromFirebase
 }

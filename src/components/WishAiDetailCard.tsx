@@ -56,8 +56,6 @@ const WishAiDetailCard: React.FC<WishAiCardDetailProps> = ({
   return (
     <ScrollView style={styles.ScrollView}>
       <View style={[styles.CardInfoContainer, {marginBottom: tabBarHeight}]}>
-        {/* Banner Ads */}
-
         {item?.response ? (
           <Markdown style={markdownStyles}>{item?.response}</Markdown>
         ) : (
