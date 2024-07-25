@@ -155,6 +155,26 @@ const SettingScreen = ({route, navigation}: any) => {
         </TouchableOpacity>
       )}
 
+      <TouchableOpacity
+        style={[
+          styles.InputContainerComponent,
+          {backgroundColor: themeColor.priamryDarkBg},
+        ]}
+        onPress={() => {
+          navigation.navigate('PurchaseList');
+        }}>
+        <View style={styles.titleContainer}>
+          <View style={styles.iconContainer}>
+            <Feather
+              name="shopping-bag"
+              size={16}
+              color={themeColor.secondaryText}
+            />
+          </View>
+          <Text style={{color: themeColor.secondaryText}}>{t('purchase')}</Text>
+        </View>
+      </TouchableOpacity>
+
       <View
         style={[
           styles.InputContainerComponent,

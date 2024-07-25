@@ -12,9 +12,13 @@ import {
   removeFromSharedWishListInFirebase,
   addToSharedWishListInFirebase,
   deleteWishListByUserInFirebase,
-  updateUserNameOnSharedWishListInFirebase
+  updateUserNameOnSharedWishListInFirebase,
+  fetchWishAiFromFirebase,
+  searchViaWishAiFromFirebase,
+  fetchWishAiItemFromFirebase,
+  fetchWishAiWishItemsFromFirebase
 } from "./firebase-functions";
-import { AlertMessageDetailItem, CategoryItem, SettingsType, SharedWishListItem, UserType, WishListItem } from './types';
+import { AlertMessageDetailItem, CategoryItem, WishAiItem, SettingsType, SharedWishListItem, UserType, WishListItem } from './types';
 import axios from 'axios';
 import { getTitleFromText, isConnectedToNetwork, showToast } from '../utils/common';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -29,6 +33,9 @@ interface StoreState {
   SharedWishList: SharedWishListItem[];
   SharedWishListItems: WishListItem[];
   AlertMessageDetails: { title: string, message: string, action: any};
+  WishAiItems: WishAiItem[];
+  WishAiSearchItem: WishAiItem | null;
+  WishAiWishItems: WishListItem[];
   setUserDetail: (user: any) => void;
   fetchWishListItems: (user: any) => Promise<void>;
   fetchCateogryList: (user: any) => Promise<void>;
@@ -42,6 +49,10 @@ interface StoreState {
   removeFromSharedWishList: (user: any, sharedWishListId: string) => Promise<void>;
   addToSharedWishList: (user: any, categoryId: string, userName: any, t:any) => Promise<void>;
   deleteWishListByUser: (user: any) => Promise<void>;
+  fetchWishAiItems: (type: string, user: any, language: string) => Promise<void>;
+  searchViaWishAi: (prompt: string, type: string, user: any) => Promise<string>;
+  fetchWishAiSearchItem: (id: string) => Promise<void>;
+  fetchWishAiWishItems: (userId: string, category: string) => Promise<void>;
 }
 
 
@@ -55,6 +66,14 @@ export const useStore = create<StoreState>(
       SharedWishListItems: [],
       WebPageContent: '',
       AlertMessageDetails: {title: '', message: '', action: ''},
+      WishAiItems: [],
+      WishAiSearchItem: {
+        id: '',
+        prompt: '',
+        response: undefined,
+        type: ''
+      },
+      WishAiWishItems: [],
       Settings: {themeMode: "Automatic", language: "English"},
       setUserDetail: async(user: any) => {
         set({UserDetail: user})
@@ -221,5 +240,39 @@ export const useStore = create<StoreState>(
          console.error("Error fetching data", error);
         }
        }, 
+      fetchWishAiItems: async (type: string, user:any, language: string) => {
+        try {
+          const lang = language && language.trim() ? language : 'en';
+          const wishAiItems = await fetchWishAiFromFirebase(type, user?.uid, lang);
+          set({WishAiItems: wishAiItems});
+        } catch (error) {
+          console.error("Error fetching guide AI data", error);
+        }
+      },
+      searchViaWishAi: async (prompt: string, type: string, user: any) => {
+        try {
+          const wishAiId = await searchViaWishAiFromFirebase(prompt, type, user?.uid);
+          return wishAiId
+        } catch (error) {
+          console.error("Error looking for guide AI", error);
+          return ''
+        }
+      },
+      fetchWishAiSearchItem: async (guideId: string) => {
+        try {
+          const wishAiItem = await fetchWishAiItemFromFirebase(guideId);
+          set({WishAiSearchItem: wishAiItem});
+        } catch (error) {
+          console.error("Error fetching guide AI data", error);
+        }
+      },
+      fetchWishAiWishItems: async (userId: string, category: string) => {
+        try {
+          const wishAiWishItems = await fetchWishAiWishItemsFromFirebase(userId, category);
+          set({WishAiWishItems: wishAiWishItems});
+        } catch (error) {
+          console.error("Error fetching guide AI wish data", error);
+        }
+      }
     }),
   );

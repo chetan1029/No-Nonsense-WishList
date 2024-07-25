@@ -136,7 +136,13 @@ const PurchaseScreen = ({navigation}: any) => {
       <StatusBar backgroundColor={themeColor.primaryBg}></StatusBar>
 
       {/* App Header */}
-      <HeaderBar title={t('myPurchases')} themeColor={themeColor} />
+      <HeaderBar
+        title={t('myPurchases')}
+        themeColor={themeColor}
+        backButton={() => {
+          navigation.navigate('Settings');
+        }}
+      />
 
       {/* Search Input */}
       <SearchBar

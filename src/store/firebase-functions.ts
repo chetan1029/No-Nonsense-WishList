@@ -1,5 +1,5 @@
-import firestore from '@react-native-firebase/firestore';
-import { CategoryItem, SharedWishListItem, WishListItem, AlertMessageDetailItem } from './types';
+import firestore, { FirebaseFirestoreTypes } from '@react-native-firebase/firestore';
+import { CategoryItem, SharedWishListItem, WishListItem, AlertMessageDetailItem, WishAiItem } from './types';
 
 const fetchWishListItemsFromFirebase = async(userId: string) => {
     let wishlistItems: WishListItem[] = [];
@@ -295,6 +295,94 @@ const updateUserNameOnSharedWishListInFirebase = async(userId: string, userName:
     await batch.commit();
 }
 
+// fetch Guide AI
+const fetchWishAiFromFirebase = async(type: string, userId: any, language: string) => {
+    let wishAiItem: WishAiItem[] = [];
+    let query: FirebaseFirestoreTypes.Query<FirebaseFirestoreTypes.DocumentData> = firestore().collection('wishAi');
+    if (type === 'user-history' && userId) {
+        query = query.where("type", "==", "user-history").where("userId", "==", userId);
+    }else{
+        query = query.where("type", "==", "general").where("language", "==", language);
+    }
+    query = query.orderBy('status.startTime', 'desc')
+    try {
+        await query.get().then((wishAiSnapshot) => {
+            if (!wishAiSnapshot.empty) {
+                wishAiItem = wishAiSnapshot.docs.map((doc) => ({
+                    id: doc.id,
+                    prompt: doc.data().prompt,
+                    response: doc.data().response,
+                    type: doc.data().type,
+                    status: doc.data().status,
+                    userId: doc.data().userId,
+                    category: doc.data().category,
+                }))
+                .filter((item) => item.status.state !== "ERROR");
+            }
+        });
+    } catch (error) {
+        console.error("Error fetching wishAi from Firebase:", error);
+    }
+    return wishAiItem;
+}
+
+// search via Guide AI
+const searchViaWishAiFromFirebase = async(prompt: string, type: string, userId: any) => {
+    const wishAiDocRef = await firestore().collection('wishAi').add(
+        { 
+            "type": type, 
+            "prompt": prompt,
+            "userId": userId,
+        }
+    )
+    return wishAiDocRef.id;
+}
+
+// fetch Guide AI Search
+const fetchWishAiItemFromFirebase = async(guideId: string) => {
+    try {
+        const wishAiSnapshot = await firestore().collection('wishAi').doc(guideId).get();
+        
+        if (wishAiSnapshot.exists) {
+            const data = wishAiSnapshot.data();
+            if (data) {
+                return {
+                    id: wishAiSnapshot.id,
+                    prompt: data.prompt,
+                    response: data.response,
+                    type: data.type
+                };
+            }
+        }
+
+        return null;
+    } catch (error) {
+        console.error("Error fetching Wish AI item:", error);
+        return null;
+    }
+}
+
+// fetch Wish AI WishList
+const fetchWishAiWishItemsFromFirebase = async(userId: string, category: string) => {
+    let wishlistItems: WishListItem[] = [];
+    await firestore().collection('Wishlist').where("userId", "==" , userId).where("category", "==" , category).orderBy('createDate', 'desc').get().then((wishlistSnapshot) => {
+        if (!wishlistSnapshot.empty) {
+            wishlistItems = wishlistSnapshot.docs.map((doc) => ({
+                id: doc.id,
+                category: doc.data().category,
+                url: doc.data().url,
+                title: doc.data().title,
+                price: doc.data().price,
+                comment: doc.data().comment,
+                image: doc.data().image,
+                createdDate: doc.data().createdDate,
+                purchase: doc.data().purchase,
+                scrapedStatus: doc.data()?.scraped_status,
+            }));
+        }
+    });
+    return wishlistItems;
+}
 
 export { 
     fetchWishListItemsFromFirebase, 
@@ -309,5 +397,9 @@ export {
     removeFromSharedWishListInFirebase,
     addToSharedWishListInFirebase,
     deleteWishListByUserInFirebase,
-    updateUserNameOnSharedWishListInFirebase
+    updateUserNameOnSharedWishListInFirebase,
+    fetchWishAiFromFirebase,
+    searchViaWishAiFromFirebase,
+    fetchWishAiItemFromFirebase,
+    fetchWishAiWishItemsFromFirebase
 }

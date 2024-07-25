@@ -41,3 +41,13 @@ export interface AlertMessageDetailItem{
     alertType: string,
     action: any,
 }
+
+export interface WishAiItem{
+    id: string,
+    prompt: string,
+    response: any,
+    type: string,
+    status?: any,
+    userId?: string,
+    category?: string,
+}

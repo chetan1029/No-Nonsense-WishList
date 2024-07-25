@@ -2,6 +2,7 @@ import React from 'react';
 import {createStackNavigator} from '@react-navigation/stack';
 import SettingScreen from '../screens/SettingScreen';
 import UserProfileScreen from '../screens/UserProfileScreen';
+import PurchaseScreen from '../screens/PurchaseScreen';
 
 const SettingStack = createStackNavigator();
 
@@ -14,6 +15,7 @@ function SettingStackScreen() {
       }}>
       <SettingStack.Screen name="Settings" component={SettingScreen} />
       <SettingStack.Screen name="UserProfile" component={UserProfileScreen} />
+      <SettingStack.Screen name="PurchaseList" component={PurchaseScreen} />
     </SettingStack.Navigator>
   );
 }

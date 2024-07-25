@@ -2,10 +2,10 @@ import React, {useEffect} from 'react';
 import {StyleSheet, Text, View} from 'react-native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {FONTSIZE} from '../theme/theme';
-import PurchaseScreen from '../screens/PurchaseScreen';
 import AddWishListScreen from '../screens/AddWishScreen';
 import WishListScreen from '../screens/WishListScreen';
 import Feather from 'react-native-vector-icons/Feather';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 import 'intl-pluralrules';
 import {useTranslation} from 'react-i18next';
 import i18n from '../utils/i18n';
@@ -14,6 +14,8 @@ import {getFocusedRouteNameFromRoute} from '@react-navigation/native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import SharedWishListStackScreen from './SharedWishListStackScreen';
 import SettingStackScreen from './SettingStackScreen';
+import WishAiScreen from '../screens/WishAiScreen';
+import WishAiStackScreen from './WishAiStackScreen';
 
 const Tab = createBottomTabNavigator();
 
@@ -96,8 +98,8 @@ const TabNavigator = ({route, navigation}: any) => {
             },
           }}></Tab.Screen>
         <Tab.Screen
-          name="PurchaseList"
-          component={PurchaseScreen}
+          name="WishAi"
+          component={WishAiStackScreen}
           options={{
             tabBarLabel: ({focused, color}) => {
               return (
@@ -110,14 +112,14 @@ const TabNavigator = ({route, navigation}: any) => {
                         : themeColor.primaryText,
                     },
                   ]}>
-                  {t('purchase')}
+                  {t('wishAi')}
                 </Text>
               );
             },
             tabBarIcon: ({focused, color, size}) => {
               return (
-                <Feather
-                  name="shopping-bag"
+                <Ionicons
+                  name="sparkles-outline"
                   size={28}
                   color={
                     focused

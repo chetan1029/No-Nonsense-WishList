@@ -3,7 +3,11 @@ import React from 'react';
 import LottieView from 'lottie-react-native';
 import {COLORS, FONTFAMILY, FONTSIZE, SPACING} from '../theme/theme';
 
-const LoadingCard = () => {
+interface LoadingCardProps {
+  title?: string;
+}
+
+const LoadingCard: React.FC<LoadingCardProps> = ({title}) => {
   return (
     <View>
       <LottieView
